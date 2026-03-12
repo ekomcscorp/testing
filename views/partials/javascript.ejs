@@ -1,0 +1,494 @@
+<!-- Core JS Files  -->
+<script src="/assets/js/core/jquery-3.7.1.min.js"></script>
+<script src="/assets/js/core/bootstrap.bundle.min.js"></script>
+
+
+<!-- jQuery Scrollbar -->
+<script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+<script src="/assets/js/plugin/jquery-ui/jquery-ui.min.js"></script>
+
+<!-- Chart JS -->
+<script src="/assets/js/plugin/chart.js/chart.min.js"></script>
+
+<!-- jQuery Sparkline -->
+<script src="/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+<!-- Chart Circle -->
+<script src="/assets/js/plugin/chart-circle/circles.min.js"></script>
+
+<!-- Datatables -->
+<script src="/assets/js/plugin/datatables/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.tailwindcss.js"></script>
+<!-- JS DataTables Responsive -->
+<!-- <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script> -->
+
+<!-- Bootstrap Notify -->
+<script src="/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="/assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
+<script src="/assets/js/plugin/jsvectormap/world.js"></script>
+<!-- Multiple select  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+
+<!-- Sweet Alert -->
+<script src="/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+<!-- Kaiadmin JS -->
+<script src="/assets/js/kaiadmin.min.js"></script>
+
+<!-- Kaiadmin DEMO methods, don't include it in your project! -->
+<script src="/assets/js/setting-demo.js"></script>
+<script src="/assets/js/demo.js"></script>
+
+<!-- PEMILIHAN PAGE JAVASCRIPT -->
+<!-- <script src="<%= jslink %>"></script> -->
+<!-- <% if (typeof jslink !== 'undefined') { %>
+    <script src="<%= jslink %>"></script>
+<% } else { %>
+    <script src="javascripts/javascript.js"></script>
+<% } %> -->
+<script src="<%= jslink %>"></script>
+<% if (typeof jslink2 !=='undefined' ) { %>
+    <script src="<%= jslink2 %>"></script>
+    <% } %>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const socket = io();
+
+                socket.emit("init_user");
+
+                socket.on("joined_admin_room", () => {
+                    console.log("✅ Admin joined room");
+
+                    socket.on("user_registered", (data) => {
+                        console.log("📢 Notifikasi user baru:", data);
+
+                        $.notify({
+                            message: `${data.fullname} (${data.username}) baru saja mendaftar!`
+                        }, {
+                            type: 'info',
+                            delay: 100000,
+                            placement: {
+                                from: 'top',
+                                align: 'right'
+                            }
+                        });
+
+                        const notifBadge = document.querySelector(".notification");
+                        if (notifBadge) {
+                            let count = parseInt(notifBadge.textContent || "0");
+                            notifBadge.textContent = count + 1;
+                            notifBadge.style.display = "inline-block";
+                        } else {
+                            console.warn("⚠️ .notification tidak ditemukan");
+                        }
+
+                        const notifTitle = document.getElementById("notif-title");
+                        if (notifTitle) {
+                            let current = parseInt(document.querySelector(".notification").textContent || "0");
+                            notifTitle.textContent = `You have ${current + 1} new notification`;
+                        } else {
+                            console.warn("⚠️ #notif-title tidak ditemukan");
+                        }
+
+                        const notifCenter = document.getElementById("notif-center");
+                        if (notifCenter) {
+                            const notifItem = document.createElement("a");
+                            notifItem.href = "#";
+                            notifItem.innerHTML = `
+          <div class="notif-icon notif-primary border-radius" style="width: 60px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: #007bff; color: white;">
+            <i class="fa fa-user-plus"></i>
+          </div>
+          <div class="notif-content">
+            <span class="block" style="width: 205px;">
+              ${data.message}
+            </span>
+            <span class="time">
+              ${new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          </div>
+        `;
+                            notifCenter.prepend(notifItem);
+                        } else {
+                            console.warn("⚠️ #notif-center tidak ditemukan");
+                        }
+                    });
+                });
+            });
+
+        </script>
+        <script>
+            //USERLEVEL START
+            document.addEventListener('DOMContentLoaded', () => {
+                // Restore collapse states from localStorage
+                document.querySelectorAll('.collapse').forEach((collapseParent) => {
+                    const id = collapseParent.getAttribute('data-menu-id');
+                    const isOpen = localStorage.getItem(`menu-collapse-${id}`);
+
+                    if (isOpen === 'true') {
+                        collapseParent.classList.add('show');
+
+                        const toggleLink = document.querySelector(`[data-bs-target="#${id}"]`);
+                        if (toggleLink) toggleLink.classList.remove('collapsed');
+                    }
+                });
+
+                document.querySelectorAll('.collapse').forEach((collapseParent) => {
+                    collapseParent.addEventListener('shown.bs.collapse', () => {
+                        localStorage.setItem(`collapse-${collapseParent.getAttribute('data-menu-id')}`, 'true');
+                    });
+
+                    collapseParent.addEventListener('hidden.bs.collapse', () => {
+                        localStorage.setItem(`collapse-${collapseParent.getAttribute('data-menu-id')}`, 'false');
+                    });
+                })
+
+                const currentPath = window.location.pathname;
+
+
+                // Highlight the matching menu item
+                document.querySelectorAll('.nav-item a').forEach(link => {
+                    if (link.getAttribute('href') === currentPath) {
+                        // Add 'active' class to the parent nav-item
+                        link.parentElement.classList.add('active');
+
+                        // Expand the menu if it's inside a collapsed menu
+                        let collapseParent = link.closest('.collapse');
+                        while (collapseParent) {
+                            collapseParent.classList.add('show');
+                            const toggleLink = collapseParent.previousElementSibling;
+                            if (toggleLink && toggleLink.classList.contains('collapsed')) toggleLink.classList.remove('collapsed');
+                            collapseParent = collapseParent.parentElement.closest('.collapsed');
+                        }
+                    }
+                });
+            });
+
+            // document.addEventListener("DOMContentLoaded", function() {
+            //    const element = document.querySelector("#collapse-5");
+            //     if(element != null){
+            //         element.addEventListener("click", function(){
+            //           element.classList.toggle('show');
+            //           alert("clicked");
+            //         })
+            //         element.classList.toggle('show');
+            //     } else {
+            //         console.error("error or not found");
+            //     }
+            // })
+            //USERLEVEL END
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pQdfJHc2OehKxGwPUJ6CSvM4xP0z1pyXHdnzMUBwnSP5Hlw72Z5pApsTuW1X3s5i"
+            crossorigin="anonymous"></script>
+        <!-- TEMPLATE NEW TAILADMIN -->
+        <script>
+            // --- Dark Mode Logic ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const html = document.documentElement;
+
+            // Cek LocalStorage atau Preferensi Sistem saat load
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                themeIcon.classList.replace('ph-moon', 'ph-sun');
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                themeIcon.classList.replace('ph-sun', 'ph-moon');
+            }
+
+            // Event Listener Tombol
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    html.classList.add('light');
+                    localStorage.theme = 'light';
+                    themeIcon.classList.replace('ph-sun', 'ph-moon');
+                } else {
+                    html.classList.add('dark');
+                    html.classList.remove('light');
+                    localStorage.theme = 'dark';
+                    themeIcon.classList.replace('ph-moon', 'ph-sun');
+                }
+            });
+
+            // --- Sidebar Logic for Mobile ---
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            function toggleSidebar() {
+                // Jika sidebar sedang tersembunyi (translate-x-full negatif)
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
+        </script>
+
+        <script>
+
+            // --- Toggle Visibility Password ---
+            function togglePasswordVisibility(inputId, btn) {
+                const input = document.getElementById(inputId);
+                const icon = btn.querySelector('i');
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.remove('ph-eye-slash');
+                    icon.classList.add('ph-eye');
+                    icon.classList.add('text-primary-600');
+                } else {
+                    input.type = "password";
+                    icon.classList.remove('ph-eye');
+                    icon.classList.add('ph-eye-slash');
+                    icon.classList.remove('text-primary-600');
+                }
+            }
+
+            // --- Logic Simpan Password ---
+            function handleSavePassword() {
+                // 1. Tutup Modal Input
+                closeChangePasswordModal();
+
+                // 2. Buka Modal Sukses
+                const successModal = document.getElementById('success-modal');
+                const successBackdrop = document.getElementById('success-backdrop');
+                const successPanel = document.getElementById('success-panel');
+
+                successModal.classList.remove('hidden');
+
+                // Animasi Masuk
+                setTimeout(() => {
+                    successBackdrop.classList.remove('opacity-0');
+                    successBackdrop.classList.add('opacity-100');
+                    successPanel.classList.remove('opacity-0', 'scale-95');
+                    successPanel.classList.add('opacity-100', 'scale-100');
+                }, 10);
+
+                // 3. Reset Form (Kosongkan input)
+                document.getElementById('changePasswordForm').reset();
+
+                // 4. Tutup Otomatis setelah 2 detik
+                setTimeout(() => {
+                    closeSuccessModal();
+                }, 2000);
+            }
+
+            function closeSuccessModal() {
+                const successModal = document.getElementById('success-modal');
+                const successBackdrop = document.getElementById('success-backdrop');
+                const successPanel = document.getElementById('success-panel');
+
+                successBackdrop.classList.remove('opacity-100');
+                successBackdrop.classList.add('opacity-0');
+                successPanel.classList.remove('opacity-100', 'scale-100');
+                successPanel.classList.add('opacity-0', 'scale-95');
+
+                setTimeout(() => {
+                    successModal.classList.add('hidden');
+                }, 300);
+            }
+
+            // --- 1. LOGIC MENU PROFIL (Dropdown) ---
+            function toggleProfileMenu() {
+                const menu = document.getElementById('profile-dropdown');
+                const chevron = document.getElementById('profile-chevron');
+
+                if (menu.classList.contains('hidden')) {
+                    // Buka Menu
+                    menu.classList.remove('hidden');
+                    // Animasi kecil (tunggu frame berikutnya agar transisi CSS jalan)
+                    setTimeout(() => {
+                        menu.classList.remove('opacity-0', 'scale-95');
+                        menu.classList.add('opacity-100', 'scale-100');
+                    }, 10);
+                    chevron.classList.add('rotate-180');
+                } else {
+                    // Tutup Menu
+                    closeProfileMenu();
+                }
+            }
+
+            function closeProfileMenu() {
+                const menu = document.getElementById('profile-dropdown');
+                const chevron = document.getElementById('profile-chevron');
+
+                menu.classList.remove('opacity-100', 'scale-100');
+                menu.classList.add('opacity-0', 'scale-95');
+                chevron.classList.remove('rotate-180');
+
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                }, 150); // Sesuaikan dengan durasi transisi CSS
+            }
+
+            // Klik di luar menu untuk menutup
+            document.addEventListener('click', function (event) {
+                const menu = document.getElementById('profile-dropdown');
+                const button = document.querySelector('button[onclick="toggleProfileMenu()"]');
+
+                // Jika klik bukan di menu dan bukan di tombol trigger
+                if (!menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
+                    closeProfileMenu();
+                }
+            });
+
+
+            // --- 2. LOGIC MODAL GANTI PASSWORD ---
+            const cpModal = document.getElementById('change-password-modal');
+            const cpBackdrop = document.getElementById('cp-backdrop');
+            const cpPanel = document.getElementById('cp-panel');
+
+            function openChangePasswordModal() {
+                // Tutup menu dropdown dulu agar rapi
+                closeProfileMenu();
+
+                cpModal.classList.remove('hidden');
+                setTimeout(() => {
+                    cpBackdrop.classList.remove('opacity-0');
+                    cpBackdrop.classList.add('opacity-100');
+                    cpBackdrop.style.pointerEvents = 'auto';
+
+                    cpPanel.classList.remove('opacity-0', 'scale-95');
+                    cpPanel.classList.add('opacity-100', 'scale-100');
+                }, 10);
+            }
+
+            function closeChangePasswordModal() {
+                cpBackdrop.classList.remove('opacity-100');
+                cpBackdrop.classList.add('opacity-0');
+                cpBackdrop.style.pointerEvents = 'none';
+
+                cpPanel.classList.remove('opacity-100', 'scale-100');
+                cpPanel.classList.add('opacity-0', 'scale-95');
+
+                setTimeout(() => {
+                    cpModal.classList.add('hidden');
+                }, 300);
+            }
+
+            // --- LOGOUT MODAL LOGIC ---
+            const logoutModal = document.getElementById('logout-modal');
+            const logoutBackdrop = document.getElementById('logout-backdrop');
+            const logoutPanel = document.getElementById('logout-panel');
+
+            function openLogoutModal() {
+                logoutModal.classList.remove('hidden');
+                // Animasi Masuk
+                setTimeout(() => {
+                    logoutBackdrop.classList.remove('opacity-0');
+                    logoutBackdrop.classList.add('opacity-100');
+                    logoutBackdrop.style.pointerEvents = 'auto';
+
+                    logoutPanel.classList.remove('opacity-0', 'scale-95');
+                    logoutPanel.classList.add('opacity-100', 'scale-100');
+                }, 10);
+            }
+
+            function closeLogoutModal() {
+                // Animasi Keluar
+                logoutBackdrop.classList.remove('opacity-100');
+                logoutBackdrop.classList.add('opacity-0');
+                logoutBackdrop.style.pointerEvents = 'none';
+
+                logoutPanel.classList.remove('opacity-100', 'scale-100');
+                logoutPanel.classList.add('opacity-0', 'scale-95');
+
+                // Sembunyikan elemen setelah animasi selesai (300ms)
+                setTimeout(() => {
+                    logoutModal.classList.add('hidden');
+                }, 300);
+            }
+
+            // Tutup modal jika klik di luar area panel (di backdrop)
+            logoutBackdrop.addEventListener('click', closeLogoutModal);
+
+        </script>
+
+        <script>
+            // --- LOGIC UNTUK DROPDOWN MENU SETTINGS ---
+            function toggleDropdown(dropdownId) {
+                // Ambil elemen menu berdasarkan ID
+                const menu = document.getElementById(dropdownId);
+
+                // Ambil elemen icon (kita ambil angka ID-nya saja dari string 'dropdown-123')
+                const numericId = dropdownId.replace('dropdown-', '');
+                const icon = document.getElementById('icon-' + numericId);
+
+                if (menu) {
+                    // Toggle Class Hidden (Buka/Tutup)
+                    const isHidden = menu.classList.contains('hidden');
+
+                    if (isHidden) {
+                        menu.classList.remove('hidden');
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        menu.classList.add('hidden');
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+        </script>
+
+        <script>
+            // Set tahun otomatis di footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        </script>
+
+        <script>
+
+            // --- LOGIC NOTIFIKASI DROPDOWN ---
+            const notifBtn = document.getElementById('notification-btn');
+            const notifDropdown = document.getElementById('notification-dropdown');
+
+            function toggleNotification() {
+                if (notifDropdown.classList.contains('hidden')) {
+                    // Buka Dropdown
+                    notifDropdown.classList.remove('hidden');
+                    setTimeout(() => {
+                        notifDropdown.classList.remove('opacity-0', 'scale-95');
+                        notifDropdown.classList.add('opacity-100', 'scale-100');
+                    }, 10);
+                } else {
+                    // Tutup Dropdown
+                    closeNotification();
+                }
+            }
+
+            function closeNotification() {
+                notifDropdown.classList.remove('opacity-100', 'scale-100');
+                notifDropdown.classList.add('opacity-0', 'scale-95');
+
+                setTimeout(() => {
+                    notifDropdown.classList.add('hidden');
+                }, 200); // Sesuai durasi transisi CSS
+            }
+
+            // Tutup jika klik di luar area notifikasi
+            document.addEventListener('click', function (event) {
+                if (!notifBtn.contains(event.target) && !notifDropdown.contains(event.target)) {
+                    if (!notifDropdown.classList.contains('hidden')) {
+                        closeNotification();
+                    }
+                }
+            });
+        </script>
+
+
+        </body>
+
+        </html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - Pengenumroh</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../assets/img/logo/favicon-pu.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        primary: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { transition: background-color 0.3s ease; }
+        .form-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-form { display: none; opacity: 0; transform: translateY(10px); }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 dark:bg-dark-bg dark:text-gray-200 font-sans antialiased min-h-screen flex items-center justify-center relative overflow-hidden px-4">
+    
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <button id="theme-toggle" class="absolute top-6 right-6 p-2.5 rounded-full bg-white dark:bg-dark-card shadow-md border border-gray-100 dark:border-dark-border z-50 active:scale-95 transition-all">
+        <i id="theme-icon" class="ph ph-moon text-xl text-gray-600 dark:text-yellow-400"></i>
+    </button>
+
+    <main class="w-full max-w-md z-10">
+        <div class="bg-white dark:bg-dark-card rounded-[2rem] shadow-2xl border border-gray-100 dark:border-dark-border p-8 sm:p-10 relative">
+            
+            <div class="flex justify-center mb-8">
+                <img src="../assets/img/logo/pengenumroh.png" alt="Logo" class="h-12 w-auto object-contain">
+            </div>
+
+            <div id="login-section" class="form-transition">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold dark:text-white">Welcome Back</h2>
+                    <p class="text-gray-500 text-sm mt-2">Login ke akun Anda</p>
+                </div>
+
+                <form action="/login" method="POST" id="form-login-action" class="space-y-5">
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium ml-1">Username / Email</label>
+                        <div class="relative">
+                            <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                            <input type="text" name="username" id="username" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" placeholder="Username">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium ml-1">Password</label>
+                        <div class="relative">
+                            <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                            <input type="password" id="passwordInput" name="password" required class="w-full pl-12 pr-12 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" placeholder="Password">
+                            <button type="button" class="toggle-password absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500" data-target="passwordInput">
+                                <i class="ph ph-eye-slash text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="rememberMe" class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
+                            <span class="text-gray-600 dark:text-gray-400">Remember me</span>
+                        </label>
+                        <a href="#" class="text-primary-600 font-semibold hover:underline">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">
+                        Sign In
+                    </button>
+                </form>
+
+                <p class="mt-8 text-center text-sm text-gray-500">
+                    Don't have an account? 
+                    <button id="go-to-register" class="text-primary-600 font-bold hover:underline">Sign Up</button>
+                </p>
+            </div>
+
+            <div id="register-section" class="form-transition hidden-form">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold dark:text-white">Create Account</h2>
+                    <p class="text-gray-500 text-sm mt-2">Buat akun baru Anda</p>
+                </div>
+
+                <form action="/register" method="POST" id="form-register-action" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-medium ml-1">Full Name</label>
+                        <input type="text" name="fullname" id="fullname" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none text-sm" placeholder="Fullname">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-medium ml-1">Username</label>
+                        <input type="text" name="username" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none text-sm" placeholder="Username">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium ml-1">Email</label>
+                        <input type="email" name="email" id="email" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all" placeholder="Email">
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium ml-1">Password</label>
+                        <div class="relative">
+                            <input type="password" name="password" id="passwordInput2" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all" placeholder="Password">
+                            <button type="button" class="toggle-password absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" data-target="passwordInput2">
+                                <i class="ph ph-eye-slash text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium ml-1">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" name="confirmPassword" id="passwordInput3" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all" placeholder="Confirm Password">
+                            <button type="button" class="toggle-password absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" data-target="passwordInput3">
+                                <i class="ph ph-eye-slash text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 mt-2">
+                        Create Account
+                    </button>
+                </form>
+
+                <p class="mt-8 text-center text-sm text-gray-500">
+                    Already have an account? 
+                    <button id="go-to-login" class="text-primary-600 font-bold hover:underline">Log In</button>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            // --- 1. Dark Mode ---
+            $('#theme-toggle').click(function() {
+                $('html').toggleClass('dark');
+                const isDark = $('html').hasClass('dark');
+                localStorage.theme = isDark ? 'dark' : 'light';
+                $('#theme-icon').attr('class', isDark ? 'ph ph-sun text-xl text-yellow-400' : 'ph ph-moon text-xl text-gray-600');
+            });
+
+            if (localStorage.theme === 'dark') {
+                $('html').addClass('dark');
+                $('#theme-icon').attr('class', 'ph ph-sun text-xl text-yellow-400');
+            }
+
+            // --- 2. Switch Form Logic ---
+            $('#go-to-register').click(function() {
+                $('#login-section').addClass('hidden-form');
+                setTimeout(() => {
+                    $('#login-section').hide();
+                    $('#register-section').show().removeClass('hidden-form');
+                    $('#register-section').css('opacity', '1').css('transform', 'translateY(0)');
+                }, 400);
+            });
+
+            $('#go-to-login').click(function() {
+                $('#register-section').addClass('hidden-form');
+                setTimeout(() => {
+                    $('#register-section').hide();
+                    $('#login-section').show().removeClass('hidden-form');
+                    $('#login-section').css('opacity', '1').css('transform', 'translateY(0)');
+                }, 400);
+            });
+
+            // --- 3. Password Toggle ---
+            $('.toggle-password').click(function() {
+                const targetId = $(this).data('target');
+                const input = $(`#${targetId}`);
+                const icon = $(this).find('i');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.attr('class', 'ph ph-eye text-lg');
+                } else {
+                    input.attr('type', 'password');
+                    icon.attr('class', 'ph ph-eye-slash text-lg');
+                }
+            });
+
+            // --- 4. Handle URL ?page=register ---
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('page') === 'register') {
+                $('#login-section').hide();
+                $('#register-section').show().removeClass('hidden-form').css('opacity', '1').css('transform', 'translateY(0)');
+            }
+        });
+    </script>
+</body>
+</html>

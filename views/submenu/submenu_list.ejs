@@ -1,0 +1,132 @@
+<div class="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Daftar Sub Menu</h2>
+            <nav class="flex text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <a href="#" class="hover:text-primary-500 transition-colors">Settings</a>
+                <span class="mx-2">/</span>
+                <span class="text-gray-800 dark:text-gray-200">Sub Menu</span>
+            </nav>
+        </div>
+
+        <button onclick="openSubMenuModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors shadow-lg shadow-primary-500/30">
+            <i class="ph ph-plus text-lg"></i>
+            <span>Tambah Sub Menu</span>
+        </button>
+    </div>
+
+    <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden mb-10">
+        <div class="p-5 border-b border-gray-100 dark:border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="relative w-full md:w-72">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                <input type="text" id="subMenuSearch" placeholder="Cari sub menu..."
+                    class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all">
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table id="submenuTable" class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-dark-border text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">
+                        <th class="p-5 text-center w-24 border border-b">Action</th>
+                        <th class="p-5 border border-b">Nama Submenu</th>
+                        <th class="p-5 border border-b">Link / Route</th>
+                        <th class="p-5 border border-b">Menu Parent</th>
+                        <th class="p-5 text-center border border-b">Urutan</th>
+                        <th class="p-5 border border-b">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-dark-border">
+                    </tbody>
+            </table>
+        </div>
+        <div id="customPaginationWrapper"
+      class="p-5 border-t border-gray-100 dark:border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p id="customTableInfo" class="text-sm text-gray-500 dark:text-gray-400">
+        <!-- Menampilkan <span class="font-semibold text-gray-900 dark:text-white">1-2</span> dari <span
+          class="font-semibold text-gray-900 dark:text-white">2</span> level -->
+      </p>
+
+      <div id="customPagination" class="flex items-center gap-2">
+        <!-- <button
+          class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors">Prev</button>
+        <button
+          class="w-8 h-8 rounded-lg bg-primary-600 text-white text-sm font-medium flex items-center justify-center shadow-lg shadow-primary-500/30">1</button>
+        <button
+          class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">Next</button> -->
+      </div>
+    </div>
+    </div>
+
+    
+</div>
+
+<div id="submenuModal" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSubMenuModal()"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:w-full sm:max-w-lg">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modalSubTitle">Form Sub Menu</h3>
+                    <button type="button" onclick="closeSubMenuModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="ph ph-x text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="submenuForm" class="p-6 space-y-4">
+                    <input type="hidden" id="hidden_id_submenu">
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Sub Menu</label>
+                            <input type="text" id="sub_nama_menu" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Link / Route</label>
+                            <input type="text" id="sub_link" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Parent Menu</label>
+                            <select id="sub_id_parent" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                                <option value="" disabled selected>Pilih Parent...</option>
+                                <% menu.forEach(item => { %>
+                                  <option value="<%= item.id_menu %>"><%= item.nama_menu %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Icon</label>
+                            <input type="text" id="sub_icon" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Urutan</label>
+                            <input type="number" id="sub_urutan" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                            <select id="sub_is_active" class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+                                <option value="Y">Ya</option>
+                                <option value="N">Tidak</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="bg-gray-50 dark:bg-slate-800/50 px-6 py-4 flex justify-end gap-3 border-t border-gray-100 dark:border-dark-border">
+                    <button onclick="closeSubMenuModal()" class="px-5 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Batal</button>
+                    <button id="submitSubMenuBtn" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-primary-500/30">
+                        Simpan Sub Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

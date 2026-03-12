@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "root",
+    "password": "12345678",
+    "database": "kaiadmin2",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": "3307"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "u182154819_itpu",
+    "password": "Adminitpu123",
+    "database": "u182154819_pengenumroh",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

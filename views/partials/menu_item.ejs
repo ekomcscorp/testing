@@ -1,0 +1,45 @@
+<% if (menu.children && menu.children.length> 0) { %>
+    <div>
+        <% const parentActiveClass=menu.isActive
+            ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400 font-medium rounded-xl'
+            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700/50 hover:text-gray-900 dark:hover:text-gray-100 rounded-xl transition-colors'
+            ; %>
+            <button onclick="toggleDropdown('menu-<%= menu.id_menu %>')"
+                class="w-full flex items-center justify-between px-4 py-3 <%= parentActiveClass %> group">
+
+                <div class="flex items-center gap-3">
+                    <i
+                        class="<%= menu.icon %> text-xl transition-transform "></i>
+                    <span>
+                        <%= menu.nama_menu %>
+                    </span>
+                </div>
+
+                <i id="icon-<%= menu.id_menu %>"
+                    class="ph ph-caret-down text-sm transition-transform duration-300 <%= menu.isActive ? 'rotate-180' : '' %>">
+                </i>
+            </button>
+
+            <div id="menu-<%= menu.id_menu %>"
+                class="<%= menu.isActive ? '' : 'hidden' %> overflow-hidden transition-all duration-300 mt-1 pl-4">
+                <% menu.children.forEach(child=> { %>
+                    <%- include('menu_item', { menu: child }) %>
+                        <% }); %>
+            </div>
+    </div>
+    <% } else { %>
+        <% const activeClass=menu.isActive
+            ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400 font-medium rounded-xl'
+            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700/50 hover:text-gray-900 dark:hover:text-gray-100 rounded-xl transition-colors'
+            ; %>
+            <!-- <a href="<%= menu.link %>"
+            class="flex items-center gap-3 px-4 py-3 bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400 rounded-xl transition-colors font-medium"> -->
+            <a href="<%= menu.link %>" class="flex items-center gap-3 px-4 py-3 <%= activeClass %>">
+
+                <i class="<%= menu.icon %> text-xl group-hover:scale-110 transition-transform"></i>
+
+                <span>
+                    <%= menu.nama_menu %>
+                </span>
+            </a>
+            <% } %>

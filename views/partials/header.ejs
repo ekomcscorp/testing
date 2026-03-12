@@ -1,0 +1,95 @@
+<!-- TEMPLATE NEW TAILADMIN -->
+<!DOCTYPE html>
+<html lang="id" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PU</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../assets/img/logo/favicon-pu.png">
+
+    <style>
+        /* Search Input */
+        .dataTables_wrapper .dataTables_filter input {
+            @apply border border-gray-300 dark:border-dark-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 dark:bg-slate-800 dark:text-gray-200;
+        }
+
+        /* Length Dropdown */
+        .dataTables_wrapper .dataTables_length select {
+            @apply border border-gray-300 dark:border-dark-border rounded-lg px-2 py-1 text-sm dark:bg-slate-800 dark:text-gray-200;
+        }
+
+        /* Pagination */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            @apply px-3 py-1 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-slate-700;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            @apply bg-primary-500 text-white;
+        }
+
+        /* Remove weird border */
+        table.dataTable.no-footer {
+            border-bottom: none !important;
+        }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1', // Indigo
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        dark: {
+                            bg: '#0f172a',      // Slate 900
+                            card: '#1e293b',    // Slate 800
+                            border: '#334155',  // Slate 700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* Smooth transition for theme toggle */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Hide scrollbar for standard look in sidebar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 dark:bg-dark-bg dark:text-gray-200 font-sans antialiased">

@@ -1,0 +1,260 @@
+<div class="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth">
+    <form id="formProduct" class="max-w-7xl mx-auto space-y-8">
+        <input type="hidden" id="hidden_id">
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-info text-primary-600"></i> Informasi Utama
+            </h3>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Thumbnail Produk<span class="text-danger">*</span></label>
+                    <div class="file-upload-dashed w-full h-64 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative bg-gray-50 dark:bg-slate-800/20 border-2 border-dashed border-gray-200 dark:border-slate-700">
+                        <input type="file" id="thumbnail" name="thumbnail" onchange="validateFileExtension(this)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                        <div class="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-500/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-3">
+                            <i class="ph ph-image text-3xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Klik untuk upload thumbnail</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG, WEBP (Max 2MB)</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Produk<span class="text-danger">*</span></label>
+                        <input type="text" id="nama_produk" name="nama_produk" placeholder="Masukan Nama Produk" required
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kategori<span class="text-danger">*</span></label>
+                        <select name="category_id" id="category_id" class="category_id w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                            <option disabled selected value="">Pilih kategori</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                        <select name="status" id="status" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                            <option value="draft">Draft</option>
+                            <option value="publish">Publish</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quota (Pax)<span class="text-danger">*</span></label>
+                        <input type="number" id="quota" name="quota" value="1" required
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Durasi (Hari)<span class="text-danger">*</span></label>
+                        <input type="number" id="duration" name="duration" placeholder="9" required
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flight-container bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-airplane-takeoff text-primary-600"></i> Detail Perjalanan
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Keberangkatan<span class="text-danger">*</span></label>
+                    <input type="date" id="date" name="date" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Lokasi Keberangkatan<span class="text-danger">*</span></label>
+                    <input type="text" id="tmp_keberangkatan" name="tmp_keberangkatan" placeholder="Contoh: Jakarta (CGK)" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maskapai Keberangkatan<span class="text-danger">*</span></label>
+                    <div class="relative">
+                        <i class="ph ph-airplane-takeoff absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" required id="flight_kbrkt" name="flight_kbrkt" placeholder="Contoh: Garuda Indonesia"
+                            class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maskapai Kepulangan<span class="text-danger">*</span></label>
+                    <div class="relative">
+                        <i class="ph ph-airplane-landing absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" required id="flight_kplg" name="flight_kplg" placeholder="Contoh: Saudi Arabian Airlines"
+                            class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-money text-green-600"></i> Harga Paket (Per Room)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <%- include('../partials/price_input', { label: 'Quad (Sekamar Ber-4)', name: 'price_quad', type:"Quad",
+                    
+                }) %>
+                </div>
+                <div>
+                    <%- include('../partials/price_input', { label: 'Triple (Sekamar Ber-3)', name: 'price_triple',type:"Triple" })  %>
+                </div>
+                <div>
+                    <%- include('../partials/price_input', { label: 'Double (Sekamar Ber-2)', name: 'price_double',type:"Double" })  %>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-bed text-orange-500"></i> Akomodasi Hotel
+            </h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="hotel_mekkah" class="border border-gray-100 dark:border-slate-700 rounded-2xl p-5 bg-gray-50/50 dark:bg-slate-800/20 space-y-4">
+                    <h4 class="font-bold text-gray-800 dark:text-white mb-2 border-b border-gray-200 dark:border-slate-700 pb-2">Hotel Makkah</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nama Hotel<span class="text-danger">*</span></label>
+                        <input type="text" name="include" placeholder="Contoh: Pullman ZamZam" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Image Hotel<span class="text-danger">*</span></label>
+                        <input type="file" id="hotel_mekkah_image" name="hotel_mekkah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Rating</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none text-sm">
+                                <option value="" disabled selected>Pilih rating</option>
+                                <option value="1">★ ☆ ☆ ☆ ☆</option>
+                                <option value="2">★ ★ ☆ ☆ ☆</option>
+                                <option value="3">★ ★ ★ ☆ ☆</option>
+                                <option value="4">★ ★ ★ ★ ☆</option>
+                                <option value="5">★ ★ ★ ★ ★</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Jarak ke Haram<span class="text-danger">*</span></label>
+                            <input type="text" name="include" placeholder="50m" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Fasilitas<span class="text-danger">*</span></label>
+                        <textarea id="mekkah_fclty" name="facilities" rows="3" placeholder="AC, WiFi, dll" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <div id="hotel_madinah" class="border border-gray-100 dark:border-slate-700 rounded-2xl p-5 bg-gray-50/50 dark:bg-slate-800/20 space-y-4">
+                    <h4 class="font-bold text-gray-800 dark:text-white mb-2 border-b border-gray-200 dark:border-slate-700 pb-2">Hotel Madinah</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nama Hotel<span class="text-danger">*</span></label>
+                        <input type="text" name="exclude" placeholder="Contoh: Anwar Al Madinah" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Image Hotel<span class="text-danger">*</span></label>
+                        <input type="file" id="hotel_madinah_image" name="hotel_madinah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Rating</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none text-sm">
+                                <option value="" disabled selected>Pilih rating</option>
+                                <option value="1">★ ☆ ☆ ☆ ☆</option>
+                                <option value="2">★ ★ ☆ ☆ ☆</option>
+                                <option value="3">★ ★ ★ ☆ ☆</option>
+                                <option value="4">★ ★ ★ ★ ☆</option>
+                                <option value="5">★ ★ ★ ★ ★</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Jarak ke Nabawi<span class="text-danger">*</span></label>
+                            <input type="text" name="include" placeholder="100m" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Fasilitas<span class="text-danger">*</span></label>
+                        <textarea id="madinah_fclty" name="facilities" rows="3" placeholder="Buffet, Lounge, dll" required class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-list-checks text-purple-600"></i> Fasilitas Tambahan
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Include (Termasuk)<span class="text-danger">*</span></label>
+                    <input type="text" id="include-fclty" name="include" placeholder="Ketik lalu tekan Enter" 
+                        class="w-full px-4 py-3 rounded-xl bg-green-50/30 dark:bg-green-900/10 border border-green-100 dark:border-green-800/30 outline-none focus:border-green-500 transition-all dark:text-white">
+                    <ul id="include-container" class="mt-3 space-y-2"></ul>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Exclude (Tidak Termasuk)<span class="text-danger">*</span></label>
+                    <input type="text" id="exclude-fclty" name="exclude"  placeholder="Ketik lalu tekan Enter" 
+                        class="w-full px-4 py-3 rounded-xl bg-red-50/30 dark:bg-red-900/10 border border-red-100 dark:border-red-800/30 outline-none focus:border-red-500 transition-all dark:text-white">
+                    <ul id="exclude-container" class="mt-3 space-y-2"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-article text-blue-600"></i> Detail & Ketentuan
+            </h3>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deskripsi Produk<span class="text-danger">*</span></label>
+                    <textarea id="description" name="description" rows="4" required placeholder="Jelaskan detail paket..."
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none focus:border-primary-500 dark:text-white"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Syarat & Ketentuan<span class="text-danger">*</span></label>
+                        <input  type="text" id="snk" name="Snk" placeholder="Ketik lalu tekan Enter" 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none focus:border-primary-500 dark:text-white">
+                        <ul id="snk-container" class="mt-3 space-y-1"></ul>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Catatan<span class="text-danger">*</span></label>
+                        <div class="flex gap-2">
+                            <input type="text" id="note" name="note" placeholder="Ketik catatan lalu Enter" 
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none focus:border-primary-500 dark:text-white" >
+                            <button type="button" id="addNote" class="bg-primary-600 text-white px-4 rounded-xl hover:bg-primary-700">
+                                <i class="ph ph-plus"></i>
+                            </button>
+                        </div>
+                        <ul id="note-container" class="mt-3 space-y-1 text-sm text-gray-600 dark:text-gray-400"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="ph-fill ph-path text-pink-600"></i> Rencana Perjalanan (Itinerary)
+                </h3>
+                <button type="button" id="addRoadmap" name="roadmap_attributes"
+                    class="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-semibold hover:bg-primary-100 transition-colors">
+                    + Tambah Roadmap
+                </button>
+            </div>
+            <div id="roadmap_option" class="space-y-4 border-l-2 border-gray-100 dark:border-slate-700 ml-3 pl-6">
+                </div>
+        </div>
+
+        <div class="flex justify-end gap-4 pb-10">
+            <button type="button" class="px-8 py-3 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">Batal</button>
+            <button type="submit" id="submitProductBtn" 
+                class="px-8 py-3 rounded-xl bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-all transform hover:-translate-y-1">
+                Simpan Produk
+            </button>
+        </div>
+    </form>
+</div>

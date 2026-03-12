@@ -1,0 +1,171 @@
+<footer class="mt-auto px-6 pt-6 border-t border-gray-300 dark:border-dark-border transition-colors">
+    <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
+        &copy; <span id="currentYear"></span> <span
+            class="font-semibold text-gray-900 dark:text-white">pengenumroh.com</span>. All rights
+        reserved.
+    </div>
+</footer>
+
+</div>
+</main>
+ <!-- MODAL LOGOUT -->
+
+    <div id="logout-modal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none"
+            id="logout-backdrop"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm opacity-0 scale-95"
+                    id="logout-panel">
+
+                    <div class="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
+                                <i class="ph-bold ph-warning text-red-600 dark:text-red-400 text-xl"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-semibold leading-6 text-gray-900 dark:text-white"
+                                    id="modal-title">
+                                    Konfirmasi Logout</h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Apakah Anda yakin ingin keluar
+                                        dari
+                                        aplikasi? Sesi Anda akan berakhir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-gray-50 dark:bg-slate-800/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100 dark:border-dark-border">
+                        <a href="/logout"
+                            class="inline-flex w-full justify-center rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition-colors">
+                            Keluar
+                        </a>
+                        <button type="button"
+                            class="mt-3 inline-flex w-full justify-center rounded-xl bg-white dark:bg-slate-700 px-5 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-slate-600 sm:mt-0 sm:w-auto transition-colors"
+                            onclick="closeLogoutModal()">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="change-password-modal" class="fixed inset-0 z-[70] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none"
+            id="cp-backdrop"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md opacity-0 scale-95"
+                    id="cp-panel">
+
+                    <div
+                        class="px-6 py-4 border-b border-gray-100 dark:border-dark-border flex justify-between items-center bg-gray-50/50 dark:bg-slate-800/50">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Ganti Password</h3>
+                        <button type="button" onclick="closeChangePasswordModal()"
+                            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-slate-700">
+                            <i class="ph ph-x text-xl"></i>
+                        </button>
+                    </div>
+
+                    <form id="changePasswordForm" action="#" method="POST" class="p-6 space-y-5">
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password
+                                Lama</label>
+                            <div class="relative group">
+                                <i
+                                    class="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></i>
+                                <input type="password" id="oldPassword" placeholder="••••••••"
+                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all sm:text-sm">
+                                <button type="button" onclick="togglePasswordVisibility('oldPassword', this)"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-md focus:outline-none">
+                                    <i class="ph ph-eye-slash text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password
+                                Baru</label>
+                            <div class="relative group">
+                                <i
+                                    class="ph ph-lock-key-open absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></i>
+                                <input type="password" id="newPassword" placeholder="••••••••"
+                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all sm:text-sm">
+                                <button type="button" onclick="togglePasswordVisibility('newPassword', this)"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-md focus:outline-none">
+                                    <i class="ph ph-eye-slash text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Konfirmasi
+                                Password Baru</label>
+                            <div class="relative group">
+                                <i
+                                    class="ph ph-check-circle absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></i>
+                                <input type="password" id="confirmPassword" placeholder="••••••••"
+                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all sm:text-sm">
+                                <button type="button" onclick="togglePasswordVisibility('confirmPassword', this)"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-md focus:outline-none">
+                                    <i class="ph ph-eye-slash text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <div
+                        class="px-6 py-4 bg-gray-50/50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-dark-border flex justify-end gap-3">
+                        <button type="button" onclick="closeChangePasswordModal()"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors border border-transparent focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-slate-700">
+                            Batal
+                        </button>
+                        <button type="button" onclick="handleSavePassword()"
+                            class="px-4 py-2 rounded-lg text-sm font-medium bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-500/30 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                            Simpan Password
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 z-[80] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none"
+            id="success-backdrop"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm opacity-0 scale-95 p-6 text-center"
+                    id="success-panel">
+
+                    <div
+                        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/20 mb-4 animate-bounce">
+                        <i class="ph-bold ph-check text-3xl text-green-600 dark:text-green-400"></i>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Password Diubah!</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Password Anda berhasil diperbarui. Silakan
+                        gunakan
+                        password baru untuk login selanjutnya.</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

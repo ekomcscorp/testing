@@ -1,0 +1,88 @@
+<div class="container">
+    <div class="page-inner">
+      <div class="page-header">
+        <h3 class="fw-bold mb-3">Gallery</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <i class="icon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Forms</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Basic Form</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <form action="/create_user" id="form_users" method="POST">
+                <div class="card-header">
+                    <div class="card-title">Form User</div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-group">
+                          <label for="title">Title</label>
+                          <input
+                            type="text"
+                            name="title"
+                            class="form-control"
+                            id="title"
+                            placeholder="Enter Title"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="image_url">Image URL</label>
+                          <input
+                            type="text"
+                            name="image_url"
+                            class="form-control"
+                            id="image_url"
+                            placeholder="Enter Image URL"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="description">Description</label>
+                          <textarea class="form-control" id="description" rows="5">
+                          </textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="category_id"
+                            >Category</label
+                          >
+                          <select
+                            class="form-select"
+                            name="category_id"
+                            id="category_id"
+                          >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-action">
+                    <button class="btn btn-success" type="submit">Submit</button>
+                    <a href="/users_list" class="btn btn-danger">Cancel</a>
+                  </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>

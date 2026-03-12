@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Register - PU</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/webp" href="../assets/img/logo/favicon-pu.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1', // Indigo
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        dark: {
+                            bg: '#0f172a',      // Slate 900
+                            card: '#1e293b',    // Slate 800
+                            border: '#334155',  // Slate 700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Prevent scroll bounce on mobile */
+        html,
+        body {
+            overscroll-behavior-y: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gray-50 text-gray-800 dark:bg-dark-bg dark:text-gray-200 font-sans antialiased flex flex-col justify-center min-h-screen relative overflow-hidden px-4 sm:px-0">
+
+    <div
+        class="absolute top-[-10%] left-[-10%] w-64 h-64 sm:w-96 sm:h-96 bg-primary-500/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none">
+    </div>
+    <div
+        class="absolute bottom-[-10%] right-[-10%] w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none">
+    </div>
+
+    <button id="theme-toggle"
+        class="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 sm:p-2.5 rounded-full bg-white dark:bg-dark-card text-gray-600 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all shadow-sm border border-gray-100 dark:border-dark-border z-10 active:scale-95">
+        <i id="theme-icon" class="ph ph-moon text-lg sm:text-xl"></i>
+    </button>
+
+    <div class="w-full max-w-sm sm:max-w-md mx-auto z-10">
+
+        <div
+            class="bg-white dark:bg-dark-card rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-gray-100 dark:border-dark-border p-6 sm:p-10 relative overflow-hidden">
+
+            <div class="text-center mb-6 sm:mb-8">
+                <div class="flex items-center justify-center mb-6">
+                    <img src="/assets/img/logo.png" alt="Pengenumroh.com Logo"
+                        class="h-12 w-auto object-contain dark:hidden transition-all">
+
+                    <img src="/assets/img/logo.png" alt="Pengenumroh.com Logo"
+                        class="hidden h-12 w-auto object-contain dark:block transition-all">
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Create an Account</h2>
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 sm:mt-2">Enter your username and
+                    password</p>
+            </div>
+
+            <form action="/register" id="register" method="post" class="space-y-4 sm:space-y-5">
+
+                <div>
+                    <label for="username"
+                        class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Username</label>
+                    <div class="relative">
+                        <i
+                            class="ph ph-user absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base sm:text-lg"></i>
+                        <input type="text" id="username" name="username" placeholder="johndoe123" required
+                            class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="fullname"
+                        class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Fullname</label>
+                    <div class="relative">
+                        <i
+                            class="ph ph-user absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base sm:text-lg"></i>
+                        <input type="text" id="fullname" name="fullname" placeholder="john doe" required
+                            class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password"
+                        class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
+                    <div class="relative">
+                        <i
+                            class="ph ph-lock-key absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base sm:text-lg"></i>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required
+                            class="w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all">
+
+                        <button type="submit" onclick="togglePassword()"
+                            class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1">
+                            <i id="eye-icon" class="ph ph-eye-slash text-base sm:text-lg"></i>
+                        </button>
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-gray-500 mt-1.5 sm:mt-2">Must be at least 8 characters</p>
+                </div>
+
+                <button type="submit" id="submitBtn"
+                    class="w-full py-2.5 sm:py-3.5 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg shadow-primary-500/30 transition-all transform active:scale-[0.98] flex justify-center items-center gap-2 text-sm sm:text-base">
+                    <span>Sign Up</span>
+                    <i id="loadingIcon" class="ph ph-spinner animate-spin hidden"></i>
+                </button>
+
+            </form>
+
+            <p class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                Already have an account?
+                <a href="/component/auth/login.html"
+                    class="font-semibold text-primary-600 hover:text-primary-500 hover:underline">Log
+                    in</a>
+            </p>
+
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:my-8 w-full max-w-[85%] sm:max-w-sm opacity-0 scale-95 p-6 sm:p-8 text-center"
+                    id="modal-panel">
+
+                    <div
+                        class="mx-auto flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/20 mb-3 sm:mb-4">
+                        <i class="ph-bold ph-check text-2xl sm:text-3xl text-green-600 dark:text-green-400"></i>
+                    </div>
+
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Registration Successful!
+                    </h3>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-5 sm:mb-6">Your account has been
+                        created. Redirecting to login...</p>
+
+                    <div class="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-1.5 mb-2 overflow-hidden">
+                        <div class="bg-primary-600 h-1.5 rounded-full w-0 transition-all duration-[1500ms] ease-out"
+                            id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Dark Mode Logic ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            html.classList.remove('light');
+            themeIcon.classList.replace('ph-moon', 'ph-sun');
+        } else {
+            html.classList.remove('dark');
+            html.classList.add('light');
+            themeIcon.classList.replace('ph-sun', 'ph-moon');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.theme = 'light';
+                themeIcon.classList.replace('ph-sun', 'ph-moon');
+            } else {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                localStorage.theme = 'dark';
+                themeIcon.classList.replace('ph-moon', 'ph-sun');
+            }
+        });
+
+        // --- 2. Password Toggle Logic ---
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.replace('ph-eye-slash', 'ph-eye');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.replace('ph-eye', 'ph-eye-slash');
+            }
+        }
+
+        // --- 3. Register Form & Modal Logic ---
+        const registerForm = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const btnText = submitBtn.querySelector('span');
+
+        const modal = document.getElementById('success-modal');
+        const backdrop = document.getElementById('modal-backdrop');
+        const panel = document.getElementById('modal-panel');
+        const progressBar = document.getElementById('progress-bar');
+
+        registerForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Prevent double submit
+            if (submitBtn.disabled) return;
+
+            // 1. Change Button State
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            loadingIcon.classList.remove('hidden');
+            btnText.textContent = 'Processing...';
+
+            // 2. Simulasi proses register
+            setTimeout(() => {
+                modal.classList.remove('hidden');
+
+                setTimeout(() => {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    panel.classList.remove('opacity-0', 'scale-95');
+                    panel.classList.add('opacity-100', 'scale-100');
+
+                    progressBar.style.width = '100%';
+                }, 50);
+
+                setTimeout(() => {
+                    window.location.href = '/component/auth/login.html';
+                }, 1600);
+
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,368 @@
+.form-group-default {
+    border: 1px solid rgba(26, 32, 53, 0.5);
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.3s ease; /* Transisi halus */
+    background-color: #f9f9f9; /* Warna latar default */
+}
+
+.form-group-default input,
+.form-group-default textarea,
+.form-group-default select {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: 14px;
+    color: #333;
+}
+
+.form-group-default:focus-within {
+    border-color: rgb(26, 32, 53); /* Warna border saat fokus */
+    box-shadow: 0 0 8px rgba(26, 32, 53, 0.5); /* Efek bayangan */
+    background-color: #ffffff; /* Warna latar saat fokus */
+}
+
+.form-group-default label {
+    font-size: 12px;
+    color: #666666;
+    margin-bottom: 5px;
+    display: block;
+    transition: color 0.3s ease; /* Transisi warna label */
+}
+
+.form-group-default:focus-within label {
+    color: rgb(26, 32, 53); /* Warna label saat fokus */
+}
+
+.img-product{
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+.img-hotel{
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+/* switch toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #28dd52;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #28dd52;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/* --- MULTI LEVEL SIDEBAR FIX --- */
+.nav .collapse .collapse {
+  padding-left: 1rem;
+  transition: all 0.3s ease;
+}
+
+.sidebar .collapse{
+  display: none;
+}
+.sidebar .collapse.show{
+    display: block;
+}
+/* Rotasi caret pas terbuka */
+.nav .caret {
+  transition: transform 0.3s ease;
+}
+
+.nav .collapsed .caret {
+  transform: rotate(0deg);
+}
+
+.nav .collapse.show ~ .nav-link .caret,
+.nav .nav-item.submenu.show > a .caret {
+  transform: rotate(90deg);
+}
+
+/* Optional: styling child menu biar beda */
+.nav .nav-collapse .nav-link {
+  font-size: 0.9rem;
+  padding-left: 2rem;
+}
+
+/* Highlight active menu */
+.nav-item.active > a {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+/* facilities include */
+.container-tag {
+  width: 90%;
+  height: 30%;
+}
+.tag-name{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 1px;
+  border: 2px solid #f1f0f0;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.tag-name .tag{
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0px 5px;
+  border-radius:3px;
+  margin: 5px 5px 0px 5px;
+  cursor: pointer;
+  background: #e4e4e4;
+  transition: .2s ease-in;
+}
+.tag:hover{
+  background: #ff5050ed;
+  color: #ffffff;
+}
+.tag i{
+  font-size: 9px;
+  color: #999999;
+  margin:2px 5px;
+  transition: .1s ease-in;
+}
+.tag i:hover{
+  color: #000000;
+}
+.select-form{
+  height: 30px;
+}
+.tag-name input{
+  flex: 11 200px;
+  min-width: 160px;
+  width: 98%;
+  padding: 6px;
+  border: none;
+  box-sizing: border-box;
+}
+.form-select{
+  width: 98%;
+  padding: 8px;
+  border: 2px solid #f1f0f0;
+}
+.row-form{
+  position: absolute;
+  top: 95px;
+  right: 10px;
+}
+.list-group-item {
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-color: #eee !important;
+  }
+
+  .list-group-item:hover {
+    background-color: #f1f1f1;
+  }
+
+  .nav-tabs .nav-link {
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Mengatur tombol kotak di sebelah kanan list */
+  .btn-light {
+    border-radius: 8px;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .addFa {
+    border-radius: 8px;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+  }
+  .addFa i{
+     color: #ffffff;
+  }
+  select, ::picker(select){
+    appearance: base-select;
+    padding: .4rem 2px;
+    background-color: #ffffff;
+  }
+  ::picker(select){
+    padding: .4rem 2px;
+    background-color: #ffffff;
+  }
+  option {
+    background-color: #fff;
+    color: #000;
+    font-size: 14px;
+    padding: 5px; /* Padding on options often doesn't work */
+  }
+option:hover {
+    background-color: #007bff; /* Hover styles are also inconsistent */
+    color: #fff;
+  }
+
+  small {
+    color: #939393;
+    font-size: 12px;
+  }
+  .include-list {
+    background-color: #d4edda;
+    border-radius: 5px;
+    border: 2px solid #e4e4e4;
+    min-height: 40px;
+    margin-bottom: 5px;
+  }
+  .exclude-list {
+    background-color: #f8d7da;
+    border-radius: 5px;
+    border: 2px solid #e4e4e4;
+    min-height: 40px;
+    margin-bottom: 5px;
+  } 
+  .snk-list {
+    background-color: #cce5ff;
+    border-radius: 5px;
+    border: 2px solid #e4e4e4;
+    min-height: 40px;
+    margin: 5px 0 5px 0;
+  }
+  .include-list span, .exclude-list span {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .note-list {
+    min-height: 40px;
+    margin-bottom: 5px;
+    background-color: #fff3cd;
+    border-radius: 5px;
+    border: 2px solid #e4e4e4;
+  }
+  .facility-container label{
+    flex: 1 0 calc(33.333% - 10px); /* Membagi 3 kolom minus jarak gap */
+    min-width: 120px; /* Batas minimum agar tidak terlalu gepeng di layar kecil */
+    text-align: center;
+  }
+  .facility-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Membagi 3 kolom sama rata */
+    gap: 8px; /* Jarak antar tombol */
+    width: 100%;
+  }
+
+/* Membuat tombol menyesuaikan lebar grid */
+  .facility-container .btn {
+      text-align: center;     /* Agar teks tetap di tengah saat melipat */
+      display: flex;          /* Membantu penyelarasan */
+      align-items: center;
+      justify-content: center;
+  } 
+  
+  /* Styling agar Select2 terlihat seperti input Tailwind kamu */
+.select2-container--default .select2-selection--single {
+    background-color: rgb(249 250 251); /* bg-gray-50 */
+    border: 1px solid rgb(229 231 235); /* border-gray-200 */
+    border-radius: 0.75rem; /* rounded-xl */
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.dark .select2-container--default .select2-selection--single {
+    background-color: rgb(30 41 59); /* dark:bg-slate-800 */
+    border-color: rgb(51 65 85); /* dark:border-slate-700 */
+    color: white;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 1rem;
+    color: inherit;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px;
+}
+
+/* Active page */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #2563eb !important; /* primary-600 */
+  color: white !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+/* Disabled */
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Number button kecil kotak */
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+  width: 32px;
+  height: 32px;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

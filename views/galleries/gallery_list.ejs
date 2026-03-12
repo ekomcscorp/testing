@@ -1,0 +1,171 @@
+<div class="container">
+    <div class="page-inner">
+      <!-- <div class="page-header">
+        <h3 class="fw-bold mb-3">Gallery</h3>
+        <ul class="breadcrumbs mb-3">
+          <li class="nav-home">
+            <a href="#">
+              <i class="icon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Tables</a>
+          </li>
+          <li class="separator">
+            <i class="icon-arrow-right"></i>
+          </li>
+          <li class="nav-item">
+            <a href="#">Datatables</a>
+          </li>
+        </ul>
+      </div> -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="d-flex align-items-center">
+                <h4 class="card-title">Gallery Table</h4>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#galleryFormModal"
+                  class="btn btn-primary btn-round ms-auto"
+                  href=""
+                >
+                  <i class="fa fa-plus"></i>
+                  Add Row
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+
+              <div class="table-responsive" style="overflow-x: auto;">
+                <table
+                  id="galleries"
+                  class="display table table-striped table-hover w-100"
+                  style="width: 100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>Action</th>
+                      <th>Title</th>
+                      <th>Image URL</th>
+                      <th>Description</th>
+                      <th>Category ID</th>
+                      <th>Created at</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>Action</th>
+                      <th>Title</th>
+                      <th>Image URL</th>
+                      <th>Description</th>
+                      <th>Category ID</th>
+                      <th>Created at</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+              <!-- MODAL FORM GALLERY -->
+            <div
+              class="modal fade"
+              id="galleryFormModal"
+              tabindex="-1"
+              role="dialog"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title">
+                      <span class="fw-mediumbold"> Form</span>
+                      <span class="fw-light"> Galery </span>
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="galleryForm">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group form-group-default">
+                            <label>Image Url</label>
+                            <input
+                              id="image_url"
+                              type="text"
+                              class="form-control"
+                            />
+                            <!-- HIDDEN INPUT -->
+                             <input 
+                              type="hidden"
+                              id="hidden_id"
+                             />
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="form-group form-group-default">
+                            <label>Title</label>
+                            <input
+                              id="title"
+                              type="text"
+                              class="form-control"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="form-group form-group-default">
+                            <label>Category</label>
+                            <select name="category_id" id="category_id" class="form-select">
+                              <option value="" selected disabled>Pilih opsi...</option>
+                              <% galleryCategory.forEach(category => { %>
+                                  <option value="<%= category.id %>"> <%= category.name %></option>
+                              <% }); %>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md">
+                          <div class="form-group form-group-default">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" rows="6"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      id="submitGalleryBtn"
+                      class="btn btn-success"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
