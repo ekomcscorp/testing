@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "dev": "NODE_ENV=development node app.js",
+    "start": "NODE_ENV=production node app.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",

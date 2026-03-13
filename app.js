@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 
 const express = require("express");
 const session = require("express-session");
@@ -57,7 +57,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // 📄 Parsing Middleware
 app.use(cors({
-  origin: "https://localhost:3000", // Ganti dengan origin frontend Anda
+  origin: "http://localhost:3000", // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
@@ -77,31 +77,6 @@ app.use("/", authRoutes);
 // 📦 Auto-load UI Routes (nested-friendly)
 const uiRoutesPath = path.join(__dirname, "routes", "ui");
 
-
-// const FILE_TYPE ={
-//     'image/png': 'png',
-//     'image/jpeg': 'jpeg',
-//     'image/jpg': 'jpg'
-// }
-
-
-
-// app.post("/api/hotels/hotel", upload.single('image'), (req, res) => {
-//   const hotelName = req.body.name;
-//   const photoPath = req.file ? `/assets/img/uploads/${req.file.filename}` : null;
-
-//   // SIMPAN KE DB: Kolom photo diisi string dari `photoPath`
-//   // query: INSERT INTO hotels (name, photo) VALUES (hotelName, photoPath)
-
-//   res.json({
-//     status: "success",
-//     message: "Hotel created successfully",
-//     data: {
-//       name: hotelName,
-//       image: photoPath
-//     }
-//   })
-// })
 
 function loadUiRoutes(basePath, parentRoute = "") {
   if (!fs.existsSync(basePath)) return;
