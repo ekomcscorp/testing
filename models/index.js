@@ -45,10 +45,16 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+
 sequelize.authenticate()
-  .then(() => {
-    console.log("✅ Database connected successfully!");
+  .then(async () => {
+    console.log("Database connected successfully!");
     console.log("Current ENV:", env);
+    console.log("ENV:", process.env.NODE_ENV);
+    console.log("DB HOST:", process.env.DB_HOST);
+    console.log("DB NAME:", process.env.DB_NAME);
+    console.log("DB USER:", process.env.DB_USERNAME);
+    console.log("DB PORT:", process.env.DB_PORT); 
   })
   .catch(err => {
     console.error("❌ Unable to connect to the database:", err);
