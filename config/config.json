@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "root",
-    "password": "12345678",
-    "database": "kaiadmin2",
+    "username": "u182154819_itpu",
+    "password": "Adminitpu123",
+    "database": "u182154819_pengenumroh",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "port": "3307"
