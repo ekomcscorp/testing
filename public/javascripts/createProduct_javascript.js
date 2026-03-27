@@ -39,12 +39,14 @@ document.addEventListener("DOMContentLoaded", async function() {
     let thumbnail_file = null;
     let hotelImageFiles = { Mekkah: null, Madinah: null };
 
+    await loadCategory();
+
      function fillFormData(data) {
     // --- 1. Field Utama Produk ---
     $('#nama_produk').val(data.nama_produk);
     ProductState.nama_produk = data.nama_produk;
 
-    $('#category_id').val(data.category_id);
+    $('#category_id').val(data.category_id).trigger("change");
     ProductState.category_id = data.category_id
 
     $('#status').val(data.status);
@@ -67,7 +69,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     // --- 2. Thumbnail Preview ---
     if (data.thumbnail_url) {
         // You may need to add an <img id="thumbnailPreview"> in your EJS if not present
-        $('#thumbnailPreview').attr('src', `/assets/img/products/thumbnails/${data.thumbnail_url}`).show();
+        // const preview = document.getElementById('thumbnail-preview');
+        
+
+        $('#thumbnail-preview').attr('src', `/assets/img/products/thumbnails/${data.thumbnail_url}`).show();
         ProductState.thumbnail_url = data.thumbnail_url;
     }
 
@@ -212,10 +217,11 @@ document.addEventListener("DOMContentLoaded", async function() {
 }
 
 
+    // --- INITIALIZATION ---
 
      if (productId) {
         try {
-            const response = await fetch(`/api/products/products/${productId}`);
+            const response = await fetch(`/api/products/${productId}`);
             
             // Cek apakah response-nya oke (status 200)
             if (!response.ok) {
@@ -233,8 +239,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             swal("Gagal!", "Gagal mengambil data produk. Cek koneksi atau URL.", "error");
         }
     }
-    // --- INITIALIZATION ---
-    loadCategory();
+
     // --- UI HELPERS (TAILWIND STYLE) ---
 
     // Helper untuk membuat List Item (Note, SnK, Facility)
@@ -282,7 +287,36 @@ document.addEventListener("DOMContentLoaded", async function() {
     // File Uploads
     document.getElementById("thumbnail").addEventListener("change", (e) => {
         thumbnail_file = e.target.files[0];
-        if (thumbnail_file) ProductState.thumbnail_url = thumbnail_file.name;
+        const filePreview = document.getElementById("thumbnail-preview");
+        const placeholder = document.getElementById("placeholder-content");
+        const overlay = document.getElementById('change-overlay');
+
+        if (thumbnail_file) {
+            
+            // Validasi tipe file (tambahan dari validateFileExtension)
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                // Pasang source gambar ke preview
+                preview.src = event.target.result;
+                
+                // Tampilkan preview, sembunyikan placeholder
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                
+                // Tampilkan overlay saat hover (opsional)
+                if(overlay) overlay.classList.remove('hidden');
+            }
+
+        reader.readAsDataURL(file);
+        ProductState.thumbnail_url = thumbnail_file.name
+        } else {
+            // Jika tidak ada file, kembalikan ke awal
+            preview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+        }
+      
+        // if (thumbnail_file) ProductState.thumbnail_url = thumbnail_file.name;
     });
 
     document.getElementById("hotel_mekkah_image").addEventListener("change", (e) => hotelImageFiles.Mekkah = e.target.files[0]);
@@ -416,7 +450,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
 
-        const url = productId ? `/api/products/products/${productId}` : '/api/products/products';
+        const url = productId ? `/api/products/${productId}` : '/api/products';
          const method = productId ? 'PUT' : 'POST';
 
         if (!ProductState.category_id) return swal("Oops!", "Kategori belum dipilih", "warning");
@@ -487,20 +521,18 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 async function loadCategory() {
     try {
-        const res = await fetch('/api/galleries/galleryCategory/');
+        const res = await fetch('/api/category');
         const result = await res.json();
 
-        if (result.status !== "success") {
+        if (!result.success) {
             throw new Error("Gagal mengambil data kategori");
         }
         
         const selectElements = document.getElementById("category_id");
-        
+
         if(selectElements) {
-            // Reset content
             selectElements.innerHTML = "<option value='' disabled selected>Pilih kategori</option>";
 
-            // Isi data dari API
             result.data.forEach(category => {
                 const option = document.createElement("option");
                 option.value = category.id;
@@ -508,21 +540,19 @@ async function loadCategory() {
                 selectElements.appendChild(option);
             });
 
-            selectElements.addEventListener('change', function (e) {
-                const val = e.target.value;
-                // Pastikan variabel 'ProductState' sudah terdefinisi secara global
-                if (typeof ProductState !== 'undefined') {
-                    ProductState.category_id = val ? Number(val) : null;
-                }
-                console.log("Kategori dipilih:", ProductState.category_id);
-            });
+            // Pastikan Select2 di-destroy jika sebelumnya pernah diinisialisasi
+            if (window.jQuery && $(selectElements).hasClass("select2-hidden-accessible")) {
+                $(selectElements).select2('destroy');
+            }
+
+            // Tidak perlu inisialisasi select2 lagi, biarkan pakai UI bawaan EJS
+
             console.log("Kategori berhasil dimuat.");
         } else {
             console.error("Elemen ID 'category_id' tidak ditemukan!");
-        };
-
+        }
 
     } catch (error) {
-        console.error(error);
+        console.error("❌ ERROR LOAD CATEGORY:", error);
     }
 }

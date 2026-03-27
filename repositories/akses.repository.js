@@ -14,18 +14,21 @@ class AksesRepository{
         return await Akses.create(aksesData);
     }
     async updateAkses(id, aksesData){
-        return await Akses.update(aksesData, { where: { id } });
+        await Akses.update(aksesData, { where: { id } });
+
+        return await Akses.findByPk(id);
     }
     
     async deleteAkses(id){
         return await Akses.destroy({ where: { id } });
     }
     async getAksesByLevel(id_level) {
-        return await Menu.findAll({
+        return await Akses.findAll({
+           where:{ id_level},
            include: [{
-                model: Akses,
-                required: false,
-                where: { id_level: id_level}
+                model: Menu,
+                required: true,
+                
            }],
         });
     }
@@ -35,27 +38,36 @@ class AksesRepository{
             transaction
         })
     }
-    async upsert (data, options){
-        const { id, id_level, id_menu, level, status } = data;
-        try{
+    async upsert (options={}){
+        const columnMap = {
+            view: "view_level",
+            add: "add_level",
+            edit: "edit_level",
+            delete: "delete_level",
+            print: "print_level",
+            upload: "upload_level"
+            };
+
+            const column = columnMap[level];
+
+            if(!column){
+            throw new Error("Invalid akses level");
+            }
+
             const [akses] = await Akses.upsert(
                 {
                     id,
                     id_level,
                     id_menu,
-                    [level]: status // Menggunakan computed property untuk level,
+                    [column]: status
                 },
                 {
                     returning: true,
                     ...options
                 }
             );
-
-        return akses;
-        } catch (error){
-            throw new Error('Failed to upsert Akses: ' + error.message);
+            return akses;
         }
-    }
 }
 
 module.exports = new AksesRepository();

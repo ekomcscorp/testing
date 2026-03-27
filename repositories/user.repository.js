@@ -33,7 +33,7 @@ class UserRepository {
     const sort =
       order && order.length > 0
         ? [[columns[order[0].column].data, order[0].dir]]
-        : [["created_at", "DESC"]];
+        : [["createdAt", "DESC"]];
 
     const offset = start || 0; // Default to 0 if start is not provided
     const limit = length || 10; // Default to 10 if length is not provided

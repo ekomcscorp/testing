@@ -30,7 +30,7 @@ class UserService {
       draw: parseInt(draw, 10),
       recordsTotal: count,
       recordsFiltered: count,
-      data: rows
+      data: rows.map(row => (typeof row.get === 'function' ? row.get({ plain: true }) : row))
     };
   }
 

@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data: "id",
         className: "p-5 text-center",
         render: function (data, type, row) {
-          console.log("Data ID:", row); // Debugging log
+          //console.log("Data ID:", row); // Debugging log
           let buttons = `<div class="flex items-center justify-center gap-2">`;
 
           if (row.akses && row.akses.edit) {

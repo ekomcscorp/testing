@@ -14,12 +14,12 @@ class AksesController {
     async getAksesById(req, res){
         try{
             const {id} = req.params;
-            const akses = await aksesService.getAksesById(req.params.id);
+            const akses = await aksesService.getAksesById(id);
 
            return res.status(200).json({
             success: true,
-            message: "Menu fetched successfully",
-            data: menu,
+            message: "Akses fetched successfully",
+            data: akses,
             });
 
         } catch (error) {

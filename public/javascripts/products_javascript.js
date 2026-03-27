@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             [10, 25, 50, 100, "All"]
         ],
          ajax: {
-            url: "/api/products/products/datatables", // Backend endpoint
+            url: "/api/products/datatables", // Backend endpoint
             type: "GET",
             // dataSrc: (json) => json.data,
         },
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
                      // Paksa munculkan teks untuk debug
                      console.log("Row data:", row)
-                     if(row.akses?.edit ) {
+                     if(row.akses?.edit) {
                         buttons += `
                            <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
                                 <i class="ph-bold ph-pencil-simple text-lg"></i>
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }).then(async (willDelete) => {
       if (willDelete) {
       try {
-        const res = await fetch(`/api/products/products/${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
         const data = await res.json();
 
         // UBAH BAGIAN INI:

@@ -59,7 +59,7 @@ sequelize.authenticate()
     console.log("DB PORT:", process.env.DB_PORT); 
   })
   .catch(err => {
-    console.error("❌ Unable to connect to the database:", err);
+    console.error("Unable to connect to the database:", err);
   });
 
 module.exports = db;

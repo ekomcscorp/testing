@@ -1,5 +1,4 @@
 const express = require("express");
-const router = express.Router();
 const { injectUser } = require ('../../../middleware/index.js');
 const productController = require("../../../controllers/api/products/product.controller.js");
 const productFlightController = require("../../../controllers/api/products/productFlight.controller.js");
@@ -11,6 +10,8 @@ const productSnKController = require("../../../controllers/api/products/productS
 const productPriceController = require("../../../controllers/api/products/productPrices.controller.js")
 const multer = require('multer');
 const path = require('path');
+const router = express.Router();
+router.use(injectUser);
 
 const FILE_TYPE = {
   "image/png": true,
@@ -45,8 +46,8 @@ const diskStrorage = multer.diskStorage({
 
 const upload = multer({storage: diskStrorage})
 
-router.get("/", productController.getAllProduct);
-router.get("/datatables", injectUser, productController.getAllProductsDatatables);
+router.get("/",  productController.getAllProduct);
+router.get("/datatables",  productController.getAllProductsDatatables);
 router.get("/:id", productController.getProductById);
 router.get("/:id/flights/", productFlightController.getFlightsByProduct);
 router.get("/:id/facilities/", productFacilityController.getFaclitiesByProduct);
@@ -55,17 +56,17 @@ router.get("/:id/itineraries/", productItineraryController.getItinerariesByProdu
 router.get("/:id/notes/", productNoteController.getNotesByProduct);
 router.get("/:id/snk/", productSnKController.getSnkByProduct);
 router.get("/:id/prices/", productPriceController.index);
-router.post("/", injectUser,upload.fields([
+router.post("/", upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.createProduct);
-router.put("/:id", injectUser,upload.fields([
+router.put("/:id", upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.updateProduct);
-router.delete("/:id", injectUser, productController.deleteProduct);
+router.delete("/:id",  productController.deleteProduct);
 
 
 module.exports = router;

@@ -15,21 +15,37 @@ class UserController {
     try {
       const { akses } = res.locals;
 
-      if (akses.view_level !== 'Y') {
+      if (akses.view_level?.trim() !== 'Y') {
         return res.status(403).json({ error: "Akses ditolak" });
       }
 
-      const result = await userService.getAllUsersDatatables(req.query);
+      const result = await userService.getAllUsersDatatables({
+        ...req.query
+      });
 
-      result.data = result.data.map(row => ({
-        ...row.get({ plain: true }),
-        akses: {
-          edit: akses.edit_level === 'Y',
-          delete: akses.delete_level === 'Y'
-        }
-      }));
+      // result.data = result.data.map(row => ({
+      //   ...row.get({ plain: true }),
+      //   akses: {
+      //     edit: akses.edit_level === 'Y',
+      //     delete: akses.delete_level === 'Y'
+      //   }
+      // }));
+      const data = result.data.map(user => ({
+              ...user,
+              akses: {
+                edit: akses.edit_level === "Y",
+                delete: akses.delete_level === "Y"
+              }
+            }));
 
-      return response.datatables(res, result);
+      return res.status(200).json({
+          success: true,
+          message: "User fetched successfully",
+          data: data,
+          draw: result.draw,
+          recordsTotal: result.recordsTotal,
+          recordsFiltered: result.recordsFiltered,
+      });
     } catch (error) {
       console.error("Error getAllUsersDatatables:", error);
       return response.error(res, error.message);
