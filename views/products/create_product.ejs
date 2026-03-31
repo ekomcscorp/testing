@@ -8,15 +8,25 @@
             </h3>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
+             <div class="lg:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Thumbnail Produk<span class="text-danger">*</span></label>
-                    <div class="file-upload-dashed w-full h-64 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative bg-gray-50 dark:bg-slate-800/20 border-2 border-dashed border-gray-200 dark:border-slate-700">
-                        <input type="file" id="thumbnail" name="thumbnail" onchange="validateFileExtension(this)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
-                        <div class="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-500/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-3">
-                            <i class="ph ph-image text-3xl"></i>
+                    <div class="file-upload-dashed w-full h-64 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative bg-gray-50 dark:bg-slate-800/20 border-2 border-dashed border-gray-200 dark:border-slate-700 overflow-hidden">
+                        
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" required>
+                        
+                        <div id="placeholder-content" class="flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-500/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-3">
+                                <i class="ph ph-image text-3xl"></i>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Klik untuk upload thumbnail</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG, WEBP (Max 2MB)</p>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Klik untuk upload thumbnail</p>
-                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG, WEBP (Max 2MB)</p>
+
+                        <img id="thumbnail-preview" src="#" alt="Preview" class="hidden absolute inset-0 w-full h-full object-cover">
+                        
+                        <div id="change-overlay" class="hidden absolute inset-0 bg-black/40 items-center justify-center text-white text-sm font-medium z-20">
+                            Klik untuk ganti gambar
+                        </div>
                     </div>
                 </div>
 
@@ -29,7 +39,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kategori<span class="text-danger">*</span></label>
-                        <select name="category_id" id="category_id" class="category_id w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
+                        <select name="category_id" id="category_id" class="category_id none w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
                             <option disabled selected value="">Pilih kategori</option>
                         </select>
                     </div>

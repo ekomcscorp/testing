@@ -153,18 +153,50 @@ class ProductController {
   // Update product
   async updateProduct(req, res) {
     try {
-      const { id } = req.params;
-      const productData = req.body;
-      const updated = await productService.updateProduct(id, productData);
-      if (!updated) {
-        return res.status(404).json({ success: false, message: "Product not found" });
-      }
-      res.json({ success: true, message: "Product updated" });
+        const { id } = req.params;
+
+        // ✅ Parse hotels dulu untuk inject image
+        let hotels = JSON.parse(req.body.hotels || "[]");
+        hotels = hotels.map(hotel => {
+            if (hotel.city === "Mekkah") {
+                hotel.image = req.files?.hotel_image_mekkah
+                    ? req.files.hotel_image_mekkah[0].filename
+                    : hotel.existing_image || null;
+            }
+            if (hotel.city === "Madinah") {
+                hotel.image = req.files?.hotel_image_madinah
+                    ? req.files.hotel_image_madinah[0].filename
+                    : hotel.existing_image || null;
+            }
+            return hotel;
+        });
+
+        const productData = {
+            ...req.body,
+            prices: JSON.parse(req.body.prices || "[]"),
+            flights: JSON.parse(req.body.flights || "[]"),
+            hotels: hotels,
+            itineraries: JSON.parse(req.body.itineraries || "[]"),
+            snks: JSON.parse(req.body.snks || "[]"),
+            notes: JSON.parse(req.body.notes || "[]"),
+            facilities: JSON.parse(req.body.facilities || "[]"),
+        };
+
+        // ✅ Handle thumbnail baru
+        if (req.files?.thumbnail) {
+            productData.thumbnail_url = req.files.thumbnail[0].filename;
+        }
+
+        const updated = await productService.updateProduct(id, productData);
+        if (!updated) {
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
+        res.json({ success: true, message: "Product updated" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-  }
+}
 
   // Delete product
   async deleteProduct(req, res) {

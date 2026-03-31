@@ -18,7 +18,7 @@ module.exports = (io, sessionMiddleware) => {
       }
 
 
-      if (user.id_level === 6) {
+      if (user.id_level === 1) {
         socket.join('super admin');
         console.log(`👑 ${user.username} masuk ke room super admin`);
         socket.emit('joined_admin_room'); // ⬅️ ini penting!
