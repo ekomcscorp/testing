@@ -178,9 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (res.ok) {
-        swal("Berhasil!", data.message || "Data berhasil disimpan", "success");
-        closeMenuModal();
-        table.ajax.reload(); // Reload table tanpa refresh halaman
+          swal("Berhasil!", data.message || "Data berhasil disimpan", "success");
+          closeMenuModal();
+          setTimeout(() => location.reload(), 1500); // Reload page setelah sukses
       } else {
         swal("Gagal!", data.message || "Terjadi kesalahan", "error");
       }

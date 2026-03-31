@@ -182,7 +182,7 @@ $(document).ready(function() {
             if (res.ok) {
                 swal("Berhasil!", data.message || "Data berhasil disimpan", "success");
                 closeSubMenuModal();
-                table.ajax.reload(); // Reload table tanpa reload halaman
+                setTimeout(() => location.reload(), 1500); // Reload table tanpa reload halaman
             } else {
                 swal("Gagal!", data.message || "Terjadi kesalahan", "error");
             }
