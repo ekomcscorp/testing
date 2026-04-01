@@ -21,7 +21,7 @@ $(document).ready(function() {
         columns: [
             { 
                 data: "id_menu",
-                className: "p-5 text-center",
+                className: "p-5 text-center border",
                 render: function (data, type, row) {
                   let buttons = `<div class="flex items-center justify-center gap-2">`
 
@@ -44,7 +44,7 @@ $(document).ready(function() {
             },
             { 
                 data: "nama_menu", 
-                className: "p-5 font-semibold text-gray-900 dark:text-white",
+                className: "p-5 font-semibold text-gray-900 border dark:text-white",
                 render: (data, type, row) => `
                     <div class="flex items-center gap-2">
                         <i class="ph-bold ph-arrow-elbow-down-right text-gray-400"></i>
@@ -53,21 +53,22 @@ $(document).ready(function() {
             },
             { 
                 data: "link", 
-                className: "p-5",
+                className: "p-5 border",
                 render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>`
             },
             { 
                 data: "parent_id", // Pastikan backend melempar nama parent
-                className: "p-5",
+                className: "p-5 border",
                 render: (data, type, row) => `
                     <span class="px-2 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-100">
                         ${data || 'N/A'}
                     </span>`
             },
-            { data: "urutan", className: "p-5 text-center dark:text-white" },
+            { data: "urutan", 
+             className: "p-5 text-center dark:text-white border" },
             { 
                 data: "is_active", 
-                className: "p-5",
+                className: "p-5 border",
                 render: data => `
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${data === 'Y' ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-gray-100 text-gray-500'}">
                         <span class="w-1.5 h-1.5 rounded-full ${data === 'Y' ? 'bg-green-600' : 'bg-gray-400'}"></span>

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const table = $("#productTable").DataTable({
+    window.productTable = $("#productTable").DataTable({
         processing: true,
         serverSide: true,
         responsive: false,
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
                      // Paksa munculkan teks untuk debug
-                     console.log("Row data:", row)
+                    //  console.log("Row data:", row)
                      if(row.akses?.edit) {
                         buttons += `
                            <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
@@ -101,15 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     
     $('#entriesSelect').on('change', function () {
-      table.page.len($(this).val()).draw();
+      window.productTable.page.len($(this).val()).draw();
     });
     // Custom Search bar logic
-    document.querySelector('input[placeholder="Cari Product..."]').addEventListener('keyup', function() {
-      table.search(this.value).draw();
+    document.getElementById('customSearchInput').addEventListener('keyup', function() {
+      window.productTable.search(this.value).draw();
     });
 
           function renderPagination() {
-    var info = table.page.info();
+    var info = window.productTable.page.info();
     var currentPage = info.page;
     var totalPages = info.pages;
 
@@ -171,8 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
     table.page(page).draw('page');
   };
 
-  renderPagination();
-  table.on('draw.dt', function () {
+  // renderPagination();
+  window.productTable.on('init.dt draw.dt', function () {
     renderPagination();
   });
 

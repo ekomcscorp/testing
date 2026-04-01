@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     processing: true,
     serverSide: true,
     responsive: true,
+    scrollX: false,
     autoWidth: true,
     info:false,
     paginate: true,
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id_menu",
-        className: "p-5 text-center",
+        className: "p-5 text-center border",
         render: function (data, type, row) {
           let buttons = `<div class="flex items-center justify-center gap-2">`;
           
@@ -44,15 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
           return buttons;
         },
       },
-      { data: "nama_menu", className: "p-5 font-semibold text-gray-900 dark:text-white" },
+      { data: "nama_menu", className: "p-5 font-semibold text-gray-900 dark:text-white border border-b " },
       { 
         data: "link", 
-        className: "p-5",
+        className: "p-5 border border-b ",
         render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>`
       },
       { 
         data: "icon", 
-        className: "p-5",
+        className: "p-5 border border-b ",
         render: data => `
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
@@ -61,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="text-xs text-gray-500 font-mono">${data}</span>
           </div>`
       },
-      { data: "urutan", className: "p-5 text-center dark:text-white" },
+      { data: "urutan", className: "p-5 text-center dark:text-white border border-b " },
       { 
         data: "is_active", 
-        className: "p-5",
+        className: "p-5 border border-b ",
         render: function(data) {
           const isActive = data === 'Y';
           return `
@@ -80,6 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
       
     }
   });
+
+     
+    $('#entriesSelect').on('change', function () {
+      table.page.len($(this).val()).draw();
+    });
+
+    // Custom Search bar logic
+  document.querySelector('input[placeholder="Cari menu..."]').addEventListener('keyup', function() {
+    table.search(this.value).draw();
+  });
+
 
   function renderPagination() {
     var info = table.page.info();
@@ -147,10 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderPagination();
   table.on('draw.dt', function () {
     renderPagination();
-  });
-  // Custom Search bar logic
-  document.querySelector('input[placeholder="Cari menu..."]').addEventListener('keyup', function() {
-    table.search(this.value).draw();
   });
 
   // 2. CREATE ATAU UPDATE LOGIC

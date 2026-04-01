@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id",
-        className: "p-5 text-center",
+        className: "p-5 text-center border",
         render: function (data, type, row) {
           //console.log("Data ID:", row); // Debugging log
           let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -46,10 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return buttons;
         },
       },
-      { data: "fullname", title: "Nama Lengkap", className: "font-semibold text-gray-900 dark:text-white" },
-      { data: "username", title: "Username", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
+      { data: "fullname", title: "Nama Lengkap", className: "font-semibold text-gray-900 dark:text-white p-5 border" },
+      { data: "username", title: "Username", className: "p-5 border", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
       { data: "level.nama_level",
-        title: "ID Level", className: "font-semibold text-gray-900 dark:text-white",
+        title: "ID Level", className: "p-5 border font-semibold text-gray-900 dark:text-white",
         render: function (data, type, row) {
           if (!data) return '';
           return data.charAt(0).toUpperCase() + data.slice(1);
@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { data: "is_active", 
         title: "Status",
+        className: "p-5 border",
         render: function (data) {
           const isActive = data === 'Y';
           return `
