@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.goToPage = function (page) {
-    table.page(page).draw('page');
+    window.productTable.page(page).draw('page');
   };
 
   // renderPagination();
