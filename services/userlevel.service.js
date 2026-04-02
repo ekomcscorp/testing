@@ -11,7 +11,8 @@ class UserlevelService {
     return userlevel || []; // jika null/undefined, tetap kembalikan array kosong
   }
 
-  async getAllUserlevelDatatables({ draw, start, length, search, order, columns, id_level }) {
+  async getAllUserlevelDatatables(query) {
+    const { draw, start, length, search, order, columns, id_level } = query;
     const searchValue =
             query.search?.value ||
             query['search[value]'] ||
