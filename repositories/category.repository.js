@@ -6,13 +6,16 @@ class CategoryRepository {
         return await Category.findAll();
     }
 
+     async countAll() {
+        return await Category.count(); // Total semua produk tanpa filter
+    }
     async getPaginatedCategory({ start, length, search, order, columns }) {
         const where = {
             ...(search && {
                 [Op.or]: [
                     { name: { [Op.like]: `%${search}%` } },
                     { slug: { [Op.like]: `%${search}%` } },
-                    { created_at: { [Op.like]: `%${search}%` } }
+                    
                 ]
             })
             // Add any other filters you need here

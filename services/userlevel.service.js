@@ -12,7 +12,10 @@ class UserlevelService {
   }
 
   async getAllUserlevelDatatables({ draw, start, length, search, order, columns, id_level }) {
-    const searchValue = search?.value || "";
+    const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
   
     const { count, rows } = await UserlevelRepository.getPaginatedUserlevels({
       start: parseInt(start, 10) || 0,

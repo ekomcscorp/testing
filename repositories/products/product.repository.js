@@ -52,7 +52,7 @@ class ProductRepository {
             { nama_produk: { [Op.like]: `%${search}%` } }
         ]
     } : {};
-
+    console.log("SEARCH REPO:", search);
     // 2. Pastikan limit dan offset aman
     const offset = parseInt(start) || 0;
     const limit = parseInt(length) || 10;
@@ -170,6 +170,10 @@ class ProductRepository {
             where: {id},
             transaction: options.transaction
         });
+    }
+
+    async countAll() {
+        return await Product.count(); // Total semua produk tanpa filter
     }
 }
 

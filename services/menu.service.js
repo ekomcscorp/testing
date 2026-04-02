@@ -16,8 +16,12 @@ class MenuService {
     return await MenuRepository.getMenuById(id_menu); // jika null/undefined, tetap kembalikan array kosong
   }
 
-  async getAllMenuDatatables({ draw, start, length, search, order, columns, parent_id, parent_not_null}) {
-    const searchValue = search?.value || "";
+  async getAllMenuDatatables(query) {
+    const { draw, start, length, search, order, columns, parent_id, parent_not_null } = query;
+    const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
 
     const filter = {};
     

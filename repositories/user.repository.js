@@ -17,6 +17,10 @@ class UserRepository {
     });
   }
 
+  async countAll() {
+    return await User.count();
+  }
+
   async getPaginatedUsers({ start, length, search, order, columns }) {
     const where = {
       ...(search && {

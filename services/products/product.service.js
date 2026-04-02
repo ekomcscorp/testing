@@ -29,21 +29,27 @@ class ProductService {
    async getAllProductsDatatables(query) {
         // Destrukturisasi query dari datatables
         const { draw, start, length, search, order, columns } = query;
-        const searchValue = search?.value || "";
+        const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
 
         // Panggil repository
-        const result = await productRepository.getPaginatedProduct({
-            start: parseInt(start, 10) || 0,
-            length: parseInt(length, 10) || 10,
-            search: searchValue,
-            order,
-            columns
-        });
+         const [result, totalCount] = await Promise.all([
+            productRepository.getPaginatedProduct({
+                start: parseInt(start, 10) || 0,
+                length: parseInt(length, 10) || 10,
+                search: searchValue,
+                order,
+                columns
+            }),
+            productRepository.countAll() // ✅ Total tanpa filter
+        ]);
 
         // findAndCountAll mengembalikan { count, rows }
         return {
             draw: parseInt(draw, 10) || 0,
-            recordsTotal: result.count,
+            recordsTotal: totalCount,
             recordsFiltered: result.count,
             data: result.rows // Ini yang akan di-map di controller
         };

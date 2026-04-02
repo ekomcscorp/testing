@@ -19,9 +19,9 @@ class UserController {
         return res.status(403).json({ error: "Akses ditolak" });
       }
 
-      const result = await userService.getAllUsersDatatables({
-        ...req.query
-      });
+      const result = await userService.getAllUsersDatatables(
+      req.query
+      );
 
       // result.data = result.data.map(row => ({
       //   ...row.get({ plain: true }),
@@ -31,7 +31,7 @@ class UserController {
       //   }
       // }));
       const data = result.data.map(user => ({
-              ...user,
+              ...user.get({plain: true}),
               akses: {
                 edit: akses.edit_level === "Y",
                 delete: akses.delete_level === "Y"

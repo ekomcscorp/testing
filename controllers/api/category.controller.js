@@ -28,9 +28,7 @@ class CategoryController {
               return res.status(403).json({ error: "Akses ditolak" });
             }
       
-            const result = await CategoryService.getAllCategoryDatatables({
-                ...req.query
-            });
+            const result = await CategoryService.getAllCategoryDatatables(req.query);
       
             // result.data = result.data.map(row => ({
             //   ...row.get({ plain: true }),
@@ -39,8 +37,8 @@ class CategoryController {
             //     delete: akses.delete_level === 'Y'
             //   }
             // }));
-            const data = result.data.map(category => ({
-              ...category,
+            const data = result.data.map(row => ({
+              ...row.get({plain: true}),
               akses: {
                 edit: akses.edit_level === "Y",
                 delete: akses.delete_level === "Y"

@@ -15,25 +15,29 @@ class UserService {
     }
   }
 
-  async getAllUsersDatatables({ draw, start, length, search, order, columns }) {
-    const searchValue = search?.value || "";
-
-    const { count, rows } = await UserRepository.getPaginatedUsers({
+  async getAllUsersDatatables(query) {
+    const { draw, start, length, search, order, columns } = query;
+    const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
+    const [ result, totalCount] = await Promise.all([ UserRepository.getPaginatedUsers({
       start: parseInt(start, 10) || 0,
       length: parseInt(length, 10) || 10,
       search: searchValue,
       order,
       columns
-    });
+    }),
+    UserRepository.countAll()
+    ]);
 
     return {
       draw: parseInt(draw, 10),
-      recordsTotal: count,
-      recordsFiltered: count,
-      data: rows.map(row => (typeof row.get === 'function' ? row.get({ plain: true }) : row))
-    };
+      recordsTotal: totalCount,
+      recordsFiltered: result.count,
+      data: result.rows
+    }
   }
-
   async getUserById(id) {
     try {
       const user = await UserRepository.getUserById(id);

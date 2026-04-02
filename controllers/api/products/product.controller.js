@@ -37,7 +37,7 @@ class ProductController {
           delete: akses.delete_level === 'Y'
         }
       }))
-
+      console.log("QUERY:", req.query);
      return res.json({
       draw: result.draw,
       recordsTotal: result.recordsTotal,
