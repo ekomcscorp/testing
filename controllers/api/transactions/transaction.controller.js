@@ -15,9 +15,17 @@ class TransactionController {
         try {
             const { id } = req.params;
             const transaction = await transactionService.getTransactionById(id);
-            return response.success(res, 'Transaction fetched', transaction);
+            return res.status(200).json({
+                success: true,
+                message: "Transaction fetched successfully",
+                data: transaction
+            });
         } catch (error) {
-            return response.notFound(res, error.message);
+            return res.status(500).json({
+                success: false,
+                message: "Error fetching transaction",
+                error: error.message
+            });
         }
     }
 
@@ -25,23 +33,41 @@ class TransactionController {
         try {
             const { akses } = res.locals;
 
-            if(akses.view_level !== "Y"){
-                return res.status(403).json({ error: "Akses ditolak" });
+           if (akses.view_level?.trim() !== 'Y') {
+              return res.status(403).json({ error: "Akses ditolak" });
             }
 
             const result = await transactionService.getAllTransactionDatatables(req.query);
-            result.data = result.data.map(row => ({
+            // result.data = result.data.map(row => ({
+            //     ...row.get({ plain: true }),
+            //     akses: {
+            //         edit: akses.edit_level === "Y",
+            //         delete: akses.delete_level === "Y"
+            //     }
+            // }));
+            const data = result.data.map(row => ({
                 ...row.get({ plain: true }),
                 akses: {
                     edit: akses.edit_level === "Y",
                     delete: akses.delete_level === "Y"
                 }
-            }));
+            }))
 
-            return response.datatables(res, result);
+            return res.status(200).json({
+              success: true,
+              message: "Transaction fetched successfully",
+              data: data,
+              draw: result.draw,
+              recordsTotal: result.recordsTotal,
+              recordsFiltered: result.recordsFiltered
+            });
         } catch (error) {
             console.error("Error getAllTransactionsDatatables:", error);
-            return response.error(res, error.message);
+            return res.status(500).json({
+             success: false,
+             message: "Error fetching transactions",
+             error: error.message,
+          });
         }
     }
 
@@ -57,22 +83,55 @@ class TransactionController {
     async updateTransaction(req, res) {
         try {
             const { id } = req.params
-            const transaction = await transactionService.updateTransaction(id, req.body);
-            return response.success(res, 'Transaction updated', transaction);
+            // const transaction = await transactionService.getTransactionById(id);
+            // if(!transaction){
+            //     return res.status(404).json({
+            //         success: false,
+            //         message: "Transaction not found"
+            //     })
+            // }
+
+            const update = await transactionService.updateTransaction(id, req.body);
+            return res.status(200).json({
+                success: true,
+                message: "Transaction updates successfully",
+                data: update
+            });
         } catch (error) {
-            return response.error(res, error.message);
+            return res.status(400).json({
+                success: false,
+                message: error.message || "Error updating transaction"
+            });
         }
     }
 
     async deleteTransaction(req, res) {
         try {
             const { id } = req.params;
-            const transaction = await transactionService.deleteTransaction(id);
-            return response.success(res, 'Transaction deleted', transaction);
+            // const transaction = await transactionService.getTransactionById(id);
+
+            // if(!transaction) {
+            //     return res.status(404).json({
+            //         success: false,
+            //         message: "Transaksi tidak ditemukan"
+            //     })
+            // }
+
+            const deleted = await transactionService.deleteTransaction(id);
+            return res.status(200).json({
+                success: true,
+                message: "Transaksi berhasil dihapus",
+                data: deleted
+            })
         } catch (error) {
-            return response.error(res, error.message);
+            return res.status(500).json({
+                success: false,
+                message: "Error deleting transaction",
+                error: error.message
+            })
+            }
         }
     }
-}
+
 
 module.exports = new TransactionController();

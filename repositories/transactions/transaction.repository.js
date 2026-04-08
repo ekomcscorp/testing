@@ -6,6 +6,10 @@ class TransactionRepository {
         return await Transaction.findAll();
     }
 
+    async countAll() {
+        return await Transaction.count(); // Total semua produk tanpa filter
+    }
+
     async getPaginatedTransaction({ start, length, search, order, columns}) {
         const where = {
             ...(search && {

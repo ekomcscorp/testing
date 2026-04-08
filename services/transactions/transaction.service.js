@@ -15,22 +15,28 @@ class TransactionService {
         }
     }
 
-    async getAllTransactionDatatables({ draw, start, length, search, order, columns}) {
-        const searchValue = search?.value || "";
+    async getAllTransactionDatatables(query) {
+        const { draw, start, length, search, order, columns} = query;
+        const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
 
-        const { count, rows } = await TransactionRepository.getPaginatedTransaction({
+        const [result, totalCount] = await Promise.all ([ TransactionRepository.getPaginatedTransaction({
             start: parseInt(start, 10) || 0,
             length: parseInt(length, 10) || 10,
             search: searchValue,
             order,
             columns
-        });
+        }),
+        TransactionRepository.countAll(),
+    ]);
 
         return {
             draw: parseInt(draw, 10),
-            recordsTotal: count,
-            recordsFiltered: count,
-            data: rows
+            recordsTotal: totalCount,
+            recordsFiltered: result.count,
+            data: result.rows
         }
     }
 
@@ -50,29 +56,21 @@ class TransactionService {
     }
 
     async updateTransaction(id, transactionData) {
-        try { 
-            const transaction = await TransactionRepository.updateTransaction(id);
+            const transaction = await TransactionRepository.getTransactionById(id);
             if(!transaction){
                 throw new Error("Transaksi tidak ditemukan");
             }
             await TransactionRepository.updateTransaction(id, transactionData);
-            return { message: "Transaksi berhasil diperbarui" };
-        } catch (error) {
-            throw new Error(error.message);
-        }
+            return {message: "Transaksi berhasil diupdate"};
     }
 
     async deleteTransaction(id){
-        try {
             const transaction = await TransactionRepository.getTransactionById(id);
             if(!transaction){
                 throw new Error("Transaksi tidak ditemukan");
             }
             await TransactionRepository.deleteTransaction(id);
             return { message: "Transaksi berhasil dihapus" };
-        } catch (error) {
-            throw new Error(error.message);
-        }
     }
 }
 

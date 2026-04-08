@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         },
         amount: {
-            type: DataTypes.DECIMAL(15, 2),
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         status: {

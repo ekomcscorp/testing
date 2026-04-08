@@ -99,13 +99,13 @@ class CategoryController {
       async updateCategory(req, res) {
         try {
           const {id} = req.params;
-          const category = await CategoryService.getCategoryById(id);
-          if(!category){
-             return res.status(404).json({
-                success: false,
-                message:"Kategori tidak ditemukan",
-            });
-          }
+          // const category = await CategoryService.getCategoryById(id);
+          // if(!category){
+          //    return res.status(404).json({
+          //       success: false,
+          //       message:"Kategori tidak ditemukan",
+          //   });
+          // }
 
           const updatedCategory = await CategoryService.updateCategory(id, req.body);
           return res.status(200).json({
@@ -124,15 +124,15 @@ class CategoryController {
       async deleteCategory(req, res) {
         try {
           const {id} = req.params;
-          const category = await CategoryService.getCategoryById(id);
-          if(!category){
-             return res.status(404).json({
-                success: false,
-                message:"Kategori tidak ditemukan",
-            });
-          }
+          // const category = await CategoryService.getCategoryById(id);
+          // if(!category){
+          //    return res.status(404).json({
+          //       success: false,
+          //       message:"Kategori tidak ditemukan",
+          //   });
+          // }
 
-          const deleted = await CategoryService.deleteCategory(req.params.id);
+          const deleted = await CategoryService.deleteCategory(id);
            return res.status(200).json({
             success: true,
             message: "Category deleted successfully",

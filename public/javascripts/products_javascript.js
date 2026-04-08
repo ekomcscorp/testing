@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: "id",
-                className: "pl-5  border border-b",
+                className: "p-2  border border-b",
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
                      // Paksa munculkan teks untuk debug
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: "prices", // Ini akan mengambil seluruh array 'prices'
                     title: "Harga (Tipe Kamar)",
-                    className: "p-5  border border-b",
+                    className: "p-2  border border-b",
                     render: function(data, type, row) {
                         if (!data || data.length === 0) return "Tidak ada harga";
                         
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 {
                     data: "status", title: "Status",
-                    className: "p-5  border border-b",
+                    className: "p-2  border border-b",
                     render: function(data) {
                         const isPublic = data === "publish";
                          return `

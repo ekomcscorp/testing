@@ -231,13 +231,13 @@ class MenuController {
 
       const {id_menu} = req.params;
        console.log("ID MENU DITERIMA:", id_menu);
-      const menu = await menuService.getMenuById(id_menu);
-      if (!menu) {
-        return res.status(404).json({
-          status: "error",
-          message:"Menu tidak ditemukan",
-        });
-      }
+      // const menu = await menuService.getMenuById(id_menu);
+      // if (!menu) {
+      //   return res.status(404).json({
+      //     status: "error",
+      //     message:"Menu tidak ditemukan",
+      //   });
+      // }
 
       await menuService.updateMenu(id_menu, req.body)
 

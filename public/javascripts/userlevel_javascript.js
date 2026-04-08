@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id_level",
-        className: "p-5 border",
+        className: "p-2 border",
         orderable: false, // Matikan sorting di kolom Action agar tidak error SQL
         render: function (data, type, row) {
           let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -60,12 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { 
         data: "id_level", 
-        className: "p-5 text-center border",
+        className: "p-2 text-center border",
         render: data => `<span class="inline-block px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded font-mono text-xs font-bold">${data}</span>`
       },
       {
         data: "nama_level",
-        className: "p-5 border",
+        className: "p-2 border",
         render: data => `<span class="font-semibold text-gray-900 dark:text-white">${data}</span>`
       }
     ],

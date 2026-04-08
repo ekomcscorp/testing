@@ -1,174 +1,325 @@
 document.addEventListener("DOMContentLoaded", () => {
-    $('#transactionsTable').DataTable({
-        processing: true,
-        serverSide: true,
-        responsive: false,
-        scrollX: false,
-        autowidth: true,
+    const table = $('#transactionsTable').DataTable({
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      scrollX: false,
+      autowidth: true,
+      info: false,
+      paginate: true,
+      lengthMenu: [
+        [
+        10, 25, 50, 100, -1
+        ],
+        [
+          5, 10, 25, 50, 100, "All"
+        ]
+      ],
+      dom: "t",
         ajax: {
-            url: '/api/transaction/datatables', // Backend endpoint
+            url: '/api/transactions/datatables', // Backend endpoint
             type: 'GET',
             dataSrc: function (json) {
-                // console.log("DataTables response:", json); // Debugging log
                 return json.data; // Extract the data array
             }
         },
         columns: [
             {
                 data: 'id',
+                className: "p-2 border border-b",
                 render: function (data, type, row) {
                     // console.log("Data ID:", row); // Debugging log
                     let buttons = `<div class="d-flex gap-2 justify-content-center">`;
 
-                    if (row.akses && row.akses.edit) {
+                    buttons += `
+                        <button
+                            class="p-1.5 rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
+                            title="Detail" onclick="viewTransactionDetail(${row.id})"><i class="ph-bold ph-eye text-base"></i>
+                        </button>
+                    `
+
+                    if (row.akses?.edit) {
                         buttons += `
-                            <a href="#" class="btn btn-sm btn-warning transactionEdit" data-id="${row.id}">
-                                <i class="fa fa-edit"></i>
-                            </a>`;
+                             <button
+                                class="p-1.5 rounded-lg text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20"
+                                title="Edit" onclick="editTransaction(${row.id})"><i class="ph-bold ph-pencil-simple text-base"></i>
+                            </button>`;
                     }
-                    if (row.akses && row.akses.delete) {
+                    if (row.akses?.delete) {
                         buttons += `
-                            <a href="#" class="btn btn-sm btn-danger transactionDelete" data-id="${row.id}">
-                                <i class="fa fa-times"></i>
-                            </a>`;
+                            <button
+                                class="p-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+                                title="Hapus" onclick="deleteTransaction(${row.id})"><i class="ph-bold ph-trash text-base"></i>
+                            </button>`;
                     }
-                    buttons += `<a href="#" class="btn btn-sm btn-info transactionDetail" data-id="${row.id}">
-                    Details
-                    </a>`;
                     buttons += `</div>`;
                     return buttons;
                 }
             },
-            { data: 'name', title: 'Nama' },
-            { data: 'created_at', title: 'Tanggal' },
-            { data: 'transaction_no', title: 'No Transaksi' },
-            { data: 'amount', title: 'Amount' },
-            { data: 'status', title: 'Status' },
+            { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border border-b font-bold text-sm text-gray-900 dark:text-gray-400" },
+            { data: 'name', title: "Jama'ah", className: "p-2 border border-b text-gray-500 dark:text-white"  },
+            { data: 'amount', title: 'Amount', className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row) {
+                if(!data) return "Rp 0";
+                
+                const formattedAmount = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: "IDR", 
+                    minimumFractionDigits: 0
+                }).format(data);
+
+                return `<span>${formattedAmount}</span>`;
+            } },
+            { data: 'payment_method', title: 'Metode Pembayaran', className: "p-2 border border-b text-gray-500 dark:text-white" },
+            { data: 'status', title: 'Status', className: "p-2 border border-b", render: function(data) {
+                const isPaid = data === "SUCCESS";
+                return `
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isPaid? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-yellow-500/20 text-yellow-600'}">
+                <span class="w-1.5 h-1.5 rounded-full ${isPaid? 'bg-green-600' : 'bg-yellow-400'}"></span>
+                ${isPaid? 'SUCCESS' : 'PENDING'}
+                </span>
+                `
+            } },
         ],
         drawCallback: function () {
             // Force redraw untuk sync header & body
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-        },
-        // "columnDefs": [
-        //     {
-        //         "targets": [1,2,3,4,5],
-        //         "className": 'dt-body-nowrap'
-        //     }, {
-        //         "targets": [0, 1],
-        //         "orderable": false
-        //     }
-        // ]
-    });
-    // CREATE OR UPDATE
-    document.getElementById("submitTransactionBtn").addEventListener("click", async () => {
-        const id = document.getElementById("hidden_id").value;
-        const name = document.getElementById("name").value;
-        const transaction_date = document.getElementById("created_at").value;
-        const transaction_no = document.getElementById("transaction_no").value;
-        const amount = document.getElementById("amount").value;
-        const status = document.getElementById("status").value;
-
-        const isUpdate = id !== "";
-        const url = isUpdate ? `/api/transaction/${id}` : '/api/transaction';
-        const method = isUpdate ? 'PUT' : 'POST';
-
-        try {
-            const res = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name,
-                    transaction_date,
-                    transaction_no,
-                    amount,
-                    status
-                })
-            });
-
-            const data = await res.json();
-            if(res.ok){
-                swal("Berhasil", data.message || "Transaksi berhasil ditambahkan", "success");
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                swal("Gagal", data.error || "Terjadi kesalahan", "error");
-            }
-        } catch (error) {
-            swal("Gagal", error.message || "Terjadi kesalahan", "error");
         }
     });
 
-    // MENGISI VALUE FORM
-    document.getElementById('transactionsTable').addEventListener("click", async (e) => {
-        if(e.target.closest(".transactionEdit")){
-            e.preventDefault();
-            const id = e.target.closest(".transactionEdit").getAttribute("data-id");
-
-            try {
-                const res = await fetch(`/api/transaction/${id}`);
-                const data = await res.json();
-
-                if(data.status === "success"){
-                    const transaction = data.data;
-                    
-
-                    document.getElementById("hidden_id").value = transaction.id;
-                    document.getElementById("name").value = transaction.name;
-                    document.getElementById("created_at").value;
-                    document.getElementById("transaction_no").value = transaction.transaction_no;
-                    document.getElementById("amount").value = transaction.amount;
-                    document.getElementById("status").value = transaction.status;
-
-                    const modal = new bootstrap.Modal(document.getElementById("transactionFormModal"));
-                    modal.show();
-                } else {
-                    swal("Gagal", data.message || "Terjadi kesalahan", "error");
-                }
-            } catch (error) {
-                swal("Gagal", error.message || "Terjadi kesalahan", "error");
-            }
-        }
+    // Event listener untuk entries select
+    $('#entriesSelect').on('change', function () {
+      table.page.len($(this).val()).draw();
     });
 
-    // RESET SAAT MENUTUP MODAL
-    document.getElementById('transactionFormModal').addEventListener('hidden.bs.modal', function () {
-        document.getElementById("transactionForm").reset();
-        document.getElementById("hidden_id").value = '';
+    // Event listener untuk search input
+    document.querySelector('input[placeholder="Cari Transaksi"]').addEventListener('keyup', function() {
+      table.search(this.value).draw();
     });
 
-    // DELETE
-    document.getElementById("transactionsTable").addEventListener("click", async (e) => {
-        if(e.target.closest(".transactionDelete")){
-            e.preventDefault();
-            const id = e.target.closest(".transactionDelete").getAttribute("data-id");
+ 
+function renderPagination() {
+    var info = table.page.info();
+    var currentPage = info.page;
+    var totalPages = info.pages;
 
-            swal({
-                title: "Yakin ingin menghapus?",
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-            .then(async (willDelete) => {
-                if (willDelete) {
-                    try {
-                        const res = await fetch(`/api/transaction/${id}`, {
-                            method: 'DELETE'
-                        });
-                        const data = await res.json();
+    // INFO TEXT
+    var start = info.start + 1;
+    var end = info.end;
+    var total = info.recordsTotal;
 
-                        if(res.ok){
-                            swal("Berhasil", data.message || "Transaksi berhasil dihapus", "success");
-                            setTimeout(() => location.reload(), 1500);
-                        } else {
-                            swal("Gagal", data.error || "Terjadi kesalahan", "error");
-                        }
-                    } catch (error) {
-                        swal("Gagal", error.message || "Terjadi kesalahan", "error");
-                    }
-                }
-            });
+    $('#customTableInfo').html(
+      `Menampilkan <span class="font-semibold text-gray-900 dark:text-white">${start}-${end}</span> 
+       dari <span class="font-semibold text-gray-900 dark:text-white">${total}</span> transaksi`
+    );
+
+    // PAGINATION BUTTONS
+    var paginationHtml = '';
+
+    // PREV
+    paginationHtml += `
+      <button 
+        ${currentPage === 0 ? 'disabled' : ''}
+        onclick="goToPage(${currentPage - 1})"
+        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
+        disabled:opacity-50 transition-colors">
+        Prev
+      </button>
+    `;
+
+    // NUMBER BUTTONS
+    for (let i = 0; i < totalPages; i++) {
+      paginationHtml += `
+        <button 
+          onclick="goToPage(${i})"
+          class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
+          ${i === currentPage 
+            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
+            : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
+          ${i + 1}
+        </button>
+      `;
+    }
+
+    // NEXT
+    paginationHtml += `
+      <button 
+        ${currentPage === totalPages - 1 ? 'disabled' : ''}
+        onclick="goToPage(${currentPage + 1})"
+        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
+        disabled:opacity-50 transition-colors">
+        Next
+      </button>
+    `;
+
+    $('#customPagination').html(paginationHtml);
+  }
+
+  window.goToPage = function (page) {
+    table.page(page).draw('page');
+  };
+
+  renderPagination();
+  table.on('draw.dt', function () {
+    renderPagination();
+  });
+});
+
+// FUNCTION VIEW DETAIL
+window.viewTransactionDetail = async function(id) {
+  try {
+    const res = await fetch(`/api/transactions/${id}`);
+    const json = await res.json();
+
+    if(json.success) {
+      // TODO: Buka modal/page untuk menampilkan detail transaksi
+      console.log("Transaction detail:", json.data);
+      swal("Info", "Fitur detail transaksi belum diimplementasikan", "info");
+    } else {
+      swal("Gagal", json.message || "Terjadi kesalahan saat mengambil data", "error");
+    }
+  } catch (error) {
+    console.error("Error fetching transaction detail:", error);
+    swal("Error", "Gagal mengambil data", "error");
+  }
+}
+
+// FUNCTION EDIT
+window.editTransaction = async function(id) {
+  try {
+    const res = await fetch(`/api/transactions/${id}`);
+    const json = await res.json();
+
+    if(json.success) {
+      const transaction = json.data;
+      
+      // Populate form
+      document.getElementById("hidden_id").value = transaction.id;
+      document.getElementById("transaction_no").value = transaction.transaction_no;
+      document.getElementById("name").value = transaction.name;
+      document.getElementById("amount").value = transaction.amount;
+      document.getElementById("payment_method").value = transaction.payment_method || '';
+      document.getElementById("status").value = transaction.status;
+      
+      document.getElementById("modalTitle").innerText = 'Edit Transaksi';
+      openTransactionModal();
+    } else {
+      swal("Gagal", json.message || "Terjadi kesalahan saat mengambil data", "error");
+    }
+  } catch (error) {
+    console.error("Error fetching transaction data:", error);
+    swal("Error", "Gagal mengambil data", "error");
+  }
+}
+
+// FUNCTION DELETE
+window.deleteTransaction = async function(id) {
+  swal({
+    title: "Yakin ingin menghapus?",
+    text: "Data yang dihapus tidak dapat dikembalikan!",
+    icon: "warning",
+    buttons: ["Batal", "Ya, hapus!"],
+    dangerMode: true,
+  }).then(async (willDelete) => {
+    if (willDelete) {
+      try {
+        const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
+        const data = await res.json();
+
+        if (data.success) {
+          swal("Terhapus!", data.message || "Transaksi berhasil dihapus", "success");
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          swal("Gagal!", data.message || "Terjadi kesalahan saat menghapus data", "error");
         }
-    })
-})
+      } catch (err) {
+        swal("Error!", "Gagal menghubungi server", "error");
+      }
+    }
+  });
+}
+
+// ═════════════════════════════════════════════════════
+// MODAL FUNCTIONS
+// ═════════════════════════════════════════════════════
+
+window.openTransactionModal = function() {
+  document.getElementById("transactionModal").classList.remove("hidden");
+}
+
+window.closeTransactionModal = function() {
+  document.getElementById("transactionModal").classList.add("hidden");
+  document.getElementById("transactionForm").reset();
+  document.getElementById("hidden_id").value = '';
+}
+
+// Close modal when clicking backdrop
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('transactionModal');
+  const backdrop = document.getElementById('transactionModalBackdrop');
+  
+  if (backdrop) {
+    backdrop.addEventListener('click', function() {
+      closeTransactionModal();
+    });
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeTransactionModal();
+    }
+  });
+
+  // Handle form submit
+  const submitBtn = document.getElementById('submitTransactionBtn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', handleTransactionSubmit);
+  }
+});
+
+// FUNCTION SUBMIT/SAVE TRANSACTION
+async function handleTransactionSubmit(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById("hidden_id").value;
+  const payload = {
+    name: document.getElementById("name").value,
+    amount: document.getElementById("amount").value,
+    payment_method: document.getElementById("payment_method").value,
+    status: document.getElementById("status").value
+  };
+
+  // Validasi
+  if (!payload.name || !payload.amount) {
+    swal("Validasi", "Nama dan Jumlah harus diisi!", "warning");
+    return;
+  }
+
+   const isUpdate = id !== "";
+    const url = isUpdate ? `/api/transactions/${id}` : `/api/transactions`;
+    const method = isUpdate ? "PUT" : "POST";
+
+  try {
+    const res = await fetch(url, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      swal("Berhasil!", data.message || "Transaksi berhasil disimpan", "success");
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      swal("Gagal!", data.message || "Terjadi kesalahan saat menyimpan data", "error");
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    swal("Error!", "Gagal menghubungi server", "error");
+  }
+}
