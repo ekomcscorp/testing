@@ -10,7 +10,30 @@ document.addEventListener("DOMContentLoaded", () => {
     ajax: {
       url: "/api/userlevel/datatables",
       type: "GET",
-      dataSrc: (json) => json.data,
+      dataSrc: (json) => {
+        // Debug log
+        console.log("DataTables response:", json);
+        
+        // Validasi response
+        if (!json || typeof json !== 'object') {
+          console.error("Response bukan object:", json);
+          throw new Error("Invalid response format");
+        }
+        
+        return json.data || [];
+      },
+      error: function(xhr, error, thrown) {
+        console.error("DataTables AJAX Error:", {
+          status: xhr.status,
+          statusText: xhr.statusText,
+          error: error,
+          thrown: thrown,
+          response: xhr.responseText
+        });
+        
+        // Show user-friendly error
+        swal("Error", "Gagal memuat data: " + xhr.statusText, "error");
+      }
     },
     lengthMenu: [[
         5, 10, 25, 50, 100, -1],

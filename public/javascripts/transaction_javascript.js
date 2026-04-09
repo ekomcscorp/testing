@@ -1,5 +1,7 @@
+let table; // Global variable untuk DataTable
+
 document.addEventListener("DOMContentLoaded", () => {
-    const table = $('#transactionsTable').DataTable({
+    table = $('#transactionsTable').DataTable({
       processing: true,
       serverSide: true,
       responsive: true,
@@ -71,11 +73,25 @@ document.addEventListener("DOMContentLoaded", () => {
             } },
             { data: 'payment_method', title: 'Metode Pembayaran', className: "p-2 border border-b text-gray-500 dark:text-white" },
             { data: 'status', title: 'Status', className: "p-2 border border-b", render: function(data) {
-                const isPaid = data === "SUCCESS";
+                let badgeClass = '';
+                let isDot = '';
+                
+                if (data === "SUCCESS") {
+                  badgeClass = 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400';
+                  isDot = 'bg-green-600';
+                } else if (data === "FAILED") {
+                  badgeClass = 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400';
+                  isDot = 'bg-red-600';
+                } else {
+                  // PENDING
+                  badgeClass = 'bg-yellow-500/20 text-yellow-600';
+                  isDot = 'bg-yellow-400';
+                }
+                
                 return `
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isPaid? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-yellow-500/20 text-yellow-600'}">
-                <span class="w-1.5 h-1.5 rounded-full ${isPaid? 'bg-green-600' : 'bg-yellow-400'}"></span>
-                ${isPaid? 'SUCCESS' : 'PENDING'}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                <span class="w-1.5 h-1.5 rounded-full ${isDot}"></span>
+                ${data}
                 </span>
                 `
             } },
@@ -95,6 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector('input[placeholder="Cari Transaksi"]').addEventListener('keyup', function() {
       table.search(this.value).draw();
     });
+
+    // Event listener untuk status filter
+    const statusSelect = document.querySelector('select[class*="rounded-xl"]');
+    if (statusSelect) {
+      statusSelect.addEventListener('change', function() {
+        filterTransactionByStatus(this.value);
+      });
+    }
 
  
 function renderPagination() {
@@ -165,6 +189,21 @@ function renderPagination() {
     renderPagination();
   });
 });
+
+// ═════════════════════════════════════════════════════
+// FILTER FUNCTIONS
+// ═════════════════════════════════════════════════════
+
+window.filterTransactionByStatus = function(status) {
+  if (!status || status === '') {
+    // Tampilkan semua
+    table.search('').draw();
+  } else {
+    // Filter berdasarkan status - cari status di column 5
+    // Gunakan regex atau custom search
+    table.column(5).search(status, true, false).draw();
+  }
+}
 
 // FUNCTION VIEW DETAIL
 window.viewTransactionDetail = async function(id) {
