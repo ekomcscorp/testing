@@ -39,6 +39,8 @@ class ProductController {
       }))
       console.log("QUERY:", req.query);
      return res.json({
+      success: true,
+      message: "Product fetched successfully",
       draw: result.draw,
       recordsTotal: result.recordsTotal,
       recordsFiltered: result.recordsFiltered,
@@ -46,7 +48,11 @@ class ProductController {
     });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      res.status(500).json({ 
+        success: false, 
+        message: "Internal Server Error",
+        error: error.message
+       });
     }
   }
 //   async getAllProductsDatatables(req, res) {
@@ -101,7 +107,7 @@ class ProductController {
       res.json({ success: true, data: product });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
     }
   }
 
@@ -142,9 +148,10 @@ class ProductController {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Internal Server Error"
+      message:  error.message || "Terjadi kesalahan saat menyimpan data",
+
     });
   }
 }
@@ -194,7 +201,7 @@ class ProductController {
         res.json({ success: true, message: "Product updated" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(400).json({ success: false, message:  error.message || "Terjadi kesalahan saat menyimpan data" });
     }
 }
 
@@ -214,7 +221,7 @@ class ProductController {
       
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: "Internal Server Error" });
+      return res.status(400).json({ success: false, message: error.message ||  "Terjadi kesalahan saat menyimpan data" });
     }
   }
   // Datatables endpoint

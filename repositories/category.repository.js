@@ -26,7 +26,8 @@ class CategoryRepository {
             : [['created_at', 'DESC']];
 
         const offset = start || 0; // Default to 0 if start is not provided
-        const limit = length || 10; // Default to 10 if length is not provided
+        // const limit = length || 10; // Default to 10 if length is not provided
+        const limit = Math.min(parseInt(length) || 10, 50);
 
         const result = await Category.findAndCountAll({
             where,

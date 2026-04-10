@@ -12,46 +12,27 @@ class UserlevelService {
   }
 
   async getAllUserlevelDatatables(query) {
-    try {
-      console.log("Service - getAllUserlevelDatatables query:", query);
-      
-      const { draw, start, length, search, order, columns, id_level } = query;
-      const searchValue =
-              query.search?.value ||
-              query['search[value]'] ||
-              "";
-    
-      const { count, rows } = await UserlevelRepository.getPaginatedUserlevels({
-        start: parseInt(start, 10) || 0,
-        length: parseInt(length, 10) || 10,
-        search: searchValue,
-        order,
-        columns,
-        id_level
-      });
-    
-      // Validasi data
-      const safeData = Array.isArray(rows) ? rows : [];
-      const safeCount = typeof count === 'number' ? count : 0;
-      const safeDraw = parseInt(draw, 10) || 0;
-      
-      console.log("Service returning:", {
-        draw: safeDraw,
-        recordsTotal: safeCount,
-        recordsFiltered: safeCount,
-        dataLength: safeData.length
-      });
-      
-      return {
-        draw: safeDraw,
-        recordsTotal: safeCount,
-        recordsFiltered: safeCount,
-        data: safeData,
-      };
-    } catch (error) {
-      console.error("Service error in getAllUserlevelDatatables:", error.message);
-      throw error;
-    }
+    const { draw, start, length, search, order, columns, id_level } = query;
+    const searchValue =
+            query.search?.value ||
+            query['search[value]'] ||
+            "";
+  
+    const { count, rows } = await UserlevelRepository.getPaginatedUserlevels({
+      start: parseInt(start, 10) || 0,
+      length: parseInt(length, 10) || 10,
+      search: searchValue,
+      order,
+      columns,
+      id_level
+    });
+  
+    return {
+      draw: parseInt(draw, 10) || 0,
+      recordsTotal: count,
+      recordsFiltered: count,
+      data: rows,
+    };
   }
 
   async getUserlevelById(id_level) {

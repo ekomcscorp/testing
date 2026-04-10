@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
         info: false,
         paginate: true,
         order:[],
-        lengthMenu: [[
-            10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+        lengthMenu: [
+          [10, 25, 50,],
+           [10, 25, 50,]
         ],
          ajax: {
             url: "/api/products/datatables", // Backend endpoint

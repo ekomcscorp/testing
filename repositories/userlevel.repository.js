@@ -9,19 +9,14 @@ class UserlevelRepository {
 
 
   async getPaginatedUserlevels({ start, length, search, order, columns }) {
-    try {
-      console.log("Repository - getPaginatedUserlevels params:", {
-        start, length, search, order, columns
-      });
-      
-      const where = {
-        ...(search && {
-          [Op.or]: [
-            { id_level: { [Op.like]: `%${search}%` } },
-            { nama_level: { [Op.like]: `%${search}%` } }
-          ]
-        })
-      };
+    const where = {
+      ...(search && {
+        [Op.or]: [
+          { id_level: { [Op.like]: `%${search}%` } },
+          { nama_level: { [Op.like]: `%${search}%` } }
+        ]
+      })
+    };
 
     const sort =
       order && order.length > 0
@@ -31,23 +26,14 @@ class UserlevelRepository {
     const offset = start || 0;
     const limit = length || 10;
 
-      const result = await Userlevel.findAndCountAll({
-        where,
-        order: sort,
-        offset,
-        limit
-      });
+    const result = await Userlevel.findAndCountAll({
+      where,
+      order: sort,
+      offset,
+      limit
+    });
 
-      console.log("Repository result:", {
-        count: result.count,
-        rowsLength: result.rows.length
-      });
-
-      return result;
-    } catch (error) {
-      console.error("Repository error in getPaginatedUserlevels:", error.message);
-      throw error;
-    }
+    return result;
   }
 
 
