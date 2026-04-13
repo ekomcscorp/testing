@@ -7,6 +7,9 @@ class UserlevelRepository {
     return await Userlevel.findAll();
   }
 
+  async countAll() {
+    return await Userlevel.count();
+  }
 
   async getPaginatedUserlevels({ start, length, search, order, columns }) {
     const where = {

@@ -85,11 +85,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     data: "status", title: "Status",
                     className: "p-2  border border-b",
                     render: function(data) {
-                        const isPublic = data === "publish";
+                        // const isPublic = data === "publish";
+                        let badgeClass = "";
+                        let isDot = "";
+
+                        if(data === "publish") {
+                          badgeClass = "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400";
+                          isDot = "bg-green-600";
+                        } else if( data === "closed") {
+                          badgeClass = 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400';
+                           isDot = 'bg-red-600';
+                        } else {
+                          badgeClass = 'bg-yellow-500/20 text-yellow-600';
+                          isDot = 'bg-yellow-400';
+                        }
                          return `
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isPublic? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-yellow-500/20 text-yellow-600'}">
-                            <span class="w-1.5 h-1.5 rounded-full ${isPublic? 'bg-green-600' : 'bg-yellow-400'}"></span>
-                            ${isPublic? 'Publish' : 'Draft'}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                            <span class="w-1.5 h-1.5 rounded-full ${isDot}"></span>
+                            ${data}
                             </span>`;
                     }
                 },

@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("addUserBtn").addEventListener("click", (e) => {
       e.preventDefault();
-      document.getElementById("userFormModal").reset();
+      document.getElementById("userForm").reset();
       document.getElementById("hidden_id_user").value = '';
       document.getElementById("modalTitle").innerText = "Tambah User Baru";
 

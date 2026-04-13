@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
-const categoryService = require("../../../services/category.service");
+const categoryRepo = require("../../../repositories/category.repository");
+const categoryRepository = require("../../../repositories/category.repository");
 // const galleryService = require("../../../services/galleries/gallery.service");
 
 // TAMPILAN LIST
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
   try {
-    const galleryCategory = await categoryService.getAllCategory();
+    const galleryCategory = await categoryRepository.getAllCategory();
 
     res.render("home", {
       link: "category/category_list",

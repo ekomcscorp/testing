@@ -1,10 +1,11 @@
 const CategoryService = require("../../services/category.service");
 const { success } = require("../../utils/response");
+const CategoryRepository = require("../../repositories/category.repository");
 
 class CategoryController {
      async getAllCategory(req, res) {
         try {
-          const category = await CategoryService.getAllCategory();
+          const category = await CategoryRepository.getAllCategory();
           return res.status(200).json({
             success: true,
             message: "Category fetched successfully",
@@ -27,8 +28,22 @@ class CategoryController {
             if (akses.view_level?.trim() !== 'Y') {
               return res.status(403).json({ error: "Akses ditolak" });
             }
-      
-            const result = await CategoryService.getAllCategoryDatatables(req.query);
+            const query = req.query;
+             const { draw, start, length, search, order, columns } = query;
+             const searchValue =
+                  query.search?.value ||
+                  query['search[value]'] ||
+                  "";
+             const [result, totalCount ] = await Promise.all([ CategoryRepository.getPaginatedCategory({
+                    start: parseInt(start, 10) || 0,
+                    length: parseInt(length, 10) || 10,
+                    search: searchValue,
+                    order,
+                    columns
+                }),
+                CategoryRepository.countAll()
+            ]);
+            // const result = await CategoryRepository.getPaginatedCategory(req.query);
       
             // result.data = result.data.map(row => ({
             //   ...row.get({ plain: true }),
@@ -37,21 +52,22 @@ class CategoryController {
             //     delete: akses.delete_level === 'Y'
             //   }
             // }));
-            const data = result.data.map(row => ({
-              ...row.get({plain: true}),
-              akses: {
-                edit: akses.edit_level === "Y",
-                delete: akses.delete_level === "Y"
-              }
-            }));
+            const data = result.rows.map((row) => ({
+                ...row.get({ plain: true }),
+                akses: {
+                  edit: akses.edit_level === "Y",
+                  delete: akses.delete_level === "Y",
+                },
+              }));
 
             return res.status(200).json({
               success: true,
               message: "Category fetched successfully",
-              data: data,
-              draw: result.draw,
-              recordsTotal: result.recordsTotal,
-              recordsFiltered: result.recordsFiltered
+              
+              draw: parseInt(draw, 10),
+              recordsTotal: totalCount,
+              recordsFiltered: result.count,
+              data
             });
           } catch (error) {
             console.error("Error getAllCategoryDatatables:", error);
@@ -65,7 +81,14 @@ class CategoryController {
     
       async getCategoryById(req, res) {
         try {
-          const category = await CategoryService.getCategoryById(req.params.id);
+          const category = await CategoryRepository.getCategoryById(req.params.id);
+
+          if(!category) {
+            return res.status(404).json({
+              success: false,
+              message: "Category not found"
+            })
+          }
          return res.status(200).json({
             success: true,
             message: "Category ID fetched successfully",
@@ -82,7 +105,12 @@ class CategoryController {
     
       async createCategory(req, res) {
         try {
-          const category = await CategoryService.createCategory(req.body);
+         
+          const { name, slug } = req.body;
+          if (!name || !slug) {
+            return res.status(400).json({ success: false, message: "Field name dan slug wajib diisi" });
+          }
+          const category = await CategoryRepository.createCategory(req.body);
           return res.status(200).json({
             success: true,
             message: "Category fetched successfully",
@@ -99,7 +127,7 @@ class CategoryController {
       async updateCategory(req, res) {
         try {
           const {id} = req.params;
-          // const category = await CategoryService.getCategoryById(id);
+          // const category = await CategoryRepository.getCategoryById(id);
           // if(!category){
           //    return res.status(404).json({
           //       success: false,
@@ -107,7 +135,7 @@ class CategoryController {
           //   });
           // }
 
-          const updatedCategory = await CategoryService.updateCategory(id, req.body);
+          const updatedCategory = await CategoryRepository.updateCategory(id, req.body);
           return res.status(200).json({
             success: true,
             message: "Category berhasil diupdate",
@@ -124,7 +152,7 @@ class CategoryController {
       async deleteCategory(req, res) {
         try {
           const {id} = req.params;
-          // const category = await CategoryService.getCategoryById(id);
+          // const category = await CategoryRepository.getCategoryById(id);
           // if(!category){
           //    return res.status(404).json({
           //       success: false,
@@ -132,7 +160,7 @@ class CategoryController {
           //   });
           // }
 
-          const deleted = await CategoryService.deleteCategory(id);
+          const deleted = await CategoryRepository.deleteCategory(id);
            return res.status(200).json({
             success: true,
             message: "Category deleted successfully",

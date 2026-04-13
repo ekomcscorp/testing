@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
-const UserService = require("../../../services/user.service");
-const UserlevelService = require("../../../services/userlevel.service");
+const UserRepo = require("../../../repositories/user.repository");
+const UserlevelRepo = require("../../../repositories/userlevel.repository");
 
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
     try {
-        const userlevel = await UserlevelService.getAllUserlevel();
-        const users = await UserService.getAllUsers();
+        const userlevel = await UserlevelRepo.getAllUserlevels();
+        const users = await UserRepo.getAllUsers();
 
         res.render("home", {
             link: "userlevel/userlevel_list",

@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
-const MenuService = require("../../../services/menu.service");
+const MenuRepo= require("../../../repositories/menu.repository");
 
 // TAMPILAN LIST
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
     try {
-        const menu = await MenuService.getAllMenu();
-        const submenu = await MenuService.getSubmenu();
+        const menu = await MenuRepo.findAll();
+        const submenu = await MenuRepo.findSubmenu();
 
         res.render("home", {
             link: "submenu/submenu_list",

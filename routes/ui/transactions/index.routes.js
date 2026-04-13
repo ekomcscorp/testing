@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
-const Transaction = require("../../../services/transactions/transaction.service");
+const Transaction = require("../../../repositories/transactions/transaction.repository");
 
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
     try { 

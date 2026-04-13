@@ -139,6 +139,15 @@ class ProductController {
       notes: JSON.parse(req.body.notes || "[]"),
     };
 
+    // Validasi status
+    const validStatuses = ['draft', 'publish', 'closed'];
+    if (productData.status && !validStatuses.includes(productData.status?.toLowerCase())) {
+        return res.status(400).json({ 
+            success: false, 
+            message: `Invalid status. Allowed values: ${validStatuses.join(', ')}` 
+        });
+    }
+
     const product = await productService.createProduct(productData);
 
     res.status(201).json({
@@ -188,6 +197,15 @@ class ProductController {
             notes: JSON.parse(req.body.notes || "[]"),
             facilities: JSON.parse(req.body.facilities || "[]"),
         };
+
+        // Validasi status
+        const validStatuses = ['draft', 'publish', 'closed'];
+        if (productData.status && !validStatuses.includes(productData.status?.toLowerCase())) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Invalid status. Allowed values: ${validStatuses.join(', ')}` 
+            });
+        }
 
         // ✅ Handle thumbnail baru
         if (req.files?.thumbnail) {

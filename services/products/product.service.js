@@ -59,7 +59,19 @@ class ProductService {
             const transaction = await sequelize.transaction();
 
             try {
-            let { prices, flights, notes, snks, facilities,hotels, itineraries,...productFields } = productData;
+            let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
+            
+            // Validasi dan normalisasi status
+            const validStatuses = ['draft', 'publish', 'closed'];
+            if (productFields.status) {
+                productFields.status = productFields.status.trim().toLowerCase();
+                
+                if (!validStatuses.includes(productFields.status)) {
+                    throw new Error(`Invalid status. Allowed values: ${validStatuses.join(', ')}`);
+                }
+            }
+            
+            console.log("Created ProductFields with status:", productFields.status);
             
            // 2. Fungsi Helper untuk mastiin data itu Array
             const ensureArray = (data) => {
@@ -221,7 +233,20 @@ class ProductService {
        async updateProduct(id, productData) {
         const transaction = await sequelize.transaction();
         try {
-            let { prices, flights, notes, snks, facilities,hotels, itineraries,...productFields } = productData;
+            let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
+            
+            // Validasi dan normalisasi status
+            const validStatuses = ['draft', 'publish', 'closed'];
+            if (productFields.status) {
+                productFields.status = productFields.status.trim().toLowerCase();
+                
+                if (!validStatuses.includes(productFields.status)) {
+                    throw new Error(`Invalid status. Allowed values: ${validStatuses.join(', ')}`);
+                }
+            }
+            
+            console.log("Updated ProductFields with status:", productFields.status);
+            
             await productRepository.updateProduct(id, productFields);
             
             const updateRelation = async (repo, data, mapper) => {

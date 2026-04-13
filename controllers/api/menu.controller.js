@@ -1,350 +1,249 @@
-const menuRepository = require("../../repositories/menu.repository");
-const menuService = require("../../services/menu.service");
-const response = require("../../utils/response");
-
-
+const menuRepo   = require("../../repositories/menu.repository");
+const aksesRepo  = require("../../repositories/akses.repository");
+const response   = require("../../utils/response");
+const { mapMenuWithAcces } = require("../../utils/menuAcces");
 
 class MenuController {
-  async getAllMenu(req, res) {
+
+  // ─── helper internal ────────────────────────────────────────────
+  async _getDatatables(req, res, filter = {}) {
     try {
-      const menu = await menuService.getAllMenu();
-      return res.status(200).json({
-        success: true,
-        message: "Menus fetched successfully",
-        data: menu,
-      })
-    } catch (error) {
+      const { akses } = res.locals;
+      
+      if (!akses || akses.view_level !== "Y") {
+        console.warn("[Menu] Access denied:", { akses, path: req.path });
+        return res.status(403).json({ success: false, message: "Akses ditolak" });
+      }
+
+      const { draw, start, length, order, columns } = req.query;
+      const search = req.query["search[value]"] || req.query.search?.value || "";
+
+      console.log("[Menu] getDatatables query:", {
+        draw, start, length, search,
+        orderLength: order?.length,
+        columnsLength: columns?.length,
+        filter
+      });
+
+      const result = await menuRepo.getPaginated({
+        start:  parseInt(start)  || 0,
+        length: parseInt(length) || 10,
+        search,
+        order,
+        columns,
+        filter,
+      });
+
+      console.log("[Menu] Repository result:", {
+        count: result.count,
+        rowsLength: result.rows?.length || 0
+      });
+
+      // Validasi result
+      if (!result || typeof result.count !== 'number' || !Array.isArray(result.rows)) {
+        throw new Error("Invalid repository response format");
+      }
+
+      const data = result.rows.map((row) => ({
+        ...(row.get ? row.get({ plain: true }) : row),
+        akses: {
+          edit:   akses.edit_level   === "Y",
+          delete: akses.delete_level === "Y",
+        },
+      }));
+
+      const responseData = {
+        draw:            parseInt(draw) || 0,
+        recordsTotal:    result.count,
+        recordsFiltered: result.count,
+        data,
+      };
+
+      console.log("[Menu] Response:", {
+        recordsTotal: responseData.recordsTotal,
+        dataLength: responseData.data.length
+      });
+
+      return response.datatables(res, responseData);
+    } catch (err) {
+      console.error("[Menu] _getDatatables ERROR:", err.message, err.stack);
       return res.status(500).json({
         success: false,
-        message: "Error fetching menus",
-        error: error.message,
-      })
+        message: err.message || "Internal server error"
+      });
+    }
+  }
+
+  // ─── endpoints ──────────────────────────────────────────────────
+  async getAll(req, res) {
+    try {
+      const data = await menuRepo.findAll();
+      return res.status(200).json({ success: true, message: "Menus fetched successfully", data });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
     }
   }
 
   async getSubmenu(req, res) {
-    try{
-      const submenu = await menuService.getSubmenu();
-      return res.status(200).json({
-        success: true,
-        message: "Submenus fetched successfully",
-        data: submenu
-      })
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Error fetching submenus",
-        error: error.message,
-      })
+    try {
+      const data = await menuRepo.findSubmenu();
+      return res.status(200).json({ success: true, message: "Submenus fetched successfully", data });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
     }
   }
 
-  async getMenuById(req, res){
-      try{
-        const {id_menu} = req.params;
-        const menu = await menuService.getMenuById(id_menu);
-
-        if(!menu) {
-          return res.status(404).json({
-            success: false,
-            message: "Menu tidak ditemukan",
-            data: null
-          });
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: "Menu fetched successfully",
-          data: menu,
-        });
-
-      } catch (error){
-        return res.status(500).json({
-          success: false,
-          message: "Error fetching menu",
-          error: error.message,
-        });
+  async getById(req, res) {
+    try {
+      const menu = await menuRepo.findById(req.params.id_menu);
+      if (!menu) {
+        return res.status(404).json({ success: false, message: "Menu tidak ditemukan" });
       }
+      return res.status(200).json({ success: true, message: "Menu fetched successfully", data: menu });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
     }
-    async getParentPaginatedMenu(req, res){
-      try{
-        const {akses} = res.locals;
-        if( akses.view_level?.trim() !== "Y"){
-          return res.status(403).json({error: "Akses ditolak" });
-        }
+  }
 
-        const parentMenu = await menuService.getParentsMenusDatatable({
-          ...req.query,
-          parent_id: null
-        });
-        const data = parentMenu.map(menu => ({
-          ...menu,
-          akses: {
-            edit: akses.edit_level === "Y",
-            delete: akses.delete_level === "Y"
-          }
-        }))
-
-
-        return res.json({
-          message: "Parent menus fetched successfully",
-          data: data
-        })
-      } catch (error){
-        console.error(error);
-        return res.status(500).json({
-          success: false,
-          message: "Error fetching parent menus",
-          error: error.message,
-        });
-      }
+  async getNested(req, res) {
+    try {
+      const data = await menuRepo.findNested();
+      return res.status(200).json({ success: true, message: "Nested menu fetched successfully", data });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
     }
- 
-  //  async getPaginatedMenu(req, res){
-  //     try{
-  //       const {start, length, search, order, columns} = req.body;
-  //       const result = await menuRepository.getPaginatedMenu({
-  //         start,
-  //         length,
-  //         search,
-  //         order,
-  //         columns
-  //       });
+  }
 
-  //       return res.status(200).json({
-  //         success: true,
-  //         message: "Paginated menus fetched successfully",
-  //         recordTotal: result.count,
-  //         recordFiltered: result.count,
-  //         data: result,
-  //       })
-  //     }catch (error){
-  //       return res.status(500).json({
-  //         success: false,
-  //         message: "Error fetching paginated menus",
-  //         error: error.message,
-  //       });
-  //     }
-  //    }
-    async getParentsController(req, res, ){
-      try {
-        const id_level = req.session.user.id_level;
-        const parentMenu = await menuService.getParentsMenusDatatable(id_level);
-
-        res.json({
-          success: true,
-          data: parentMenu
-        });
-
-      } catch (e){
-        console.error(e);
-        return res.status(500).json({
-          success: true,
-          message: "failed to load parentMenus"
-        })
-      }
-    }
-    
-  async getAllMenuDatatables(req, res) {
+  // parent menu dengan info akses per level
+  async getParentByLevel(req, res) {
     try {
       const { akses } = res.locals;
-
-      // console.log("akses", akses);
-        
-        if (akses.view_level !== 'Y') {
-          return res.status(403).json({ error: "Akses ditolak" });
-        }
-  
-        const result = await menuService.getSubmenuDatatables(req.query);
-  
-        result.data = result.data.map(row => ({
-         ... (row.get ? row.get({ plain: true }) : row),
-          akses: {
-            edit: akses.edit_level === 'Y',
-            delete: akses.delete_level === 'Y'
-          }
-        }));
-  
-        return response.datatables(res, result);
-      } catch (error) {
-        console.error("Error getAllMenuDatatables:", error);
-        return response.error(res, error.message);
-    }
-  }
-
- async datatablesSubmenu(req, res) {
-  try {
-    const { akses } = res.locals;
-
-    if (akses.view_level !== 'Y') {
-      return res.status(403).json({ error: "Akses ditolak" });
-    }
-
-   const result = await menuService.getSubmenuDatatables(req.query);
-
-    result.data = result.data.map(row => ({
-      ...(row.get ? row.get({ plain: true }) : row),
-      akses: {
-        edit: akses.edit_level === 'Y',
-        delete: akses.delete_level === 'Y'
+      if (akses.view_level?.trim() !== "Y") {
+        return res.status(403).json({ success: false, message: "Akses ditolak" });
       }
-    }));
 
-    return response.datatables(res, result);
+      const menus = await menuRepo.findParents();
+      const data  = menus.map((menu) => ({
+        ...mapMenuWithAcces(menu),
+        akses: {
+          edit:   akses.edit_level   === "Y",
+          delete: akses.delete_level === "Y",
+        },
+      }));
 
-  } catch (error) {
-    console.error("Error datatablesSubmenu:", error);
-    return response.error(res, error.message);
+      return res.json({ success: true, message: "Parent menus fetched successfully", data });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err.message });
+    }
   }
-}
-  // async getMenuById(req, res) {
-  //   try {
-  //     const menu = await menuService.getMenuById(req.params.id);
-  //     return response.success(res, "Menu fetched", menu);
-  //   } catch (error) {
-  //     return response.notFound(res, error.message);
-  //   }
-  // }
 
-  async createMenu(req, res) {
+  // datatables khusus parent menu saja
+  async getDatatablesParent(req, res) {
     try {
-      const menu = await menuService.createMenu(req.body);
-      return res.status(200).json({
-        success: true,
-        message: "Menu created successfully",
-        data: menu,
-      });
-    } catch (error) {
-      console.error("Error in createMenu:", error);
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        error: error.message,
-      });
-      
+      return await this._getDatatables(req, res, { parent_id: null });
+    } catch (err) {
+      return response.error(res, err.message);
     }
   }
 
-  async updateMenu(req, res) {
+  // datatables untuk semua menu (parent + submenu)
+  async getDatatables(req, res) {
     try {
-      console.log("PARAMS:", req.params);
-
-      const {id_menu} = req.params;
-       console.log("ID MENU DITERIMA:", id_menu);
-      // const menu = await menuService.getMenuById(id_menu);
-      // if (!menu) {
-      //   return res.status(404).json({
-      //     status: "error",
-      //     message:"Menu tidak ditemukan",
-      //   });
-      // }
-
-      await menuService.updateMenu(id_menu, req.body)
-
-      return res.status(200).json({
-        success: true,
-        message: "Menu updated successfully",
-      })
-
-    } catch (error) {
-      console.error("Error in updateMenu:", error);
-      return res.status(404).json({
-        success: false,
-        message: error.message,
-        error: error.message,
-      });
+      return await this._getDatatables(req, res);
+    } catch (err) {
+      return response.error(res, err.message);
     }
   }
 
-  async deleteMenu(req, res) {
+  // datatables khusus submenu saja
+  async getDatatablesSubmenu(req, res) {
     try {
-
-      const {id_menu} = req.params;
-   
-      await menuService.deleteMenu(id_menu);
-
-      return res.status(200).json({
-        success: true,
-        message: "Menu deleted successfully",
-      });
-
-    } catch (error) {
-      console.error("Error in deleteMenu:", error);
-      return response.notFound(res, error.message);
+      return await this._getDatatables(req, res, { parent_not_null: true });
+    } catch (err) {
+      return response.error(res, err.message);
     }
   }
 
-  async getNestedMenu(req, res){
-    try{
-      const nestedMenu = await menuService.getNestedMenu();
+  async create(req, res) {
+    try {
+      const requiredFields = ["nama_menu", "link", "icon", "urutan", "is_active"];
+      for (const field of requiredFields) {
+        if (req.body[field] === undefined) {
+          return res.status(400).json({ success: false, message: `Field ${field} wajib diisi` });
+        }
+      }
 
-      return res.status(200).json({
-        success: true,
-        message: "menu fetched successfully",
-        data: nestedMenu,
-      })
-    }catch (error){ 
-      return res.status(500).json({
-        success: false,
-        message: "Error fetching nested menu",
-        error: error.message,
+      const data = await menuRepo.create({
+        ...req.body,
+        parent_id: req.body.parent_id ?? null,
       });
-    }
-  }
-  // async getNestedMenu(req, res){
-  //   try{
-  //     const menu = await menuService.getNestedMenu();
 
-  //      // Buat map untuk lookup cepat
-  //     const menuMap = {};
-  //     menu.forEach(menu=> {
-  //       menuMap[menu.id_menu] = {...menu, children:[]};
-  //     });
-
-  //     const nestedMenu = [];
-
-  //     menu.forEach(menu => {
-  //       if(menu.parent_id === null){
-  //         nestedMenu.push(menuMap[menu.id_menu]);
-  //       }else if(menuMap[menu.parent_id]){
-  //         menuMap[menu.parent_id].children.push(menuMap[menu.id_menu]);
-  //       }
-  //     })
-
-  //     return res.status(200).json({
-  //       success: true,
-  //       message: "menu fetched successfully",
-  //       data: nestedMenu,
-  //     })
-  //   }catch (error){ 
-  //     console.error("Error in getNestedMenu:", error);
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: "Error fetching nested menu",
-  //       error: error.message,
-  //     });
-  //   }
-  // }
-
-  async createNestedMenu(req, res){
-    try{
-      const newMenu = await menuService.createNestedMenu(req.body);
-      return res.status(201).json({
-        success: true,
-        message: "Nested menu created successfully",
-        data: newMenu,
-      })
-    }catch (error){
-      console.error("Error in createNestedMenu:", error);
-      return res.status(400).json({
-        success: false,
-        message: "Error creating nested menu",
-        error: error.message,
-      });
+      return res.status(201).json({ success: true, message: "Menu created successfully", data });
+    } catch (err) {
+      return res.status(400).json({ success: false, message: err.message });
     }
   }
 
-  
+  async createNested(req, res) {
+    try {
+      // rekursif helper
+      const buildNested = async (menuData, parentId = null) => {
+        const created = await menuRepo.create({
+          nama_menu: menuData.nama_menu,
+          link:      menuData.link,
+          icon:      menuData.icon,
+          urutan:    menuData.urutan,
+          is_active: menuData.is_active,
+          parent_id: parentId,
+        });
+        if (menuData.children?.length > 0) {
+          for (const child of menuData.children) {
+            await buildNested(child, created.id_menu);
+          }
+        }
+        return created;
+      };
+
+      const data = await buildNested(req.body);
+      return res.status(201).json({ success: true, message: "Nested menu created successfully", data });
+    } catch (err) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { id_menu } = req.params;
+      const existing = await menuRepo.findById(id_menu);
+      if (!existing) {
+        return res.status(404).json({ success: false, message: "Menu tidak ditemukan" });
+      }
+
+      const data = await menuRepo.update(id_menu, {
+        ...req.body,
+        parent_id: req.body.parent_id ?? null,
+      });
+
+      return res.status(200).json({ success: true, message: "Menu updated successfully", data });
+    } catch (err) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const { id_menu } = req.params;
+      const existing = await menuRepo.findById(id_menu);
+      if (!existing) {
+        return res.status(404).json({ success: false, message: "Menu tidak ditemukan" });
+      }
+
+      await menuRepo.destroy(id_menu);
+      return res.status(200).json({ success: true, message: "Menu deleted successfully" });
+    } catch (err) {
+      return response.notFound(res, err.message);
+    }
+  }
 }
 
 module.exports = new MenuController();
