@@ -178,34 +178,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- HELPER MODAL ---
 window.toggleModal = (modalId, isOpen) => {
-  const modal = document.getElementById(modalId);
-  const backdrop = document.getElementById(modalId.replace('-modal', '-backdrop'));
-  const panel = document.getElementById(modalId.replace('-modal', '-panel'));
-  
-  if (!modal) return;
+  try {
+    const modal = document.getElementById(modalId);
+    const backdrop = document.getElementById(modalId.replace('-modal', '-backdrop'));
+    const panel = document.getElementById(modalId.replace('-modal', '-panel'));
+    
+    if (!modal || !backdrop || !panel) {
+      console.error('Modal elements not found for:', modalId);
+      return;
+    }
 
-  if (isOpen) {
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-      backdrop.classList.replace('opacity-0', 'opacity-100');
-      backdrop.classList.remove('pointer-events-none');
-      panel.classList.replace('opacity-0', 'opacity-100');
-      panel.classList.replace('scale-95', 'scale-100');
-    }, 10);
-  } else {
-    panel.classList.replace('opacity-100', 'opacity-0');
-    panel.classList.replace('scale-100', 'scale-95');
-    backdrop.classList.replace('opacity-100', 'opacity-0');
-    backdrop.classList.add('pointer-events-none');
-    setTimeout(() => modal.classList.add('hidden'), 300);
+    if (isOpen) {
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        backdrop.classList.remove('pointer-events-none');
+        panel.classList.remove('opacity-0');
+        panel.classList.add('opacity-100');
+        panel.classList.remove('scale-95');
+        panel.classList.add('scale-100');
+      }, 10);
+    } else {
+      panel.classList.remove('opacity-100');
+      panel.classList.add('opacity-0');
+      panel.classList.remove('scale-100');
+      panel.classList.add('scale-95');
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0');
+      backdrop.classList.add('pointer-events-none');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+  } catch (err) {
+    console.error('Error in toggleModal:', err);
   }
 };
+// window.toggleModal = (modalId, isOpen) => {
+//   const modal = document.getElementById(modalId);
+//   const backdrop = document.getElementById(modalId.replace('-modal', '-backdrop'));
+//   const panel = document.getElementById(modalId.replace('-modal', '-panel'));
+
+//   if (!modal) return;
+
+//   if (isOpen) {
+//     modal.classList.remove('hidden');
+
+//     backdrop.classList.remove('pointer-events-none');
+//     backdrop.classList.replace('opacity-0', 'opacity-100');
+
+//     panel.classList.replace('opacity-0', 'opacity-100');
+//     panel.classList.replace('scale-95', 'scale-100');
+
+//   } else {
+//     backdrop.classList.add('pointer-events-none');
+//     backdrop.classList.replace('opacity-100', 'opacity-0');
+
+//     panel.classList.replace('opacity-100', 'opacity-0');
+//     panel.classList.replace('scale-100', 'scale-95');
+
+//     setTimeout(() => {
+//       modal.classList.add('hidden');
+//     }, 300);
+//   }
+// };
 
 window.openAddLevelModal = () => {
-  document.getElementById("hidden_id_userlevel").value = "";
-  document.getElementById("level-name").value = "";
-  document.querySelector('#add-level-panel h3').innerText = 'Tambah Level Baru';
-  toggleModal('add-level-modal', true);
+  try {
+    const hiddenId = document.getElementById("hidden_id_userlevel");
+    const levelName = document.getElementById("level-name");
+    const title = document.querySelector('#add-level-panel h3');
+
+    if (hiddenId) hiddenId.value = "";
+    if (levelName) levelName.value = "";
+    if (title) title.innerText = 'Tambah Level Baru';
+
+    toggleModal('add-level-modal', true);
+  } catch (err) {
+    console.error('Error in openAddLevelModal:', err);
+    alert('Terjadi kesalahan saat membuka form tambah level');
+  }
 };
 
 window.closeAddLevelModal = () => toggleModal('add-level-modal', false);
@@ -220,12 +271,18 @@ window.editUserLevel = async (id_level) => {
     const userlevel = json.data || json;
 
     if (userlevel) {
-      document.getElementById("hidden_id_userlevel").value = userlevel.id_level;
-      document.getElementById("level-name").value = userlevel.nama_level;
-      document.querySelector('#add-level-panel h3').innerText = 'Edit User Level';
+      const hiddenId = document.getElementById("hidden_id_userlevel");
+      const levelName = document.getElementById("level-name");
+      const title = document.querySelector('#add-level-panel h3');
+
+      if (hiddenId) hiddenId.value = userlevel.id_level;
+      if (levelName) levelName.value = userlevel.nama_level;
+      if (title) title.innerText = 'Edit User Level';
+      
       toggleModal('add-level-modal', true);
     }
   } catch (err) {
+    console.error('Error in editUserLevel:', err);
     swal("Error", "Gagal mengambil data", "error");
   }
 };
@@ -254,3 +311,12 @@ window.deleteUserLevel = (id_level) => {
     }
   });
 };
+
+// --- ACCESS MODAL ---
+window.openAccessModal = (id_level, nama_level) => {
+  document.getElementById("modal-level-name").innerText = nama_level;
+  document.getElementById("hidden_id_userlevel").value = id_level;
+  toggleModal('access-modal', true);
+};
+
+window.closeAccessModal = () => toggleModal('access-modal', false);
