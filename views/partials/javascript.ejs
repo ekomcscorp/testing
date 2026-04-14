@@ -261,31 +261,75 @@
 
             // --- Logic Simpan Password ---
             function handleSavePassword() {
-                // 1. Tutup Modal Input
+                const oldPassword = document.getElementById('oldPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Validasi input
+                if (!oldPassword || !newPassword || !confirmPassword) {
+                    alert("Semua field harus diisi");
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    alert("Password baru dan konfirmasi tidak sesuai");
+                    return;
+                }
+
+                // Tutup Modal Input
                 closeChangePasswordModal();
 
-                // 2. Buka Modal Sukses
-                const successModal = document.getElementById('success-modal');
-                const successBackdrop = document.getElementById('success-backdrop');
-                const successPanel = document.getElementById('success-panel');
+                // Kirim request ke server
+                fetch('/dashboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        oldPassword: oldPassword,
+                        newPassword: newPassword,
+                        confirmPassword: confirmPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Response data:", data);
+                    if (data.success) {
+                        // Buka Modal Sukses
+                        const successModal = document.getElementById('success-modal');
+                        const successBackdrop = document.getElementById('success-backdrop');
+                        const successPanel = document.getElementById('success-panel');
 
-                successModal.classList.remove('hidden');
+                        successModal.classList.remove('hidden');
 
-                // Animasi Masuk
-                setTimeout(() => {
-                    successBackdrop.classList.remove('opacity-0');
-                    successBackdrop.classList.add('opacity-100');
-                    successPanel.classList.remove('opacity-0', 'scale-95');
-                    successPanel.classList.add('opacity-100', 'scale-100');
-                }, 10);
+                        // Animasi Masuk
+                        setTimeout(() => {
+                            successBackdrop.classList.remove('opacity-0');
+                            successBackdrop.classList.add('opacity-100');
+                            successPanel.classList.remove('opacity-0', 'scale-95');
+                            successPanel.classList.add('opacity-100', 'scale-100');
+                        }, 10);
 
-                // 3. Reset Form (Kosongkan input)
-                document.getElementById('changePasswordForm').reset();
+                        // Reset Form
+                        document.getElementById('changePasswordForm').reset();
 
-                // 4. Tutup Otomatis setelah 2 detik
-                setTimeout(() => {
-                    closeSuccessModal();
-                }, 2000);
+                        // Tutup Otomatis setelah 2 detik
+                        setTimeout(() => {
+                            closeSuccessModal();
+                        }, 2000);
+                    } else {
+                        console.error("Error from server:", data);
+                        alert(data.message || "Gagal mengubah password");
+                        // Buka kembali modal jika ada error
+                        openChangePasswordModal();
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert("Terjadi kesalahan: " + error.message);
+                    // Buka kembali modal jika ada error
+                    openChangePasswordModal();
+                });
             }
 
             function closeSuccessModal() {

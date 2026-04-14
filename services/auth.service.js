@@ -43,7 +43,7 @@ async function registerUser(data) {
       username,
       fullname,
       password: hashed,
-      id_level: 2, // default user
+      id_level: 4, // default user
       is_active: "N",
       app: "N",
     }, t);
@@ -94,4 +94,22 @@ async function approveUser(userId) {
   return updated, delete_notification;
 }
 
-module.exports = { login, registerUser };
+async function updatePassword(userId, oldPassword, newPassword) {
+  const user = await userRepository.getUserById(userId);
+  if (!user) throw new Error("User tidak ditemukan");
+
+  // Validasi password lama
+  const isMatch = await comparePassword(oldPassword, user.password);
+  if (!isMatch) throw new Error("Password lama tidak sesuai");
+
+  // Hash password baru
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Update password di database
+  await userRepository.updateUser(userId, { password: hashedPassword });
+
+  return { message: "Password berhasil diubah" };
+}
+
+
+module.exports = { login, registerUser, updatePassword };

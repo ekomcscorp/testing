@@ -74,6 +74,54 @@ req.session.destroy(() => {
 
 
 }
+
+async changePassword(req, res) {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const userId = req.session.user?.id;
+
+  console.log("🟡 Change password attempt for user ID:", userId);
+  console.log("Session user:", req.session.user);
+
+  // Validasi user ID
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      message: "User tidak terautentikasi"
+    });
+  }
+
+  // Validasi input
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Semua field harus diisi"
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Password baru dan konfirmasi tidak sesuai"
+    });
+  }
+
+  try {
+    const result = await authService.updatePassword(userId, oldPassword, newPassword);
+    console.log("✅ Password changed successfully for user ID:", userId);
+    
+    return res.status(200).json({
+      success: true,
+      message: result.message
+    });
+  } catch (error) {
+    console.error("❌ Change password error:", error);
+    console.error("Error message:", error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Gagal mengubah password"
+    });
+  }
+ }
 }
 
 module.exports = new AuthController();
