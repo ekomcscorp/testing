@@ -1,5 +1,5 @@
 const { Model, Op, where, Transaction } = require("sequelize");
-const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses } = require("../../models");
+const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses, User } = require("../../models");
 
 class ProductRepository {
     async getAllProduct() {
@@ -39,6 +39,12 @@ class ProductRepository {
                     model: ProductNote,
                     as: "notes",
                     attributes: ["note"]
+                },
+                {
+                    model: User,
+                    as: "creator",
+                    attributes: ["id", "fullname", "username"]
+
                 }
             ],
             order: [["createdAt", "DESC"]]
@@ -105,6 +111,11 @@ class ProductRepository {
                     model: ProductNote,
                     as: "notes",
                     attributes: ["note"]
+                },
+                {
+                    model: User,
+                    as: "creator",
+                    attributes: ["id", "fullname", "username"]
                 }
         ],
         
@@ -154,13 +165,18 @@ class ProductRepository {
                     model: ProductNote,
                     as: "notes",
                     attributes: ["note"]
+                },
+                {
+                    model: User,
+                    as: "creator",
+                    attributes: ["id", "fullname", "username"]
                 }
             ],
         });
     }
 
-    async createProduct(productData) {
-        return await Product.create(productData);
+    async createProduct(productData, option = {}) {
+        return await Product.create(productData, option);
     }
     async deleteProduct(id) {
         return await Product.destroy({ where: {id}});

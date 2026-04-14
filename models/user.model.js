@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = (models) => {
       User.belongsTo(models.Userlevel, { foreignKey: 'id_level', as: 'level' });
+      User.hasMany(models.Product, {
+        foreignKey: "user_id",
+        as: "products"
+      });
     }
   
     return User;

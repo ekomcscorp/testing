@@ -114,6 +114,12 @@ class ProductController {
   // Create new product
   async createProduct(req, res) {
   try {
+    const userId = req.session?.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+    
+    console.log("SESSION USER:", req.session?.user);
     // console.log("BODY:", req.body);
     // console.log("FILES:", req.files);
     let hotels = JSON.parse(req.body.hotels || "[]");
@@ -139,16 +145,16 @@ class ProductController {
       notes: JSON.parse(req.body.notes || "[]"),
     };
 
-    // Validasi status
-    const validStatuses = ['draft', 'publish', 'closed'];
-    if (productData.status && !validStatuses.includes(productData.status?.toLowerCase())) {
-        return res.status(400).json({ 
-            success: false, 
-            message: `Invalid status. Allowed values: ${validStatuses.join(', ')}` 
-        });
-    }
+    // // Validasi status
+    // const validStatuses = ['draft', 'publish', 'closed'];
+    // if (productData.status && !validStatuses.includes(productData.status?.toLowerCase())) {
+    //     return res.status(400).json({ 
+    //         success: false, 
+    //         message: `Invalid status. Allowed values: ${validStatuses.join(', ')}` 
+    //     });
+    // }
 
-    const product = await productService.createProduct(productData);
+    const product = await productService.createProduct(productData, userId);
 
     res.status(201).json({
       success: true,
@@ -170,6 +176,10 @@ class ProductController {
   async updateProduct(req, res) {
     try {
         const { id } = req.params;
+        const userId = req.session?.user?.id;
+        if (!userId) {
+          return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
 
         // ✅ Parse hotels dulu untuk inject image
         let hotels = JSON.parse(req.body.hotels || "[]");

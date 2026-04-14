@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
             key: 'id'
             }
         },
+        user_id:{
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: "tbl_user",
+                key: "id"
+            }
+        },
         nama_produk: {
             type: DataTypes.STRING(255),
             allowNull: false,
@@ -93,6 +101,10 @@ module.exports = (sequelize, DataTypes) => {
             as: 'itinerary',
             onDelete: 'CASCADE'
        });
+      Product.belongsTo(models.User, {
+            foreignKey: "user_id",
+            as: "creator"
+      })
     }
 
 

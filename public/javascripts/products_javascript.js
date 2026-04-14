@@ -45,18 +45,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 },
                 {
-                    data: "thumbnail_url", title: "Thumbnail", 
-                    className: "pl-5 border border-b",
-                    render: function(data) {
-                        if(data) {
-                            const safeUrl = encodeURIComponent(data);
-                            return `<img src="/assets/img/products/thumbnails/${safeUrl}" alt="Thumbnail"  class="w-10 h-12 object-cover">`
+                    data: null,
+                    title: "Produk", 
+                    className: "p-7 border border-b",
+                    render: function(data, type, row) {
+                        const thumbnail = row.thumbnail_url;
+                        const nama = row.nama_produk;
+                        
+                        let imgHtml = "No Image";
+                        if(thumbnail) {
+                            const safeUrl = encodeURIComponent(thumbnail);
+                            imgHtml = `<img src="/assets/img/products/thumbnails/${safeUrl}" alt="Thumbnail" class="w-10 h-12 object-cover  rounded flex-shrink-0">`;
                         }
-                        return "No Image";
+                        
+                        return `
+                            <div class="flex items-center gap-3 min-w-0">
+                                ${imgHtml}
+                                <span class="grow text-gray-900 dark:text-white break-words whitespace-normal">${nama}</span>
+                            </div>
+                        `;
                     }
                 },
                 {
-                    data: "nama_produk", title: "Nama Produk", className: "pl-5  font-semibold text-gray-900 dark:text-white border border-b"
+                  data: "user_id",
+                  title: "Added By",
+                  className: "pl-2  text-gray-500 dark:text-white border border-b",
+                  render: function(data, type,row,){
+                    if(!data) return "<span class='text-gray-400'>-</span>";
+                    return `<span>${row.creator.fullname}</span>`;
+                  }
                 },
                 {
                     data: "prices", // Ini akan mengambil seluruh array 'prices'
