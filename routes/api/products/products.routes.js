@@ -50,7 +50,7 @@ router.get("/",  productController.getAllProduct);
 router.get("/datatables",  productController.getAllProductsDatatables);
 router.get("/:id", productController.getProductById);
 router.get("/:id/flights/", productFlightController.getFlightsByProduct);
-router.get("/:id/facilities/", productFacilityController.getFaclitiesByProduct);
+router.get("/:id/facilities/", productFacilityController.getFacilitiesByProduct);
 router.get("/:id/hotels/", productHotelController.getHotelByProduct);
 router.get("/:id/itineraries/", productItineraryController.getItinerariesByProduct);
 router.get("/:id/notes/", productNoteController.getNotesByProduct);

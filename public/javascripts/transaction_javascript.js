@@ -82,10 +82,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (data === "FAILED") {
                   badgeClass = 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400';
                   isDot = 'bg-red-600';
+                } else if (data === "UNPAID") {
+                  badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-red-400';
+                  isDot = 'bg-amber-600';
                 } else {
                   // PENDING
-                  badgeClass = 'bg-yellow-500/20 text-yellow-600';
-                  isDot = 'bg-yellow-400';
+                  badgeClass = 'bg-cyan-500/20 text-cyan-600';
+                  isDot = 'bg-cyan-400';
                 }
                 
                 return `
