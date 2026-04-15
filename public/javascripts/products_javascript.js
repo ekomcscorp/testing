@@ -138,7 +138,11 @@ document.addEventListener("DOMContentLoaded", () => {
       window.productTable.search(this.value).draw();
     });
 
-          function renderPagination() {
+     window.productTable.on('init.dt draw.dt', function () {
+        renderPagination();
+    });
+
+   function renderPagination() {
     var info = window.productTable.page.info();
     var currentPage = info.page;
     var totalPages = info.pages;
@@ -202,9 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // renderPagination();
-  window.productTable.on('init.dt draw.dt', function () {
-    renderPagination();
-  });
+ 
 
 });
 
