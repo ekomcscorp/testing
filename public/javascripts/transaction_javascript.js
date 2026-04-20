@@ -59,7 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             },
             { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border border-b font-bold text-sm text-gray-900 dark:text-gray-400" },
-            { data: 'name', title: "Jama'ah", className: "p-2 border border-b text-gray-500 dark:text-white"  },
+            { data: 'user_id', title: "Jama'ah", className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row){
+              if(!data) return "N/A";if(!data) return "<span class='text-gray-400'>-</span>";
+              return `<span>${row.user.fullname}</span>`
+            } },
             { data: 'amount', title: 'Amount', className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row) {
                 if(!data) return "Rp 0";
                 

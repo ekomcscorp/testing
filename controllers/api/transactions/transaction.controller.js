@@ -81,13 +81,13 @@ class TransactionController {
 
   async createTransaction(req, res) {
     try {
-      const requiredFields = ["name", "transaction_date", "amount"];
+      const requiredFields = ["user_id", "product_id", "amount"];
       if (!requiredFields.every((field) => req.body[field])) {
-        return response.error(res, "Semua field wajib diisi", 400);
+        return response.error(res, "user_id, product_id, dan amount wajib diisi", 400);
       }
 
       const transaction = await transactionRepo.createTransaction(req.body);
-      return response.success(res, "Transaction created", transaction);
+      return response.success(res, "Transaksi berhasil dibuat", transaction);
     } catch (error) {
       return response.error(res, error.message);
     }
@@ -104,8 +104,7 @@ class TransactionController {
       await transactionRepo.updateTransaction(id, req.body);
       return res.status(200).json({
         success: true,
-        message: "Transaction updated successfully",
-        data: { message: "Transaksi berhasil diupdate" },
+        message: "Transaksi berhasil diupdate",
       });
     } catch (error) {
       return res.status(400).json({

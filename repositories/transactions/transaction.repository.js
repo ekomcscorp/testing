@@ -1,9 +1,25 @@
 const { Model, Op } = require("sequelize"); // Import Op for Sequelize operators
-const { Transaction } = require("../../models");
+const { Transaction, Product, User} = require("../../models");
 
 class TransactionRepository {
     async getAllTransactions() {
-        return await Transaction.findAll();
+        return await Transaction.findAll({
+            include: [
+                {
+                    model: Product,
+                    as: "product",
+                    attributes: ["id", "nama_produk", "tgl_keberangkatan"]
+                },
+                {
+                    model: User,
+                    as: "user",
+                    attributes: [
+                     "id", "fullname", "username"
+                    ]
+                }
+            ],
+            order: [["created_at", "DESC"]]
+        });
     }
 
     async countAll() {
@@ -14,12 +30,9 @@ class TransactionRepository {
         const where = {
             ...(search && {
             [Op.or]: [
-                { name: { [Op.like]: `%${search}%`} },
-                { transaction_date: { [Op.like]: `%${search}%`} },
                 { transaction_no: { [Op.like]: `%${search}%`} },
                 { amount: { [Op.like]: `%${search}%`} },
                 { status: { [Op.like]: `%${search}%`} },
-
             ]
             }) 
         };
@@ -34,6 +47,18 @@ class TransactionRepository {
 
         const result = await Transaction.findAndCountAll({
             where,
+            include: [
+                {
+                    model: Product,
+                    as: "product",
+                    attributes: ["id", "nama_produk", "tgl_keberangkatan"]
+                },
+                {
+                    model: User,
+                    as: "user",
+                    attributes: ["id", "fullname", "username"]
+                }
+            ],
             order: sort,
             offset,
             limit
@@ -43,7 +68,20 @@ class TransactionRepository {
     }
 
     async getTransactionById(id) {
-        return await Transaction.findByPk(id);
+        return await Transaction.findByPk(id, {
+            include: [
+                {
+                    model: Product,
+                    as: "product",
+                    attributes: ["id", "nama_produk", "tgl_keberangkatan"]
+                },
+                {
+                    model: User,
+                    as: "user",
+                    attributes: ["id", "fullname", "username"]
+                }
+            ]
+        });
     }
     
     async createTransaction(transactionData) {

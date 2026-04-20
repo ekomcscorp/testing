@@ -5,9 +5,21 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true,
         },
-        name: {
-            type: DataTypes.STRING(100),
+        user_id: {
+            type: DataTypes.INTEGER,
             allowNull: false,
+            references: {
+                model: "tbl_user",
+                key: "id"
+            }
+        },
+        product_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: "product",
+                key: "id"
+            }
         },
         transaction_no: {
             type: DataTypes.STRING,
@@ -52,9 +64,21 @@ module.exports = (sequelize, DataTypes) => {
             // Atau bisa pakai random generator
             const randomDigits = Math.floor(1000 + Math.random() * 9000); // 4 angka acak
             transaction.transaction_no = `TRX-${Date.now()}${randomDigits}`;
+            }
         }
+    })
+
+    Transaction.associate = (models) => {
+        Transaction.belongsTo(models.User, {
+            foreignKey: "user_id",
+            as: "user"
+        });
+        Transaction.belongsTo(models.Product, {
+            foreignKey: "product_id",
+            as: "product"
+        });
     }
-    });
+
     return Transaction;
 }
 
