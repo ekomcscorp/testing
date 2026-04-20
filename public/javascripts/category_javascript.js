@@ -1,72 +1,126 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+     const tableEl = document.getElementById("galleryCategories");
+  if (!tableEl) return;
 
-   const table = $('#galleryCategories').DataTable({
-      processing: true,
-      serverSide: true,
-      responsive: true,
-      scrollX: false,
-      autowidth: true,
-      info: false,
-      paginate: true,
-      //optimasi
-      lengthMenu: [
-      [5, 10, 50],
-      [5, 10, 50]
-      ],
-      dom: "t",
-      ajax: {
-        url: '/api/category/datatables', // Backend endpoint
-        type: 'GET',
-        dataSrc: (json) => json.data
-      },
-      columns: [
-        {
-          data: 'id',
-          className: "p-2 text-center border",
-          render: function (data, type, row) {
-            let buttons = `<div class="flex items-center justify-center gap-2">`;
+  try {
+    const res = await fetch("/api/category/datatables");
+    const json = await res.json();
 
-            if (row.akses && row.akses.edit) {
-              buttons += `
-                <button onclick="editCategory(${row.id})"  class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 transition-colors galleryCategoryEdit"  title="Edit" style="scale: 0.9">
-                        <i class="ph-bold ph-pencil-simple text-lg"></i>
-                    </button>`;
-            }
-            if (row.akses && row.akses.delete) {
-              buttons += `
-                <button onclick="deleteCategory(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 transition-colors galleryCategoryDelete"" title="Hapus" style="scale: 0.9">
-                        <i class="ph-bold ph-trash text-lg"></i>
-                    </button>`;
-            }
-            buttons += `</div>`;
-            return buttons;
-          }
-        },
-        { 
-          data: 'name', title: 'Nama Kategori', className: "p-2 font-semibold text-gray-900 dark:text-white border" 
-        },
-        { data: 'slug', title: 'Slug',
-          className: "p-2 border",
-          render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` 
-        },
-      ],
-      columnDefs: [
-        // { responsivePriority: 1, targets: 0 }, // Title
-        // { responsivePriority: 2, targets: 1 }, // Image URL
-        // { responsivePriority: 3, targets: 5 },  // Action
-        // { targets: 0, width: '20%' }, // Set width for the first column (Title)
-        // { targets: 1, width: '15%' }, // Set width for the second column (Image URL)
-        // { targets: 2, width: '25%' }, // Set width for the third column (Description)
-        // { targets: 3, width: '40%' }, // Set width for the fourth column (Category ID)
-        // { targets: 4, width: '15%' }, // Set width for the fifth column (Created At)
-        // { targets: 5, width: '30%' }  // Set width for the sixth column (Action)
-      ],
-      drawCallback: function () {
-        // Force redraw untuk sync header & body
-        $($.fn.dataTable.tables(true)).DataTable()
-          .columns.adjust();
+    const rows = json.data || [];
+
+    const data = rows.map((row) => {
+      let buttons = `<div class="flex justify-center gap-2">`;
+
+      if (row.akses?.edit) {
+        buttons += `
+          <button onclick="editCategory(${row.id})"
+            class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">
+            <i class="ph-bold ph-pencil-simple"></i>
+          </button>`;
       }
+
+      if (row.akses?.delete) {
+        buttons += `
+          <button onclick="deleteCategory(${row.id})"
+            class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+            <i class="ph-bold ph-trash"></i>
+          </button>`;
+      }
+
+      buttons += `</div>`;
+
+      return [
+        buttons,
+        `<span class="font-semibold text-gray-900 dark:text-white">${row.name}</span>`,
+        `<span class="px-2 py-1 text-xs font-mono bg-gray-100 dark:bg-gray-700 rounded">${row.slug}</span>`
+      ];
     });
+
+    new DataTable(tableEl, {
+      data: {
+        headings: ["Action", "Nama", "Slug"],
+        data: data
+      },
+      searchable: true,
+      sortable: true,
+      paging: true,
+      perPage: 5,
+      perPageSelect: [5, 10, 15, 20],
+      columns: [
+        { select: 0, sortable: false } // disable sort di action
+      ]
+    });
+
+  } catch (err) {
+    console.error("Gagal load data:", err);
+  }
+  //  const table = $('#galleryCategories').DataTable({
+  //     processing: true,
+  //     serverSide: true,
+  //     responsive: true,
+  //     scrollX: false,
+  //     autowidth: true,
+  //     info: false,
+  //     paginate: true,
+  //     //optimasi
+  //     lengthMenu: [
+  //     [5, 10, 50],
+  //     [5, 10, 50]
+  //     ],
+  //     dom: "t",
+  //     ajax: {
+  //       url: '/api/category/datatables', // Backend endpoint
+  //       type: 'GET',
+  //       dataSrc: (json) => json.data
+  //     },
+  //     columns: [
+  //       {
+  //         data: 'id',
+  //         className: "p-2 text-center border",
+  //         render: function (data, type, row) {
+  //           let buttons = `<div class="flex items-center justify-center gap-2">`;
+
+  //           if (row.akses && row.akses.edit) {
+  //             buttons += `
+  //               <button onclick="editCategory(${row.id})"  class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 transition-colors galleryCategoryEdit"  title="Edit" style="scale: 0.9">
+  //                       <i class="ph-bold ph-pencil-simple text-lg"></i>
+  //                   </button>`;
+  //           }
+  //           if (row.akses && row.akses.delete) {
+  //             buttons += `
+  //               <button onclick="deleteCategory(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 transition-colors galleryCategoryDelete"" title="Hapus" style="scale: 0.9">
+  //                       <i class="ph-bold ph-trash text-lg"></i>
+  //                   </button>`;
+  //           }
+  //           buttons += `</div>`;
+  //           return buttons;
+  //         }
+  //       },
+  //       { 
+  //         data: 'name', title: 'Nama Kategori', className: "p-2 font-semibold text-gray-900 dark:text-white border" 
+  //       },
+  //       { data: 'slug', title: 'Slug',
+  //         className: "p-2 border",
+  //         render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` 
+  //       },
+  //     ],
+  //     columnDefs: [
+  //       // { responsivePriority: 1, targets: 0 }, // Title
+  //       // { responsivePriority: 2, targets: 1 }, // Image URL
+  //       // { responsivePriority: 3, targets: 5 },  // Action
+  //       // { targets: 0, width: '20%' }, // Set width for the first column (Title)
+  //       // { targets: 1, width: '15%' }, // Set width for the second column (Image URL)
+  //       // { targets: 2, width: '25%' }, // Set width for the third column (Description)
+  //       // { targets: 3, width: '40%' }, // Set width for the fourth column (Category ID)
+  //       // { targets: 4, width: '15%' }, // Set width for the fifth column (Created At)
+  //       // { targets: 5, width: '30%' }  // Set width for the sixth column (Action)
+  //     ],
+  //     drawCallback: function () {
+  //       // Force redraw untuk sync header & body
+  //       $($.fn.dataTable.tables(true)).DataTable()
+  //         .columns.adjust();
+  //     }
+  //   });
     
 
     function renderPagination() {
