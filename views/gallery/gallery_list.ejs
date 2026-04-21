@@ -1,18 +1,18 @@
 <div class="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth">
   <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Daftar Kategori</h2>
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Daftar Gallery</h2>
       <nav class="flex text-sm text-gray-500 dark:text-gray-400 mt-1">
         <a href="#" class="hover:text-primary-500 transition-colors">Dashboard</a>
         <span class="mx-2">/</span>
-        <span class="text-gray-800 dark:text-gray-200">Categories</span>
+        <span class="text-gray-800 dark:text-gray-200">Gallery</span>
       </nav>
     </div>
 
-    <button onclick="openCategoryModal()"
+    <button onclick="openGalleryModal()"
       class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors shadow-lg shadow-primary-500/30">
       <i class="ph ph-plus text-lg"></i>
-      <span>Tambah Kategori</span>
+      <span>Tambah Gallery</span>
     </button>
   </div>
 
@@ -38,22 +38,24 @@
         </div>
         <div class="relative w-full md:w-72">
           <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-          <input type="text" id="customSearchInput" placeholder="Cari kategori..."
+          <input type="text" id="customSearchInput" placeholder="Cari Gallery..."
             class="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder-gray-400">
         </div>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="galleryCategories">
+        <table class="w-full text-left border-collapse" id="gallery">
           <thead>
             <tr
               class="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-dark-border text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">
               <th class="p-5 w-24 text-center">Action</th>
-              <th class="p-5 whitespace-nowrap">Nama Kategori</th>
-              <th class="p-5 whitespace-nowrap">Slug</th>
+              <th class="p-5 whitespace-nowrap">Title</th>
+              <th class="p-5 whitespace-nowrap">Path</th>
+              <th class="p-5 whitespace-nowrap">Gambar</th>
+              <th class="p-5 whitespace-nowrap">Dibuat Pada</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-dark-border" id="galleryCategories">
+          <tbody class="divide-y divide-gray-100 dark:divide-dark-border">
           </tbody>
         </table>
       </div>
@@ -77,46 +79,82 @@
     </div>
   </div>
 </div>
-<div id="categoryModal" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true">
+
+<div id="galleryModal" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" id="menuModalBackdrop"></div>
   <div class="fixed inset-0 z-10 overflow-y-auto">
     <div class="flex min-h-full items-center justify-center p-4">
       <div
         class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:w-full sm:max-w-lg">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
-          <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modalTitle">Form Category</h3>
-          <button type="button" onclick="closeCategoryModal()"
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modalTitle">Form Gallery</h3>
+          <button type="button" onclick="closeGalleryModal()"
             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <i class="ph ph-x text-xl"></i>
           </button>
         </div>
+        <form id="galleryForm" class="p-6 space-y-5" enctype="multipart/form-data">
+          <input type="hidden" name="id" id="hidden_id_gallery">
 
-        <form id="categoryForm" class="p-6 space-y-4">
-          <input type="hidden" name="id" id="hidden_id_category">
-
+          <!-- TITLE -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kategori</label>
-            <input type="text" id="name"
-              class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug</label>
-            <input type="text" id="slug"
-              class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none transition-all dark:text-white">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              Title
+            </label>
+            <input type="text" id="title" placeholder="Masukkan title gallery..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 
+                bg-white dark:bg-dark-card text-gray-800 dark:text-white 
+                focus:ring-2 focus:ring-primary-500 outline-none transition">
           </div>
 
+          <!-- UPLOAD GAMBAR -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Upload Gambar
+            </label>
+
+            <div id="uploadBox" class="flex flex-col items-center justify-center border-2 border-dashed 
+                border-gray-300 dark:border-gray-600 rounded-xl p-6 cursor-pointer 
+                hover:border-primary-500 transition text-center">
+
+              <input type="file" id="imageInput" accept="image/*" class="hidden">
+
+              <i class="ph ph-image text-3xl text-gray-400 mb-2"></i>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Klik atau drag gambar ke sini
+              </p>
+              <p class="text-xs text-gray-400 mt-1">
+                PNG / JPG / JPEG
+              </p>
+
+              <!-- PREVIEW -->
+              <img id="previewImage" class="mt-4 hidden max-h-40 rounded-lg shadow">
+            </div>
+          </div>
         </form>
-
         <div
           class="bg-gray-50 dark:bg-slate-800/50 px-6 py-4 flex justify-end gap-3 border-t border-gray-100 dark:border-dark-border">
-          <button onclick="closeCategoryModal()"
+          <button onclick="closeGalleryModal()"
             class="px-5 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Batal</button>
-          <button id="submitCategoryBtn"
+          <button id="submitGalleryBtn"
             class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-primary-500/30">
             Simpan Perubahan
           </button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="imageModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white dark:bg-gray-800 rounded-xl p-4 max-w-lg w-full relative">
+
+    <!-- Tombol Close -->
+    <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl">
+      ✖
+    </button>
+
+    <!-- Gambar -->
+    <img id="modalImage" src="" alt="Preview" class="w-full rounded-lg">
+
   </div>
 </div>
