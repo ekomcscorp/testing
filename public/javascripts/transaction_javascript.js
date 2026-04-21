@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     buttons += `
                         <button
                             class="p-1.5 rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
-                            title="Detail" onclick="viewTransactionDetail(${row.id})"><i class="ph-bold ph-eye text-base"></i>
+                            title="Detail" "><a href = "/detail_transaction" ><i class="ph-bold ph-eye text-base"></i></a>
                         </button>
                     `
 
@@ -242,7 +242,7 @@ window.editTransaction = async function(id) {
       // Populate form
       document.getElementById("hidden_id").value = transaction.id;
       document.getElementById("transaction_no").value = transaction.transaction_no;
-      document.getElementById("name").value = transaction.name;
+      document.getElementById("name").value = transaction.user.fullname;
       document.getElementById("amount").value = transaction.amount;
       document.getElementById("payment_method").value = transaction.payment_method || '';
       document.getElementById("status").value = transaction.status;
