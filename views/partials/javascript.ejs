@@ -6,7 +6,7 @@
 <!-- jQuery Scrollbar -->
 <script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
-<script src="/assets/js/plugin/jquery-ui/jquery-ui.min.js"></script>
+<!-- <script src="/assets/js/plugin/jquery-ui/jquery-ui.min.js"></script> -->
 
 <!-- Chart JS -->
 <!-- <script src="/assets/js/plugin/chart.js/chart.min.js"></script> -->
@@ -298,45 +298,45 @@
                         confirmPassword: confirmPassword
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Response data:", data);
-                    if (data.success) {
-                        // Buka Modal Sukses
-                        const successModal = document.getElementById('success-modal');
-                        const successBackdrop = document.getElementById('success-backdrop');
-                        const successPanel = document.getElementById('success-panel');
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Response data:", data);
+                        if (data.success) {
+                            // Buka Modal Sukses
+                            const successModal = document.getElementById('success-modal');
+                            const successBackdrop = document.getElementById('success-backdrop');
+                            const successPanel = document.getElementById('success-panel');
 
-                        successModal.classList.remove('hidden');
+                            successModal.classList.remove('hidden');
 
-                        // Animasi Masuk
-                        setTimeout(() => {
-                            successBackdrop.classList.remove('opacity-0');
-                            successBackdrop.classList.add('opacity-100');
-                            successPanel.classList.remove('opacity-0', 'scale-95');
-                            successPanel.classList.add('opacity-100', 'scale-100');
-                        }, 10);
+                            // Animasi Masuk
+                            setTimeout(() => {
+                                successBackdrop.classList.remove('opacity-0');
+                                successBackdrop.classList.add('opacity-100');
+                                successPanel.classList.remove('opacity-0', 'scale-95');
+                                successPanel.classList.add('opacity-100', 'scale-100');
+                            }, 10);
 
-                        // Reset Form
-                        document.getElementById('changePasswordForm').reset();
+                            // Reset Form
+                            document.getElementById('changePasswordForm').reset();
 
-                        // Tutup Otomatis setelah 2 detik
-                        setTimeout(() => {
-                            closeSuccessModal();
-                        }, 2000);
-                    } else {
-                        console.error("Error from server:", data);
-                        alert(data.message || "Gagal mengubah password");
+                            // Tutup Otomatis setelah 2 detik
+                            setTimeout(() => {
+                                closeSuccessModal();
+                            }, 2000);
+                        } else {
+                            console.error("Error from server:", data);
+                            alert(data.message || "Gagal mengubah password");
+                            // Buka kembali modal jika ada error
+                            openChangePasswordModal();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        alert("Terjadi kesalahan: " + error.message);
                         // Buka kembali modal jika ada error
                         openChangePasswordModal();
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    alert("Terjadi kesalahan: " + error.message);
-                    // Buka kembali modal jika ada error
-                    openChangePasswordModal();
-                });
+                    });
             }
 
             function closeSuccessModal() {
