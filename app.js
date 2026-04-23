@@ -57,7 +57,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // 📄 Parsing Middleware
 app.use(cors({
-  origin: "*", // Sementara dan Ganti dengan origin frontend Anda
+  origin: "http://localhost:3000", // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
