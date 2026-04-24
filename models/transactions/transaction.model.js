@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         product_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: "product",
                 key: "id"
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             unique: true
         },
-        amount: {
+        total_price: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -60,10 +60,10 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
         hooks: {
         beforeCreate: (transaction, options) => {
-            // Contoh format: TRX-1703951234 (TRX + Timestamp)
-            // Atau bisa pakai random generator
-            const randomDigits = Math.floor(1000 + Math.random() * 9000); // 4 angka acak
-            transaction.transaction_no = `TRX-${Date.now()}${randomDigits}`;
+            // Format: TRX-123452026 (5 random digits + year)
+            const randomDigits = Math.floor(10000 + Math.random() * 90000); // 5 angka acak
+            const year = new Date().getFullYear();
+            transaction.transaction_no = `TRX-${randomDigits}${year}`;
             }
         }
     })
@@ -76,6 +76,10 @@ module.exports = (sequelize, DataTypes) => {
         Transaction.belongsTo(models.Product, {
             foreignKey: "product_id",
             as: "product"
+        });
+        Transaction.hasMany(models.TransactionDetail, {
+            foreignKey: "transaction_id",
+            as: "details"
         });
     }
 

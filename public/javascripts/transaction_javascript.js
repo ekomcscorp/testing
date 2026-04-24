@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
       paginate: true,
       lengthMenu: [
         [
-        10, 25, 50, 100, -1
+        5, 10, 25, 50
         ],
         [
-          5, 10, 25, 50, 100, "All"
+          5, 10, 25, 50
         ]
       ],
       dom: "t",
@@ -34,19 +34,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     let buttons = `<div class="d-flex gap-2 justify-content-center">`;
 
                     buttons += `
-                        <button
-                            class="p-1.5 rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
-                            title="Detail" "><a href = "/detail_transaction" ><i class="ph-bold ph-eye text-base"></i></a>
-                        </button>
-                    `
+                        <a href="/detail_transaction/${row.id}">
+                            <button class="p-1.5 rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100">
+                                <i class="ph-bold ph-eye text-base"></i>
+                            </button>
+                        </a>
+                    `;
 
-                    if (row.akses?.edit) {
-                        buttons += `
-                             <button
-                                class="p-1.5 rounded-lg text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20"
-                                title="Edit" onclick="editTransaction(${row.id})"><i class="ph-bold ph-pencil-simple text-base"></i>
-                            </button>`;
-                    }
+                    // if (row.akses?.edit) {
+                    //     buttons += `
+                    //          <button
+                    //             class="p-1.5 rounded-lg text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20"
+                    //             title="Edit" onclick="editTransaction(${row.id})"><i class="ph-bold ph-pencil-simple text-base"></i>
+                    //         </button>`;
+                    // }
                     if (row.akses?.delete) {
                         buttons += `
                             <button
@@ -63,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
               if(!data) return "N/A";if(!data) return "<span class='text-gray-400'>-</span>";
               return `<span>${row.user.fullname}</span>`
             } },
-            { data: 'amount', title: 'Amount', className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row) {
+            { data: 'total_price', title: 'Total Harga', className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row) {
                 if(!data) return "Rp 0";
                 
                 const formattedAmount = new Intl.NumberFormat('id-ID', {
@@ -231,32 +232,32 @@ window.viewTransactionDetail = async function(id) {
 }
 
 // FUNCTION EDIT
-window.editTransaction = async function(id) {
-  try {
-    const res = await fetch(`/api/transactions/${id}`);
-    const json = await res.json();
+// window.editTransaction = async function(id) {
+//   try {
+//     const res = await fetch(`/api/transactions/${id}`);
+//     const json = await res.json();
 
-    if(json.success) {
-      const transaction = json.data;
+//     if(json.success) {
+//       const transaction = json.data;
       
-      // Populate form
-      document.getElementById("hidden_id").value = transaction.id;
-      document.getElementById("transaction_no").value = transaction.transaction_no;
-      document.getElementById("name").value = transaction.user.fullname;
-      document.getElementById("amount").value = transaction.amount;
-      document.getElementById("payment_method").value = transaction.payment_method || '';
-      document.getElementById("status").value = transaction.status;
+//       // Populate form
+//       document.getElementById("hidden_id").value = transaction.id;
+//       document.getElementById("transaction_no").value = transaction.transaction_no;
+//       document.getElementById("name").value = transaction.name;
+//       document.getElementById("total_price").value = transaction.total_price;
+//       document.getElementById("payment_method").value = transaction.payment_method || '';
+//       document.getElementById("status").value = transaction.status;
       
-      document.getElementById("modalTitle").innerText = 'Edit Transaksi';
-      openTransactionModal();
-    } else {
-      swal("Gagal", json.message || "Terjadi kesalahan saat mengambil data", "error");
-    }
-  } catch (error) {
-    console.error("Error fetching transaction data:", error);
-    swal("Error", "Gagal mengambil data", "error");
-  }
-}
+//       document.getElementById("modalTitle").innerText = 'Edit Transaksi';
+//       openTransactionModal();
+//     } else {
+//       swal("Gagal", json.message || "Terjadi kesalahan saat mengambil data", "error");
+//     }
+//   } catch (error) {
+//     console.error("Error fetching transaction data:", error);
+//     swal("Error", "Gagal mengambil data", "error");
+//   }
+// }
 
 // FUNCTION DELETE
 window.deleteTransaction = async function(id) {
@@ -331,13 +332,13 @@ async function handleTransactionSubmit(e) {
   const id = document.getElementById("hidden_id").value;
   const payload = {
     name: document.getElementById("name").value,
-    amount: document.getElementById("amount").value,
+    total_price: document.getElementById("total_price").value,
     payment_method: document.getElementById("payment_method").value,
     status: document.getElementById("status").value
   };
 
   // Validasi
-  if (!payload.name || !payload.amount) {
+  if (!payload.name || !payload.total_price) {
     swal("Validasi", "Nama dan Jumlah harus diisi!", "warning");
     return;
   }
@@ -368,3 +369,29 @@ async function handleTransactionSubmit(e) {
     swal("Error!", "Gagal menghubungi server", "error");
   }
 }
+
+function openApproveModal() {
+    document.getElementById('approvePaymentModal').classList.remove('hidden');
+}
+
+function closeApproveModal() {
+    document.getElementById('approvePaymentModal').classList.add('hidden');
+}
+
+// Tambahkan event listener untuk tombol Konfirmasi
+document.getElementById('confirmApproveBtn').addEventListener('click', async function() {
+    this.disabled = true;
+    this.innerHTML = "Processing...";
+    
+    try {
+        // Panggil API approve kamu di sini
+        // const response = await fetch(`/api/transactions/approve/${id}`, { method: 'POST' });
+        
+       swal("Berhasil!", "Pembayaran berhasil diapprove", "success");
+       setTimeout(() => location.reload(), 1500); // Refresh halaman untuk update status
+    } catch (error) {
+        swal("Gagal!", "Terjadi kesalahan saat mengapprove pembayaran", "error");
+        this.disabled = false;
+        this.innerHTML = "Ya, Approve";
+    }
+});

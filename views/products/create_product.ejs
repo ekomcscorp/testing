@@ -86,7 +86,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maskapai Keberangkatan<span class="text-danger">*</span></label>
                     <div class="relative">
-                        <i class="ph ph-airplane-takeoff absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <i class="ph ph-airplane-takeoff absolute left-4 bottom-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" required id="flight_kbrkt" name="flight_kbrkt" placeholder="Contoh: Garuda Indonesia"
                             class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
                     </div>
@@ -94,7 +94,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maskapai Kepulangan<span class="text-danger">*</span></label>
                     <div class="relative">
-                        <i class="ph ph-airplane-landing absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <i class="ph ph-airplane-landing absolute bottom-3 left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" required id="flight_kplg" name="flight_kplg" placeholder="Contoh: Saudi Arabian Airlines"
                             class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
                     </div>
@@ -134,7 +134,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Image Hotel<span class="text-danger">*</span></label>
-                        <input type="file" id="hotel_mekkah_image" name="hotel_mekkah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                        <div class="flex justify-start">
+                            <i class="ph ph-image text-3xl"></i>
+                            <input type="file" id="hotel_mekkah_image" name="hotel_mekkah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                       
+                        </div>
+                        
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -167,7 +172,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Image Hotel<span class="text-danger">*</span></label>
-                        <input type="file" id="hotel_madinah_image" name="hotel_madinah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                        <div class="flex justify-start">
+                             <i class="ph ph-image text-3xl"></i>
+                            <input type="file" id="hotel_madinah_image" name="hotel_madinah_image" onchange="validateFileExtension(this)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700" >
+                        </div>
+                        
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>

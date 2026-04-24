@@ -43,22 +43,21 @@ module.exports = (sequelize, DataTypes) => {
     },
 
 
-    hotel_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-
-    hotel_city: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    hotels_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
     },
 
 
-    airline_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    flights_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
     },
 
+    travel_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
 
     departure_date: {
       type: DataTypes.DATE,
@@ -75,7 +74,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-
+    // invoice_no: {
+    //     type: DataTypes.STRING,
+    //     allowNull: true,
+    //     unique: true
+    // },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -91,6 +94,12 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
+    hooks: {
+        beforeCreate: (transactionDetail, options) => {
+            const numberInvoice = Math.floor(10 + Math.random() * 90);
+            transactionDetail.invoice_no =  `INV/${Date.now()}/UMR/${numberInvoice}`;
+        }
+    }
   });
 
   // 🔗 RELATION

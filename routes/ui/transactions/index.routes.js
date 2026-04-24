@@ -8,7 +8,7 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
         const transactions = await Transaction.getAllTransactions();
 
         res.render("home", {
-            link: "transaction/transaction_list",
+            link: "transactions/transaction_list",
             jslink: "javascripts/transaction_javascript.js",
             user: req.session.user,
             username: req.session.user?.username || "Guest",

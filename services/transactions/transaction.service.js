@@ -1,77 +1,115 @@
-// const TransactionRepository = require("../../repositories/transactions/transaction.repository");
+const { sequelize, Transaction, TransactionDetail } = require("../../models"); // Import model di sini
+const transactionRepo = require("../../repositories/transactions/transaction.repository");
+const productRepo = require("../../repositories/products/product.repository");
 
-// class TransactionService {
-//     async getAllTransactions() {
-//         const transactions = await TransactionRepository.getAllTransactions();
-//         return transactions || [];
-//     }
-    
-//     async getTransactionById(id) {
-//         try{
-//             const transaction = await TransactionRepository.getTransactionById(id);
-//             return transaction || null;
-//         } catch (error) {
-//             throw new Error(error.message)
-//         }
-//     }
+class TransactionService {
+   async checkout(payload) {
+    const { user_id, items, payment_method } = payload;
 
-//     async getAllTransactionDatatables(query) {
-//         const { draw, start, length, search, order, columns} = query;
-//         const searchValue =
-//             query.search?.value ||
-//             query['search[value]'] ||
-//             "";
+    // 1. Validasi Baru: Cek user_id dan pastikan array items ada isinya
+    if (!user_id || !items || !Array.isArray(items) || items.length === 0) {
+        throw new Error("Data user_id dan daftar items wajib diisi");
+    }
 
-//         const [result, totalCount] = await Promise.all ([ TransactionRepository.getPaginatedTransaction({
-//             start: parseInt(start, 10) || 0,
-//             length: parseInt(length, 10) || 10,
-//             search: searchValue,
-//             order,
-//             columns
-//         }),
-//         TransactionRepository.countAll(),
-//     ]);
+    const t = await sequelize.transaction();
 
-//         return {
-//             draw: parseInt(draw, 10),
-//             recordsTotal: totalCount,
-//             recordsFiltered: result.count,
-//             data: result.rows
-//         }
-//     }
+    try {
+        let totalTransactionPrice = 0;
+        const detailsToCreate = [];
 
-//     async createTransaction(transactionData) {
-//         try {
-//             const requiredFields = ["name", "transaction_date", "amount"];
+        // 2. Looping untuk validasi tiap item di dalam array
+        for (const item of items) {
+            // Validasi tiap item harus punya product_id dan room_type
+            if (!item.product_id || !item.room_type) {
+                throw new Error("Setiap item harus memiliki product_id dan room_type");
+            }
+
+            const product = await productRepo.getProductById(item.product_id);
+            if (!product) throw new Error(`Product ID ${item.product_id} tidak ditemukan`);
+
+            const selectedPrice = product.prices.find(p => p.room_types === item.room_type);
+            if (!selectedPrice) throw new Error(`Tipe kamar ${item.room_type} tidak tersedia untuk ${product.nama_produk}`);
+
+            // ... (lanjutkan proses mapping snapshot seperti yang kita bahas sebelumnya)
             
-//             if (!requiredFields.every(field => transactionData[field])) {
-//                 throw new Error("Semua field wajib diisi"); // Validasi input
-//             }
+            const hotelsSnapshot = product.hotels?.map(h => ({
+                name: h.name, city: h.city, rating: h.rating
+            })) || [];
 
-//             const newTransaction = await TransactionRepository.createTransaction(transactionData);
-//             return newTransaction;
-//         } catch (error) {
-//             throw new Error(error.message);
-//         }
-//     }
+            const flightsSnapshot = product.flights?.map(f => ({
+                airline_name: f.airline_name, type: f.type
+            })) || [];
 
-//     async updateTransaction(id, transactionData) {
-//             const transaction = await TransactionRepository.getTransactionById(id);
-//             if(!transaction){
-//                 throw new Error("Transaksi tidak ditemukan");
-//             }
-//             await TransactionRepository.updateTransaction(id, transactionData);
-//             return {message: "Transaksi berhasil diupdate"};
-//     }
+            const travelSnapshot = {
+                fullname: product.creator?.fullname,
+            };
 
-//     async deleteTransaction(id){
-//             const transaction = await TransactionRepository.getTransactionById(id);
-//             if(!transaction){
-//                 throw new Error("Transaksi tidak ditemukan");
-//             }
-//             await TransactionRepository.deleteTransaction(id);
-//             return { message: "Transaksi berhasil dihapus" };
-//     }
-// }
+            totalTransactionPrice += selectedPrice.price;
 
-// module.exports = new TransactionService();
+            detailsToCreate.push({
+                user_id: user_id,
+                product_id: product.id,
+                product_name: product.nama_produk,
+                price: selectedPrice.price,
+                room_type: item.room_type,
+                hotels_snapshot: JSON.stringify(hotelsSnapshot),
+                flights_snapshot: JSON.stringify(flightsSnapshot),
+                travel_snapshot: JSON.stringify(travelSnapshot),
+                departure_date: product.tgl_keberangkatan,
+                duration: product.duration,
+                subtotal: selectedPrice.price
+            });
+        }
+
+        // 3. Simpan Header Transaksi
+        const transaction = await transactionRepo.createTransaction({
+            user_id,
+            total_price: totalTransactionPrice,
+            status: "UNPAID",
+            payment_method: payment_method || 'TRANSFER'
+        }, { transaction: t });
+
+        // 4. Pasangkan ID Transaksi ke Detail
+        const finalDetails = detailsToCreate.map(detail => ({
+            ...detail,
+            transaction_id: transaction.id
+        }));
+
+        // 5. Simpan semua detail (Bulk Create)
+        await transactionRepo.createBulkTransactionDetail(finalDetails, { transaction: t });
+
+        await t.commit();
+        return transaction;
+
+    } catch (error) {
+        await t.rollback();
+        throw error;
+    }
+}
+   
+    async getAllTransactionDatatables(query) {
+        const { draw, start, length, order, columns } = query;
+        const search = query["search[value]"] || query.search?.value || "";
+
+        // Menggunakan repository untuk mengambil data paginated
+        const [result, totalCount] = await Promise.all([
+            transactionRepo.getPaginatedTransaction({
+                start: parseInt(start) || 0,
+                length: parseInt(length) || 10,
+                search,
+                order,
+                columns,
+            }),
+            transactionRepo.countAll(),
+        ]);
+
+        return {
+            draw: parseInt(draw) || 0,
+            recordsTotal: totalCount,
+            recordsFiltered: result.count,
+            data: result.rows
+        };
+    }
+}
+
+module.exports = new TransactionService();
