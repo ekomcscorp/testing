@@ -5,20 +5,27 @@ document.addEventListener("DOMContentLoaded", () => {
         responsive: false,
         scrollX: false,
         autowidth: true,
-        dom: "t",
         info: false,
-        paginate: true,
-        order:[],
-        lengthMenu: [
-          [10, 25, 50,],
-           [10, 25, 50,]
-        ],
+        language: {
+          zeroRecords: "Tidak ada kategori yang ditemukan",
+          processing: "Memuat..."
+        },
+        layout: {
+          topEnd: {
+              features: {
+                  search: {
+                      placeholder: 'Cari kategori...'
+                  }
+              }
+          },
+          bottomEnd: 'paging',
+        },
          ajax: {
             url: "/api/products/datatables", // Backend endpoint
             type: "GET",
             // dataSrc: (json) => json.data,
         },
-        lengthChange: false,
+
         columns: [
             {
                 data: "id",

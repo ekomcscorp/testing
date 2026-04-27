@@ -8,16 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
       scrollX: false,
       autowidth: true,
       info: false,
-      paginate: true,
-      lengthMenu: [
-        [
-        5, 10, 25, 50
-        ],
-        [
-          5, 10, 25, 50
-        ]
-      ],
-      dom: "t",
+      language: {
+        zeroRecords: "Tidak ada kategori yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari kategori...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
         ajax: {
             url: '/api/transactions/datatables', // Backend endpoint
             type: 'GET',

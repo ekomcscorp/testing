@@ -6,13 +6,20 @@ document.addEventListener("DOMContentLoaded", () => {
     responsive: false,
     scrollX: false,
     autowidth: true,
-    dom: "t",
-    info: false,
-    paginate: true,
-    lengthMenu: [[
-        5, 10, 25, 50, 100, -1],
-        [5, 10, 25, 50, 100, "All"]
-    ],
+    language: {
+        zeroRecords: "Tidak ada User yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari User...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
     ajax: {
       url: "/api/user/datatables", // Backend endpoint
       type: "GET",

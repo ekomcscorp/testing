@@ -61,14 +61,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       responsive: true,
       scrollX: false,
       autowidth: true,
-      info: false,
-      paginate: true,
-      //optimasi
-      lengthMenu: [
-      [5, 10, 50],
-      [5, 10, 50]
-      ],
-      dom: "t",
+      language: {
+        zeroRecords: "Tidak ada Gallery yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari Gallery...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
       ajax: {
         url: '/api/gallery/datatables', // Backend endpoint
         type: 'GET',

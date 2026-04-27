@@ -7,12 +7,20 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollX: false,
     autoWidth: true,
     info:false,
-    paginate: true,
-    dom: "t",
-    lengthMenu: [[
-        5, 10, 25, 50, 100, -1],
-        [5, 10, 25, 50, 100, "All"]
-      ],
+    language: {
+        zeroRecords: "Tidak ada Menu yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari Menu...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
     ajax: {
       url: "/api/menu/parent/datatables",
       type: "GET",

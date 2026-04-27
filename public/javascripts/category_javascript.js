@@ -1,60 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  //    const tableEl = document.getElementById("galleryCategories");
-  // if (!tableEl) return;
-
-  // try {
-  //   const res = await fetch("/api/category/datatables");
-  //   const json = await res.json();
-
-  //   const rows = json.data || [];
-
-  //   const data = rows.map((row) => {
-  //     let buttons = `<div class="flex justify-center gap-2">`;
-
-  //     if (row.akses?.edit) {
-  //       buttons += `
-  //         <button onclick="editCategory(${row.id})"
-  //           class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">
-  //           <i class="ph-bold ph-pencil-simple"></i>
-  //         </button>`;
-  //     }
-
-  //     if (row.akses?.delete) {
-  //       buttons += `
-  //         <button onclick="deleteCategory(${row.id})"
-  //           class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
-  //           <i class="ph-bold ph-trash"></i>
-  //         </button>`;
-  //     }
-
-  //     buttons += `</div>`;
-
-  //     return [
-  //       buttons,
-  //       `<span class="font-semibold text-gray-900 dark:text-white">${row.name}</span>`,
-  //       `<span class="px-2 py-1 text-xs font-mono bg-gray-100 dark:bg-gray-700 rounded">${row.slug}</span>`
-  //     ];
-  //   });
-
-  //   new DataTable(tableEl, {
-  //     data: {
-  //       headings: ["Action", "Nama", "Slug"],
-  //       data: data
-  //     },
-  //     searchable: true,
-  //     sortable: true,
-  //     paging: true,
-  //     perPage: 5,
-  //     perPageSelect: [5, 10, 15, 20],
-  //     columns: [
-  //       { select: 0, sortable: false } // disable sort di action
-  //     ]
-  //   });
-
-  // } catch (err) {
-  //   console.error("Gagal load data:", err);
-  // }
-  
    const table = $('#galleryCategories').DataTable({
       processing: true,
       serverSide: true,
@@ -62,13 +6,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       scrollX: false,
       autowidth: true,
       info: false,
-      paginate: true,
+      language: {
+        zeroRecords: "Tidak ada kategori yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari kategori...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
+       // Server-side processing
+
       //optimasi
-      lengthMenu: [
-      [5, 10, 50],
-      [5, 10, 50]
-      ],
-      dom: "t",
+      // lengthMenu: [
+      // [5, 10, 50],
+      // [5, 10, 50]
+      // ],,
       ajax: {
         url: '/api/category/datatables', // Backend endpoint
         type: 'GET',
@@ -98,9 +56,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         },
         { 
-          data: 'name', title: 'Nama Kategori', className: "p-2 font-semibold text-gray-900 dark:text-white border" 
+          data: 'name', className: "p-2 font-semibold text-gray-900 dark:text-white border" 
         },
-        { data: 'slug', title: 'Slug',
+        { data: 'slug', 
           className: "p-2 border",
           render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` 
         },

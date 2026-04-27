@@ -12,16 +12,25 @@ document.addEventListener("DOMContentLoaded", () => {
         processing: true,
         serverSide: true,
         responsive: true,
-        dom: "t",
-        info: false,
-        paginate: true,
         ajax: {
             url: "/api/userlevel/datatables",
             type: "GET",
             dataSrc: (json) => json.data,
         },
-        lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
-        order: [[1, "asc"]],
+        language: {
+            zeroRecords: "Tidak ada Userlevel yang ditemukan",
+            processing: "Memuat..."
+        },
+        layout: {
+            topEnd: {
+                features: {
+                    search: {
+                        placeholder: 'Cari Userlevel...'
+                    }
+                }
+            },
+            bottomEnd: 'paging',
+        },
         columns: [
             {
                 data: "id_level",

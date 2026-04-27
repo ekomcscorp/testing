@@ -6,13 +6,20 @@ $(document).ready(function() {
         responsive: true,
         scrollX: false,
         autoWidth: true,
-        paginate: true,
-        dom: "t",
-        info:false,
-        lengthMenu: [[
-        5, 10, 25, 50, 100, -1],
-        [5, 10, 25, 50, 100, "All"]
-         ],
+       language: {
+        zeroRecords: "Tidak ada Submenu yang ditemukan",
+        processing: "Memuat..."
+      },
+      layout: {
+         topEnd: {
+            features: {
+                search: {
+                    placeholder: 'Cari Submenu...'
+                }
+            }
+        },
+        bottomEnd: 'paging',
+      },
         ajax: {
             url: "/api/menu/submenu/datatables", // Sesuaikan endpoint backend
             type: "GET",
