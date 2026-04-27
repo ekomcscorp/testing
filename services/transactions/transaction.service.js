@@ -110,6 +110,35 @@ class TransactionService {
             data: result.rows
         };
     }
+
+    async updatePayment(id, payload) {
+        const checktTransaction = await transactionRepo.getTransactionById(id);
+        if(!checktTransaction){
+            throw new Error("Transaksi tidak ditemukan");
+        }
+
+        await transactionRepo.updateTransaction(id, {
+            evidence_url: payload.evidence_url,
+            status: 'PENDING',
+            updated_at: new Date()  
+        })
+
+        return await transactionRepo.getTransactionById(id);
+    }
+
+    async updateStatus(id, newStatus) {
+        const checkTransaction = await transactionRepo.getTransactionById(id);
+        if(!checkTransaction){
+            throw new Error("Transaksi tidak ditemukan");
+        }
+
+        await transactionRepo.updateTransaction(id, {
+            status: newStatus,
+            updated_at: new Date()
+        });
+
+        return await transactionRepo.getTransactionById(id);
+    }
 }
 
 module.exports = new TransactionService();

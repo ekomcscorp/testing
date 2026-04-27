@@ -105,7 +105,58 @@ class TransactionController {
     } catch (error) {
         res.status(500).send(error.message);
     }
-} 
+}   
+  async uploadPayment(req, res){
+    try{
+      const {id} = req.params;
+
+      let evidence_url = null;
+      let status = req.body.status || 'PENDING';
+
+      if (req.file) {
+        evidence_url = req.file.filename;
+      } else if (req.body.evidence_url) {         
+          evidence_url = req.body.evidence_url;
+      }
+
+      if (!evidence_url) {
+            return res.status(400).json({
+                status: "error",
+                message: "Bukti transfer (evidence) wajib diunggah"
+            });
+        }
+
+        const result = await transactionService.updatePayment(id, {
+            evidence_url: evidence_url,
+            status: "PENDING" // Status baru menunggu dicek admin
+        });
+
+        return res.status(200).json({
+            status: "success",
+            message: "Pembayaran berhasil diupdate"
+        });
+    } catch (error) {
+      return res.status(500).json({ status: "error", message: error.message });
+    
+    }
+  }
+  
+    async approvePayment(req, res) {
+      try {
+          const { id } = req.params;
+
+          // Panggil service dengan status 'PAID' atau 'SUCCESS'
+          await transactionService.updateStatus(id, 'SUCCESS');
+
+          return res.status(200).json({
+              status: "success",
+              message: "Status transaksi berhasil diperbarui menjadi PAID"
+          });
+      } catch (error) {
+          return res.status(500).json({ status: "error", message: error.message });
+      }
+  }
+
   async deleteTransaction(req, res){
     try { 
       const {id} = req.params;
