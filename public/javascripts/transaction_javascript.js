@@ -9,14 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
       autowidth: true,
       info: false,
       language: {
-        zeroRecords: "Tidak ada kategori yang ditemukan",
+        zeroRecords: "Tidak ada Transaksi yang ditemukan",
         processing: "Memuat..."
       },
       layout: {
          topEnd: {
             features: {
                 search: {
-                    placeholder: 'Cari kategori...'
+                    placeholder: 'Cari Transaksi...'
                 }
             }
         },
