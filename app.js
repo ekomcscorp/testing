@@ -56,8 +56,19 @@ app.use(express.static(path.join(__dirname, "public")));
 // });
 
 // 📄 Parsing Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://mediumspringgreen-meerkat-585223.hostingersite.com/"
+];
+
 app.use(cors({
-  origin: "http://localhost:3000", // Ganti dengan origin frontend Anda
+  origin: function(origin, callback){
+    if(!origin || allowedOrigins.includes(origin)){
+      callback(null, true)
+    }else{
+       callback(new Error("Not allowed by CORS"));
+    }
+  }, // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
