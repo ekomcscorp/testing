@@ -57,13 +57,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
-    if(!origin || allowedOrigins.includes(origin)){
-      callback(null, true)
-    } else {
-      callback(new Error("CORS not allowed"));
-    }
-  }, // Ganti dengan origin frontend Anda
+  origin: "http://localhost:3000", // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
