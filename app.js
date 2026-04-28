@@ -16,7 +16,7 @@ const io = new Server(server); // Socket.IO instance
 const { setIO } = require("./utils/socketIO");
 setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
 
-
+app.set("trust proxy", 1);
 
 // Buat satu instance sessionMiddleware
 const sessionMiddleware = session({
@@ -25,7 +25,8 @@ const sessionMiddleware = session({
   saveUninitialized: false, // disarankan untuk keamanan & efisiensi
   cookie: { 
     secure: true, 
-    httpOnly: true 
+    httpOnly: true,
+    sameSite: 'lax'
   }, // kalau di production, ganti jadi true + pakai https
 });
 
