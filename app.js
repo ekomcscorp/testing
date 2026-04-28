@@ -16,27 +16,17 @@ const io = new Server(server); // Socket.IO instance
 const { setIO } = require("./utils/socketIO");
 setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
 
-// ===> PASANG socket handler
-// const socketHandler = require("./utils/socket");
-// socketHandler(io); // aktifkan socket listener
-// <===
 
-// 🧠 Session setup
-// app.use(
-//   session({
-//     secret: "rahasia_kamu",
-//     resave: false,a
-//     saveUninitialized: true,
-//     cookie: { secure: false },
-//   })
-// );
 
 // Buat satu instance sessionMiddleware
 const sessionMiddleware = session({
   secret: "rahasia_kamu",
   resave: false,
   saveUninitialized: false, // disarankan untuk keamanan & efisiensi
-  cookie: { secure: false, httpOnly: true }, // kalau di production, ganti jadi true + pakai https
+  cookie: { 
+    secure: true, 
+    httpOnly: true 
+  }, // kalau di production, ganti jadi true + pakai https
 });
 
 // Pakai di HTTP routes (Express)
