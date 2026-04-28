@@ -30,6 +30,7 @@ const sessionMiddleware = session({
   cookie: { 
     secure: isProduction, 
     httpOnly: true,
+    sameSite: "lax"
   }, // kalau di production, ganti jadi true + pakai https
 });
 
@@ -56,7 +57,13 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins, // Ganti dengan origin frontend Anda
+  origin: function(origin, callback){
+    if(!origin || allowedOrigins.includes(origin)){
+      callback(null, true)
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  }, // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
