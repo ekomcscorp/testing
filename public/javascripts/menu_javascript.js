@@ -90,85 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-     
-    $('#entriesSelect').on('change', function () {
-      table.page.len($(this).val()).draw();
-    });
-
-    // Custom Search bar logic
-  document.querySelector('input[placeholder="Cari menu..."]').addEventListener('keyup', function() {
-    table.search(this.value).draw();
-  });
-
-
-  function renderPagination() {
-    var info = table.page.info();
-    var currentPage = info.page;
-    var totalPages = info.pages;
-
-    // INFO TEXT
-    var start = info.start + 1;
-    var end = info.end;
-    var total = info.recordsTotal;
-
-    $('#customTableInfo').html(
-      `Menampilkan <span class="font-semibold text-gray-900 dark:text-white">${start}-${end}</span> 
-       dari <span class="font-semibold text-gray-900 dark:text-white">${total}</span> level`
-    );
-
-    // PAGINATION BUTTONS
-    var paginationHtml = '';
-
-    // PREV
-    paginationHtml += `
-      <button 
-        ${currentPage === 0 ? 'disabled' : ''}
-        onclick="goToPage(${currentPage - 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
-        text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
-        disabled:opacity-50 transition-colors">
-        Prev
-      </button>
-    `;
-
-    // NUMBER BUTTONS
-    for (let i = 0; i < totalPages; i++) {
-      paginationHtml += `
-        <button 
-          onclick="goToPage(${i})"
-          class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
-          ${i === currentPage 
-            ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-            : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
-          ${i + 1}
-        </button>
-      `;
-    }
-
-    // NEXT
-    paginationHtml += `
-      <button 
-        ${currentPage === totalPages - 1 ? 'disabled' : ''}
-        onclick="goToPage(${currentPage + 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
-        text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
-        disabled:opacity-50 transition-colors">
-        Next
-      </button>
-    `;
-
-    $('#customPagination').html(paginationHtml);
-  }
-
-  window.goToPage = function (page) {
-    table.page(page).draw('page');
-  };
-
-  renderPagination();
-  table.on('draw.dt', function () {
-    renderPagination();
-  });
-
   // 2. CREATE ATAU UPDATE LOGIC
   document.getElementById("submitMenuBtn").addEventListener("click", async () => {
     const id = document.getElementById("hidden_id_menu").value;
@@ -260,7 +181,7 @@ function deleteMenu(id) {
         const res = await fetch(`/api/menu/${id}`, { method: "DELETE" });
         const data = await res.json();
 
-        if (data.status === "success") {
+        if (res.ok) {
           swal("Terhapus!", data.message, "success");
           $("#menuTable").DataTable().ajax.reload();
         } else {

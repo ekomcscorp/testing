@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return buttons;
         },
       },
-      { data: "fullname", title: "Nama Lengkap", className: "font-semibold text-gray-900 dark:text-white p-2 border" },
+      { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border" },
       { data: "username", title: "Username", className: "p-2 border", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
       { data: "level.nama_level",
         title: "ID Level", className: "p-2 border font-semibold text-gray-900 dark:text-white",
