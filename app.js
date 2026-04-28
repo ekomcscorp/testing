@@ -1,4 +1,7 @@
-// require('dotenv').config();
+require('dotenv').config({
+  path: process.env.NODE_ENV === "production" ? '.env' : '.env.local',
+  override: true
+});
 
 const express = require("express");
 const session = require("express-session");
@@ -17,6 +20,7 @@ const { setIO } = require("./utils/socketIO");
 setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
 
 app.set("trust proxy", 1);
+const isProduction = process.env.NODE_ENV === "production";
 
 // Buat satu instance sessionMiddleware
 const sessionMiddleware = session({
@@ -24,7 +28,7 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false, // disarankan untuk keamanan & efisiensi
   cookie: { 
-    secure: false, 
+    secure: isProduction, 
     httpOnly: true,
   }, // kalau di production, ganti jadi true + pakai https
 });
@@ -52,7 +56,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: "http://localhost:3000", // Ganti dengan origin frontend Anda
+  origin: allowedOrigins, // Ganti dengan origin frontend Anda
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Agar cookie session bisa dipakai
 }));
