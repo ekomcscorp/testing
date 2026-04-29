@@ -53,6 +53,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // 📄 Parsing Middleware
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://127.0.0.1:8000",
   "https://mediumspringgreen-meerkat-585223.hostingersite.com",
   "https://gold-lark-507177.hostingersite.com"
 ];
