@@ -112,7 +112,7 @@ class TransactionRepository {
                         {
                             model: User,
                             as: 'creator', 
-                            attributes: ['fullname', 'address']
+                            attributes: ['fullname', ]
                         }
                     ]
                 },

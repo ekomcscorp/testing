@@ -58,7 +58,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  unction (origin, callback) {
+  function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       return callback(new Error('CORS policy blokir origin ini'), false);

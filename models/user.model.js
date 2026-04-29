@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      role: {
+        type: DataTypes.STRING(45),
+        allowNull:true,
+      },
       is_active: {
         type: DataTypes.ENUM('Y', 'N'),
         allowNull: true,
@@ -70,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "transactions"
       });
+      User.hasMany(models.Profile, {
+        foreignKey: "user_id",
+        as: "profile"
+      })
     }
   
     return User;
