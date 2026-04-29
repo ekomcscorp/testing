@@ -15,7 +15,8 @@ class TransactionController {
   }
   async getTransactionById(req, res) {
     try{
-      const result = await transactionRepo.getTransactionById();
+      const {id} = req.params;
+      const result = await transactionRepo.getTransactionById(id);
       return response.success(res, "Data berhasil diambil", result)
     } catch (error) {
       return response.error(res, error.message)
@@ -79,33 +80,23 @@ class TransactionController {
     try {
         const { id } = req.params;
         // Gunakan Repo yang sudah kita buat sebelumnya
-        // Ingat: findByPk ini sudah include TransactionDetail (snapshot)
+        // Repository sudah otomatis parse snapshots
         const transaction = await transactionRepo.getTransactionById(id);
 
         if (!transaction) {
             return res.status(404).send("Transaksi tidak ditemukan");
         }
 
-        if (transaction.details && transaction.details.length > 0) {
-            transaction.details.forEach(detail => {
-                if (typeof detail.flights_snapshot === 'string') {
-                    detail.flights_snapshot = JSON.parse(detail.flights_snapshot);
-                }
-                if (typeof detail.hotels_snapshot === 'string') {
-                    detail.hotels_snapshot = JSON.parse(detail.hotels_snapshot);
-                }
-                if (typeof detail.travel_snapshot === 'string') {
-                    detail.travel_snapshot = JSON.parse(detail.travel_snapshot);
-                }
-            });
-        }
-
-        // Render file EJS dan kirim variabel 'data'
-       res.render("transactions/detail_transaction", { data: transaction });
+        // Snapshots sudah di-parse oleh repository
+        res.render("transactions/detail_transaction", {
+            transaction: transaction
+        });
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error("Error rendering detail page:", error);
+        res.status(500).send("Error: " + error.message);
     }
-}   
+  }
+
   async uploadPayment(req, res){
     try{
       const {id} = req.params;
@@ -140,7 +131,7 @@ class TransactionController {
     
     }
   }
-  
+
     async approvePayment(req, res) {
       try {
           const { id } = req.params;
@@ -150,7 +141,7 @@ class TransactionController {
 
           return res.status(200).json({
               status: "success",
-              message: "Status transaksi berhasil diperbarui menjadi PAID"
+              message: "Status transaksi berhasil diperbarui menjadi SUCCESS"
           });
       } catch (error) {
           return res.status(500).json({ status: "error", message: error.message });

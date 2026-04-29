@@ -1,6 +1,45 @@
 const { Op } = require("sequelize"); 
 const { Transaction, User, TransactionDetail, Product } = require("../../models");
 
+// Helper function untuk parse JSON snapshots
+const parseSnapshots = (detail) => {
+    if (!detail) return detail;
+    
+    const parsed = detail.get ? detail.get({ plain: true }) : { ...detail };
+    
+    // Parse travel_snapshot
+    if (parsed.travel_snapshot && typeof parsed.travel_snapshot === 'string') {
+        try {
+            parsed.travel_snapshot = JSON.parse(parsed.travel_snapshot);
+        } catch (e) {
+            console.warn('Failed to parse travel_snapshot:', e.message);
+            parsed.travel_snapshot = {};
+        }
+    }
+    
+    // Parse flights_snapshot
+    if (parsed.flights_snapshot && typeof parsed.flights_snapshot === 'string') {
+        try {
+            parsed.flights_snapshot = JSON.parse(parsed.flights_snapshot);
+        } catch (e) {
+            console.warn('Failed to parse flights_snapshot:', e.message);
+            parsed.flights_snapshot = [];
+        }
+    }
+    
+    // Parse hotels_snapshot
+    if (parsed.hotels_snapshot && typeof parsed.hotels_snapshot === 'string') {
+        try {
+            parsed.hotels_snapshot = JSON.parse(parsed.hotels_snapshot);
+        } catch (e) {
+            console.warn('Failed to parse hotels_snapshot:', e.message);
+            parsed.hotels_snapshot = [];
+        }
+    }
+    
+    return parsed;
+};
+
 class TransactionRepository {
     // Menambahkan parameter 'transaction' (t) agar bisa digunakan di Service layer (Atomic)
     async createTransaction(data, options = {}) {
@@ -39,7 +78,7 @@ class TransactionRepository {
     }
 
     async getAllTransactions() {
-        return await Transaction.findAll({
+        const transactions = await Transaction.findAll({
             include: [
                 {
                     model: TransactionDetail,
@@ -53,10 +92,18 @@ class TransactionRepository {
             ],
             order: [["created_at", "DESC"]]
         });
+        
+        // Auto-parse snapshots in all details
+        return transactions.map(transaction => {
+            if (transaction.details) {
+                transaction.details = transaction.details.map(detail => parseSnapshots(detail));
+            }
+            return transaction;
+        });
     }
 
     async getTransactionById(id) {
-        return await Transaction.findByPk(id, {
+        const transaction = await Transaction.findByPk(id, {
             include: [
                 {
                     model: Product,
@@ -81,6 +128,13 @@ class TransactionRepository {
                 }
             ]
         });
+        
+        // Auto-parse snapshots in details
+        if (transaction && transaction.details) {
+            transaction.details = transaction.details.map(detail => parseSnapshots(detail));
+        }
+        
+        return transaction;
     }
 
     async getPaginatedTransaction({ start, length, search, order, columns }) {
@@ -116,8 +170,19 @@ class TransactionRepository {
             limit: parseInt(length) || 10,
             distinct: true // Penting saat menggunakan include + limit agar count tidak kacau
         });
+        
+        // Auto-parse snapshots in all rows
+        const parsedRows = result.rows.map(transaction => {
+            if (transaction.details) {
+                transaction.details = transaction.details.map(detail => parseSnapshots(detail));
+            }
+            return transaction;
+        });
 
-        return result;
+        return {
+            ...result,
+            rows: parsedRows
+        };
     }
 
     async countAll() {
