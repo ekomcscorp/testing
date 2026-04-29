@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('Y', 'N'),
         allowNull: true,
       },
+      app: {
+        type: DataTypes.ENUM('N', 'Y'),
+        allowNull: true,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
