@@ -4761,6 +4761,15 @@ input:checked + .toggle-bg {
 .dt-search {
   position: relative;
   width: 100%;
+  border: 1px solid rgb(209 213 219);
+  border-radius: 10px;
+}
+.dt-search label {
+  display: none;
+}
+.dt-search input {
+  border: none;
+  width: 90%;
 }
 
 @media (min-width: 768px) {
