@@ -11,7 +11,7 @@ class ProductFlightRepository {
         });
     }
 
-    async deleteByProduct(productId, options) {
+    async deleteByProduct(productId, options = {}) {
         return await ProductFlight.destroy({
         where: { product_id: productId },
         ...options

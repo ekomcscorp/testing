@@ -9,7 +9,7 @@ class ProductFacilityRepository {
       where: { product_id: productId },
     });
   }
-  async deleteByProduct(productId, options  = null) {
+  async deleteByProduct(productId, options  = {}) {
     return await ProductFacility.destroy({
       where: { product_id: productId },
       ...options ,

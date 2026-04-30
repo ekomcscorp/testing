@@ -24,7 +24,7 @@ class ProductFacilityService {
     async replaceFacility(productId, facilities, transaction = null) {
         if (!facilities || facilities.length === 0) return [];
 
-        await ProductFacilityRepository.deleteByProduct(productId, transaction);
+        await ProductFacilityRepository.deleteByProduct(productId, {transaction});
 
         const facilityPayload = facilities.map(f => ({
             product_id: productId, 
@@ -32,7 +32,7 @@ class ProductFacilityService {
             type: f.type
         }));
 
-        return await ProductFacilityRepository.create(facilityPayload, transaction);
+        return await ProductFacilityRepository.create(facilityPayload, {transaction});
     }
 }
 
