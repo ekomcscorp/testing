@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
       responsive: true,
       scrollX: false,
       autowidth: true,
-      info: false,
       language: {
         zeroRecords: "Tidak ada Transaksi yang ditemukan",
         processing: "Memuat..."

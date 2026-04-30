@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       responsive: true,
       scrollX: false,
       autowidth: true,
-      info: false,
       language: {
         zeroRecords: "Tidak ada kategori yang ditemukan",
         processing: "Memuat..."

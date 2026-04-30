@@ -41,6 +41,44 @@ try {
 
 }
 
+async apiLogin(req, res) {
+  const username = req.body.username || req.body.email;
+  const password = req.body.password;
+
+  console.log("🟡 API Login attempt:", req.body);
+
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Ada data yang belum diisi"
+    });
+  }
+
+  try {
+    const { user } = await authService.login(username, password);
+
+    // kalau marketplace butuh session juga:
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      fullname: user.fullname,
+      id_level: user.id_level,
+    };
+
+    return res.json({
+      success: true,
+      message: "Login berhasil",
+      user
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+}
+
 async registerUser(req, res) {
 console.log("🟡 Register attempt:", req.body.username);
 

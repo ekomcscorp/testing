@@ -4756,6 +4756,18 @@ input:checked + .toggle-bg {
   forced-color-adjust: none;
 }
 
+/* .dt-search {
+  position: relative;
+  width: 100%;
+  border: 1px solid rgb(209 213 219);
+  border-radius: 10px;
+}
+.dt-search label {
+  display: none;
+}
+.dt-search input {
+  border: none
+} */
 /* Custom Flowbite overrides if needed */
 
 .dt-search {
@@ -4768,8 +4780,7 @@ input:checked + .toggle-bg {
   display: none;
 }
 .dt-search input {
-  border: none;
-  width: 90%;
+  border: none
 }
 
 @media (min-width: 768px) {

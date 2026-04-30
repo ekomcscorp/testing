@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
         responsive: false,
         scrollX: false,
         autowidth: true,
-        info: false,
         language: {
           zeroRecords: "Tidak ada Produk yang ditemukan",
           processing: "Memuat..."

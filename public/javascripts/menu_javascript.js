@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     responsive: true,
     scrollX: false,
     autoWidth: true,
-    info:false,
     language: {
         zeroRecords: "Tidak ada Menu yang ditemukan",
         processing: "Memuat..."
