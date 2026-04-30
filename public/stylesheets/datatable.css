@@ -8,5 +8,12 @@
   display: none;
 }
 .dt-search input {
+  width: 90%;
   border: none
 }
+
+.dt-paging a {
+    border-radius: 10px;
+    margin: 0 1px;
+}
+

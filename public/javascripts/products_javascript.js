@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: null,
                     title: "Produk", 
-                    className: "p-7 border border-b",
+                    className: "p-2 border border-b",
                     render: function(data, type, row) {
                         const thumbnail = row.thumbnail_url;
                         const nama = row.nama_produk;
