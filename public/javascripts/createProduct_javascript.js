@@ -109,9 +109,9 @@ document.addEventListener("DOMContentLoaded", async function() {
              console.log(`🖼️ Image ${h.city}:`, h.image);
             if (h.city === "Mekkah") {
                 // Hotel Mekkah
-                $("#hotel_mekkah input[name='include']").val(h.name);
+                $("#hotel_mekkah input[name='include']:first").val(h.name);
                 $("#hotel_mekkah select").val(h.rating);
-                $("#hotel_mekkah input[placeholder='50m']").val(h.jarak);
+                $("#jarak_mekkah").val(h.jarak);
                 $('#mekkah_fclty').val(h.facilities);
                 // Preview image if needed
                 ProductHotelState.Mekkah = { 
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 // Hotel Madinah
                 $("#hotel_madinah input[name='exclude']").val(h.name);
                 $("#hotel_madinah select").val(h.rating);
-                $("#hotel_madinah input[placeholder='100m']").val(h.jarak);
+                $("#jarak_madinah").val(h.jarak);
                 $('#madinah_fclty').val(h.facilities);
                 ProductHotelState.Madinah = { 
                     name: h.name, 
@@ -436,14 +436,14 @@ document.addEventListener("DOMContentLoaded", async function() {
         const mekkahRoot = document.getElementById("hotel_mekkah");
         ProductHotelState.Mekkah.name = mekkahRoot.querySelector("input[name='include']").value;
         ProductHotelState.Mekkah.rating = mekkahRoot.querySelector("select").value;
-        ProductHotelState.Mekkah.jarak = mekkahRoot.querySelector("input[placeholder='50m']").value;
+        ProductHotelState.Mekkah.jarak = mekkahRoot.querySelector("input[placeholder='Contoh:50m']").value;
         ProductHotelState.Mekkah.facilities = document.getElementById("mekkah_fclty").value;
 
         // Madinah
         const madinahRoot = document.getElementById("hotel_madinah");
         ProductHotelState.Madinah.name = madinahRoot.querySelector("input[name='exclude']").value;
         ProductHotelState.Madinah.rating = madinahRoot.querySelector("select").value;
-        ProductHotelState.Madinah.jarak = madinahRoot.querySelector("input[placeholder='100m']").value;
+        ProductHotelState.Madinah.jarak = madinahRoot.querySelector("input[placeholder='Contoh: 100m']").value;
         ProductHotelState.Madinah.facilities = document.getElementById("madinah_fclty").value;
     }
 
