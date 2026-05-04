@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         }
     }, {
-        tableName: 'profiles',
+        tableName: 'tbl_profile',
         timestamps: true,
         underscored: true,
         createdAt: 'created_at',

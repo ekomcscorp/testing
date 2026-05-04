@@ -2,6 +2,27 @@ document.addEventListener("DOMContentLoaded", async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
+    // --- HELPER FUNCTION: Show Hotel Image Preview ---
+    window.showHotelImagePreview = function(hotelName, file) {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const previewId = `preview_${hotelName}`;
+            const placeholderId = `hotel_${hotelName}_placeholder`;
+            
+            const previewImg = document.getElementById(previewId);
+            const placeholder = document.getElementById(placeholderId);
+
+            if (previewImg && placeholder) {
+                previewImg.src = event.target.result;
+                previewImg.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
     // --- STATES ---
     const ProductState = {
         category_id: null,
@@ -121,7 +142,13 @@ document.addEventListener("DOMContentLoaded", async function() {
                     facilities: h.facilities ,
                     existing_image: h.image || ""
                 };
-                if(h.image) $('#preview_mekkah').attr('src', `/assets/img/products/hotels/${h.image}`).show();
+                if(h.image) {
+                    const previewImg = document.getElementById('preview_mekkah');
+                    const placeholder = document.getElementById('hotel_mekkah_placeholder');
+                    previewImg.src = `/assets/img/products/hotels/${h.image}`;
+                    previewImg.classList.remove('hidden');
+                    if (placeholder) placeholder.classList.add('hidden');
+                }
             } else if (h.city === "Madinah") {
                 // Hotel Madinah
                 $("#hotel_madinah input[name='exclude']").val(h.name);
@@ -135,7 +162,13 @@ document.addEventListener("DOMContentLoaded", async function() {
                     facilities: h.facilities ,
                     existing_image: h.image || ""
                 };
-                if(h.image) $('#preview_madinah').attr('src', `/assets/img/products/hotels/${h.image}`).show();
+                if(h.image) {
+                    const previewImg = document.getElementById('preview_madinah');
+                    const placeholder = document.getElementById('hotel_madinah_placeholder');
+                    previewImg.src = `/assets/img/products/hotels/${h.image}`;
+                    previewImg.classList.remove('hidden');
+                    if (placeholder) placeholder.classList.add('hidden');
+                }
             }
         });
     }
@@ -326,8 +359,15 @@ document.addEventListener("DOMContentLoaded", async function() {
       
     });
 
-    document.getElementById("hotel_mekkah_image").addEventListener("change", (e) => hotelImageFiles.Mekkah = e.target.files[0]);
-    document.getElementById("hotel_madinah_image").addEventListener("change", (e) => hotelImageFiles.Madinah = e.target.files[0]);
+    document.getElementById("hotel_mekkah_image").addEventListener("change", (e) => {
+        hotelImageFiles.Mekkah = e.target.files[0];
+        showHotelImagePreview("mekkah", e.target.files[0]);
+    });
+    
+    document.getElementById("hotel_madinah_image").addEventListener("change", (e) => {
+        hotelImageFiles.Madinah = e.target.files[0];
+        showHotelImagePreview("madinah", e.target.files[0]);
+    });
 
     // Price Inputs (Mapping dari ID partials)
     // ['price_quad', 'price_triple', 'price_double'].forEach(id => {
