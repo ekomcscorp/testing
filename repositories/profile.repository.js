@@ -4,7 +4,7 @@ const { Profile } = require("../models")
 class ProfileRepository{
     async getProfile(userId) {
         return await Profile.findAll({
-            where: { id_user: userId },
+            where: { user_id: userId },
             include: [{
                 model: require('../models').User,
                 as: 'user',

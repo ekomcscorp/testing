@@ -12,9 +12,9 @@ const ensureAuth = (req, res, next) => {
 
 
 router.get('/my-profile', ensureAuth, profileController.getMyProfile);
-router.get('/:id', profileController.getProfileById);
-router.post('/', ensureAuth, profileController.createProfile);
-router.put('/:id', ensureAuth, profileController.updateProfile);
-router.delete('/:id', ensureAuth, profileController.deleteProfile);
+router.get('/my-profile/:id', ensureAuth,profileController.getProfileById);
+router.post('/my-profile', ensureAuth, profileController.createProfile);
+router.put('/my-profile/:id', ensureAuth, profileController.updateProfile);
+router.delete('/my-profile/:id', ensureAuth, profileController.deleteProfile);
 
 module.exports = router;

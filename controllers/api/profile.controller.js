@@ -49,8 +49,13 @@ class ProfileController {
                 return response.error(res, "Silakan login terlebih dahulu", 401);
             }
 
+            // Validasi req.body
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return response.error(res, "Body request tidak boleh kosong", 400);
+            }
+
             const userId = req.session.user.id;
-            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body;
+            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body || {};
 
             // Validasi data yang diperlukan
             if (!address) {
@@ -64,7 +69,7 @@ class ProfileController {
             }
 
             const profileData = {
-                id_user: userId,
+                user_id: userId,
                 image,
                 address,
                 jk,
@@ -88,11 +93,17 @@ class ProfileController {
     async updateProfile(req, res) {
         try {
             const { id } = req.params;
-            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body;
 
             if (!id) {
                 return response.error(res, "ID profile harus disediakan");
             }
+
+            // Validasi req.body
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return response.error(res, "Body request tidak boleh kosong", 400);
+            }
+
+            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body || {};
 
             // Cek apakah profile exist
             const profile = await profileRepo.getProfileById(id);
@@ -101,7 +112,7 @@ class ProfileController {
             }
 
             // Validasi ownership - hanya user sendiri yang bisa update profile-nya
-            if (req.session && req.session.user && req.session.user.id !== profile.id_user) {
+            if (req.session && req.session.user && req.session.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk mengubah profile ini", 403);
             }
 
@@ -146,7 +157,7 @@ class ProfileController {
             }
 
             // Validasi ownership
-            if (req.session && req.session.user && req.session.user.id !== profile.id_user) {
+            if (req.session && req.session.user && req.session.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk menghapus profile ini", 403);
             }
 

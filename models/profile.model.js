@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false
         },
-        id_user: {
+        user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Profile.associate = (models) => {
         Profile.belongsTo(models.User, {
-            foreignKey: 'id_user',
+            foreignKey: 'user_id',
             as: 'user'
         });
     };
