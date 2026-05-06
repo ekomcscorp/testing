@@ -19,7 +19,7 @@ const io = new Server(server); // Socket.IO instance
 const { setIO } = require("./utils/socketIO");
 setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
 
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 const isProduction = process.env.NODE_ENV === "production";
 
 // Buat satu instance sessionMiddleware
