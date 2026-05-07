@@ -12,7 +12,8 @@ const path = require("path");
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
 const Transaction = require("../../../repositories/transactions/transaction.repository");
 const transactionController = require("../../../controllers/api/transactions/transaction.controller");
-const { formatTransaction } = require("../../../utils/transactionFormatter")
+const { formatTransaction } = require("../../../utils/transactionFormatter");
+const { getBrowser } = require("../../../utils/browser");
 
 // router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
 //     try { 
@@ -58,9 +59,7 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
             logoPath
         });
 
-        const browser = await puppeteer.launch({
-            headless: true,
-        });
+        const browser = await getBrowser();
 
         const page = await browser.newPage();
 
@@ -92,7 +91,7 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
             }
         });
 
-        await browser.close();
+        await page.close();
 
         res.setHeader("Content-Type", "application/pdf");
 
