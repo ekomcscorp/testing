@@ -5,13 +5,13 @@ const puppeteer = require("puppeteer");
 let browserInstance = null;
 
 async function getBrowser() {
-    if (browserInstance) return browserInstance;
-
     browserInstance = await puppeteer.launch({
-        headless: true,
+        headless: "new",
         args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu"
         ]
     });
 

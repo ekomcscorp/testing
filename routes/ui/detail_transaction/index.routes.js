@@ -14,26 +14,12 @@ const Transaction = require("../../../repositories/transactions/transaction.repo
 const transactionController = require("../../../controllers/api/transactions/transaction.controller");
 const { formatTransaction } = require("../../../utils/transactionFormatter");
 const { getBrowser } = require("../../../utils/browser");
-
-// router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
-//     try { 
-//         const transactions = await Transaction.getAllTransactions();
-
-//         res.render("home", {
-//             link: "transactions/transaction_list",
-//             jslink: "/javascripts/transaction_javascript.js",
-//             user: req.user,
-//             username: req.user?.username || "Guest",
-//             fullname: req.user?.fullname || "Guest",
-//             transactions
-//         });
-//     } catch (error) {
-//         console.error("❌ Error loading transactions:", error.message);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
+const fs = require('fs');
+const logoBuffer = fs.readFileSync(path.join(process.cwd(), "public/assets/img/logo/pengenumroh.png"));
+const logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`;
 
 router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
+    let browser;
     try {
         const { id } = req.params;
 
@@ -49,23 +35,19 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
             "../../../views/transactions/invoice.ejs"
         );
 
-        const logoPath = `file://${path.join(
-            process.cwd(),
-            "../../../logo/pengenumroh.png"
-        )}`;
+ 
 
         const html = await ejs.renderFile(filePath, {
             data: transaction,
-            logoPath
+            logoPath:  logoBase64
         });
 
-        const browser = await getBrowser();
-
+        browser = await getBrowser();
         const page = await browser.newPage();
 
         // inject html
         await page.setContent(html, {
-            waitUntil: "networkidle0",
+            waitUntil: "domcontentloaded",
         });
 
         // inject tailwind css hasil build
@@ -91,7 +73,6 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
             }
         });
 
-        await page.close();
 
         res.setHeader("Content-Type", "application/pdf");
 
@@ -105,6 +86,10 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
     } catch (error) {
         console.error("❌ PDF ERROR:", error);
         res.status(500).send("Gagal generate PDF");
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
 });
 
@@ -118,20 +103,6 @@ router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, r
             return res.status(404).send("Transaksi tidak ditemukan");
         }
 
-        // Parse JSON snapshots jika masih string
-        // if (transaction.details && transaction.details.length > 0) {
-        //     transaction.details.forEach(detail => {
-        //         if (typeof detail.flights_snapshot === 'string') {
-        //             detail.flights_snapshot = JSON.parse(detail.flights_snapshot);
-        //         }
-        //         if (typeof detail.hotels_snapshot === 'string') {
-        //             detail.hotels_snapshot = JSON.parse(detail.hotels_snapshot);
-        //         }
-        //         if (typeof detail.travel_snapshot === 'string') {
-        //             detail.travel_snapshot = JSON.parse(detail.travel_snapshot);
-        //         }
-        //     });
-        // }
 
         const aksesMiddleware = res.locals.akses || {};
         const akses = {
