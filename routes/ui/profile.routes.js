@@ -8,9 +8,9 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
         res.render("home", {
             link: "profile/user_profile", // Path ke file view untuk profile
             jslink: "javascripts/profile_javascript.js", // Path ke file JavaScript khusus profile
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
         });
     } catch (error) {
         console.error("❌ Error loading profile", error.message);

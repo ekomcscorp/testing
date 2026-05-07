@@ -5,15 +5,17 @@ const loadSidebar = require("../../../middleware/loadSidebar"); // ✅
 const loadNotification = require("../../../middleware/loadNotification"); // ✅
 
 
-router.get("/", ensureAuth, loadSidebar, loadNotification, (req, res) => {
+router.get("/", loadSidebar, loadNotification, (req, res) => {
   res.render("home", {
     link: "index", // nama partial konten
-    jslink: "javascripts/javascript.js", // jika kamu load JS eksternal
-    sidebarMenus: res.locals.sidebarMenus,
-    activeMenu: res.locals.activeMenu,
-    user: req.session.user,
-    username: req.session.user?.username || "Guest",
-    fullname: req.session.user?.fullname || "Guest"
+    jslink: "javascripts/javascript.js", // load JS eksternal
+    sidebarMenus: res.locals.sidebarMenus || [],
+    activeMenu: res.locals.activeMenu || "",
+    // EJS tidak tahu usernya karena token ada di localStorage.
+    // Client script (checkAuth) yang akan nge-set profile.
+    user: req.user,
+    username: req.user?.username || "Guest",
+    fullname: req.user?.fullname || "Guest"
   });
 });
 

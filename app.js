@@ -4,7 +4,7 @@ require('dotenv').config({
 });
 
 const express = require("express");
-const session = require("express-session");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fs = require("fs");
@@ -22,31 +22,20 @@ setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
 app.set("trust proxy", true);
 const isProduction = process.env.NODE_ENV === "production";
 
-// Buat satu instance sessionMiddleware
-const sessionMiddleware = session({
-  secret: "rahasia_kamu",
-  resave: false,
-  saveUninitialized: false, // disarankan untuk keamanan & efisiensi
-  cookie: { 
-    secure: isProduction, 
-    httpOnly: true,
-    sameSite: isProduction ? "none" : "lax"
-  }, // kalau di production, ganti jadi true + pakai https
-});
-
-// Pakai di HTTP routes (Express)
-app.use(sessionMiddleware);
-
+// Socket Handler tanpa express-session
 const socketHandler = require("./utils/socket");
-socketHandler(io, sessionMiddleware); // Kirim session ke socket
+socketHandler(io); // Kirim io ke socket
+
+const extractJwt = require("./middleware/extractJwt");
+app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Header
 
 app.use(injectUser); // ⬅️ Middleware global
 app.use(express.static(path.join(__dirname, "public")));
 
 // 🌐 Middleware untuk inject data user ke view
 // app.use((req, res, next) => {
-//   res.locals.username = req.session.user?.username || null;
-//   res.locals.fullname = req.session.user?.fullname || null;
+//   res.locals.username = req.user?.username || null;
+//   res.locals.fullname = req.user?.fullname || null;
 //   next();
 // });
 
@@ -59,7 +48,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  function (origin, callback) {
+  function(origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       return callback(new Error('CORS policy blokir origin ini'), false);
@@ -96,7 +85,7 @@ function loadUiRoutes(basePath, parentRoute = "") {
     if (stat.isDirectory()) {
       // masuk folder → jadi endpoint
       loadUiRoutes(fullPath, path.join(parentRoute, file));
-    } 
+    }
     else if (file.endsWith(".routes.js")) {
 
       const route = require(fullPath);
@@ -127,7 +116,7 @@ const loadApiRoutes = (dir, baseRoute = "") => {
 
     if (stat.isDirectory()) {
       loadApiRoutes(fullPath, path.join(baseRoute, file));
-    } 
+    }
     else if (file.endsWith(".routes.js")) {
 
       const route = require(fullPath);

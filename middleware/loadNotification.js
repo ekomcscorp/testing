@@ -3,7 +3,7 @@ const { UserNotification, User } = require("../models"); // atau import sesuai s
 
 module.exports = async function loadNotification(req, res, next) {
   try {
-    const user = req.session.user;
+    const user = req.user;
 
     // Jika bukan admin, skip
     if (!user || user.id_level !== 1) {

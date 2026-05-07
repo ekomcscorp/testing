@@ -13,9 +13,9 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
             link: "userlevel/userlevel_list",
             jslink: "javascripts/userlevel_javascript.js",
             // jslink2: "javascripts/userAkses_javascript.js",
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
             userlevel,
             users
         });
@@ -28,7 +28,7 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
 router.get("/userAkses/:id_level", auth.ensureAuth, loadSidebar, async (req, res) => {
     try {
         const users = await UserService.getAllUsers();
-        const {id_level} = req.params;
+        const { id_level } = req.params;
         const userlevel = await UserlevelService.getAllUserlevel();
 
         // console.log("AKSES MENU:");
@@ -41,9 +41,9 @@ router.get("/userAkses/:id_level", auth.ensureAuth, loadSidebar, async (req, res
         res.render("home", {
             link: "userlevel/userAkses",
             jslink: "javascripts/javascript.js",
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
             users,
             userlevel,
             id_level

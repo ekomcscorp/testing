@@ -73,7 +73,10 @@
             document.addEventListener("DOMContentLoaded", function () {
                 const socket = io();
 
-                socket.emit("init_user");
+                const token = localStorage.getItem("token");
+                if (token) {
+                    socket.emit("init_user", token);
+                }
 
                 socket.on("joined_admin_room", () => {
                     console.log("✅ Admin joined room");
@@ -503,8 +506,51 @@
             document.getElementById('currentYear').textContent = new Date().getFullYear();
         </script>
 
+
         <script>
-            
+            async function checkAuth() {
+
+                const token = localStorage.getItem("token");
+
+                // ❌ kalau token gak ada
+                if (!token) {
+                    window.location.href = "/login";
+                    return;
+                }
+
+                try {
+
+                    const res = await fetch("/api/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                    });
+
+                    // ❌ token invalid
+                    if (!res.ok) {
+                    localStorage.removeItem("token");
+
+                    window.location.href = "/login";
+                    return;
+                    }
+
+                    const data = await res.json();
+
+                    console.log("User login:", data.user);
+
+                } catch (err) {
+                    console.error(err);
+
+                    window.location.href = "/login";
+                }
+            }
+
+            async function handleLogout() {
+                localStorage.removeItem("token");
+                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                window.location.href = "/login";
+            }
+            checkAuth();
         </script>
 
         <!-- <script>

@@ -58,7 +58,7 @@
                     <!-- <p class="text-gray-500 text-sm mt-2">Login ke akun Anda</p> -->
                 </div>
 
-                <form action="/login" method="POST" id="form-login-action" class="space-y-5">
+                <form  id="form-login-action" class="space-y-5">
                     <div class="space-y-1.5">
                         <label class="text-sm font-medium ml-1">Username / Email</label>
                         <div class="relative">
@@ -110,7 +110,7 @@
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-medium ml-1">Username</label>
-                        <input type="text" name="username" required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none text-sm" placeholder="Username">
+                        <input type="text" name="username"  required class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:border-primary-500 outline-none text-sm" placeholder="Username">
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-sm font-medium ml-1">Email</label>
@@ -205,6 +205,41 @@
                 $('#login-section').hide();
                 $('#register-section').show().removeClass('hidden-form').css('opacity', '1').css('transform', 'translateY(0)');
             }
+
+            // --- 5. Custom JWT Form Submit via Fetch ---
+            $('#form-login-action').on('submit', async function(e) {
+                e.preventDefault();
+
+                const username = $('#username').val();
+                const password = $('#passwordInput').val();
+
+                try {
+                    const res = await fetch("/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (!data.success) {
+                        alert(data.message || "Gagal login!");
+                        return;
+                    }
+                    
+                    // Simpan JWT ke localStorage
+                    localStorage.setItem("token", data.token);
+                    
+                    // Supaya EJS Engine di backend bisa baca saat reload URL!
+                    document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
+                    
+                    // Redirect ke dashboard
+                    window.location.href = "/dashboard";
+                } catch (err) {
+                    console.error(err);
+                    alert("Terjadi kesalahan pada server");
+                }
+            });
         });
     </script>
 </body>

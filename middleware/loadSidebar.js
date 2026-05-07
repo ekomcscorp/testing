@@ -34,7 +34,7 @@ const markActive = (menus, currentUrl) => {
 
 const loadSidebar = async (req, res, next) => {
   try {
-    const user = req.session.user;
+    const user = req.user;
     if (!user) {
       res.locals.sidebarMenus = [];
       return next();

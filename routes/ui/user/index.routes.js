@@ -14,9 +14,9 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
             link: "users/user_list",
             jslink: "javascripts/user_javascript.js",
             activeMenu: req.path,
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
             users,
             userlevels
         });

@@ -21,9 +21,9 @@ const { formatTransaction } = require("../../../utils/transactionFormatter")
 //         res.render("home", {
 //             link: "transactions/transaction_list",
 //             jslink: "/javascripts/transaction_javascript.js",
-//             user: req.session.user,
-//             username: req.session.user?.username || "Guest",
-//             fullname: req.session.user?.fullname || "Guest",
+//             user: req.user,
+//             username: req.user?.username || "Guest",
+//             fullname: req.user?.fullname || "Guest",
 //             transactions
 //         });
 //     } catch (error) {
@@ -36,7 +36,6 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
     try {
         const { id } = req.params;
 
-        // 1. Ambil data
         let transaction = await Transaction.getTransactionById(id);
         transaction = await formatTransaction(transaction);
 
@@ -44,53 +43,59 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
             return res.status(404).send("Transaksi tidak ditemukan");
         }
 
-        // 2. Render EJS → HTML string
         const filePath = path.join(
             __dirname,
             "../../../views/transactions/invoice.ejs"
         );
 
-      
+        const logoPath = `file://${path.join(
+            process.cwd(),
+            "../../../logo/pengenumroh.png"
+        )}`;
 
         const html = await ejs.renderFile(filePath, {
-            data: transaction
+            data: transaction,
+            logoPath
         });
 
-        // 3. Launch Puppeteer
         const browser = await puppeteer.launch({
-            headless: "new", // biar lebih stabil
+            headless: true,
         });
 
         const page = await browser.newPage();
 
-        const baseUrl = `${req.protocol}://${req.get("host")}`;
-        // 4. Inject HTML
+        // inject html
         await page.setContent(html, {
             waitUntil: "networkidle0",
         });
 
-          await page.addStyleTag({
-            path: path.join(__dirname, "../../../public/stylesheets/output.css")
-        })
+        // inject tailwind css hasil build
+        await page.addStyleTag({
+            path: path.join(
+                __dirname,
+                "../../../public/stylesheets/output.css"
+            )
+        });
+
+        
 
         await page.emulateMediaType("screen");
 
-        // 5. Generate PDF
         const pdfBuffer = await page.pdf({
             format: "A4",
             printBackground: true,
             margin: {
-                top: "20mm",
+                top: "15mm",
                 right: "15mm",
-                bottom: "20mm",
+                bottom: "15mm",
                 left: "15mm"
             }
         });
 
         await browser.close();
 
-        // 6. Auto download
         res.setHeader("Content-Type", "application/pdf");
+
         res.setHeader(
             "Content-Disposition",
             `attachment; filename=invoice-${transaction.transaction_no}.pdf`
@@ -108,7 +113,7 @@ router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, r
     try {
         const { id } = req.params;
         let transaction = await Transaction.getTransactionById(id);
-        transaction =  await formatTransaction(transaction);
+        transaction = await formatTransaction(transaction);
 
         if (!transaction) {
             return res.status(404).send("Transaksi tidak ditemukan");
@@ -139,9 +144,9 @@ router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, r
         res.render("home", {
             link: "transactions/detail_transaction",
             jslink: "/javascripts/detailTransaction_javascript.js",
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
             data: transaction,
             akses
         });

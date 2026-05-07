@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 
 module.exports = async (req, res, next) => {
   try {
-    const user = req.session.user;
+    const user = req.user;
 
     if (!user) {
       res.locals.akses = getDefaultAkses();

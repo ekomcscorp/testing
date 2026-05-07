@@ -544,8 +544,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (hotelImageFiles.Madinah) formData.append("hotel_image_madinah", hotelImageFiles.Madinah);
 
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(url, { 
                 method: method, 
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
                 body: formData 
             });
             const data = await res.json();

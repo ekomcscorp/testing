@@ -1,5 +1,9 @@
 const path = require("path");
 const authService = require("../services/auth.service");
+const jwt = require("jsonwebtoken");
+const { success } = require("../utils/response");
+const { generateToken } = require("../utils/jwt");
+
 
 class AuthController {
 showLoginForm(req, res) {
@@ -15,30 +19,31 @@ console.log("🟡 Login attempt");
 console.log("Username:", username);
 console.log("Password length:", password ? password.length : 0);
 
-try {
-  const { user } = await authService.login(username, password);
+  try {
+    const { user } = await authService.login(username, password);
 
-  console.log("🟢 User found in DB:", user ? user.username : null);
-  console.log("User ID:", user?.id);
-  console.log("User Level:", user?.id_level);
+    console.log("🟢 User found in DB:", user ? user.username : null);
 
-  req.session.user = {
-    id: user.id,
-    username: user.username,
-    fullname: user.fullname,
-    id_level: user.id_level,
-  };
+    const token = generateToken({
+      id: user.id,
+      username: user.username,
+      fullname: user.fullname,
+      id_level: user.id_level,
+    });
 
-  console.log("✅ Session created:", req.session.user);
+    return res.json({
+      success: true,
+      token,
+      user
+    });
 
-  return res.redirect("/dashboard");
-
-} catch (error) {
-  console.error("❌ Login error:", error.message);
-  return res.render("login", { error: error.message });
-}
-
-
+  } catch (error) {
+    console.error("❌ Login error:", error.message);
+    return res.status(400).json({
+        success: false,
+        message: error.message
+    });
+  }
 }
 
 async apiLogin(req, res) {
@@ -57,17 +62,17 @@ async apiLogin(req, res) {
   try {
     const { user } = await authService.login(username, password);
 
-    // kalau marketplace butuh session juga:
-    req.session.user = {
+    const token = generateToken({
       id: user.id,
       username: user.username,
       fullname: user.fullname,
       id_level: user.id_level,
-    };
+    });
 
     return res.json({
       success: true,
       message: "Login berhasil",
+      token,
       user
     });
 
@@ -78,6 +83,18 @@ async apiLogin(req, res) {
     });
   }
 }
+
+  getMe(req, res) {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: "Data user berhasil diambil",
+      user: req.user
+    });
+  }
 
 async registerUser(req, res) {
 console.log("🟡 Register attempt:", req.body.username);
@@ -103,22 +120,15 @@ try {
 }
 
 logout(req, res) {
-console.log("🔵 User logout:", req.session.user?.username);
-
-
-req.session.destroy(() => {
-  res.redirect("/login");
-});
-
-
+  // Hanya API response kalau mau dipanggil pakai fetch
+  return res.json({ success: true, message: "Logout berhasil" });
 }
 
 async changePassword(req, res) {
   const { oldPassword, newPassword, confirmPassword } = req.body;
-  const userId = req.session.user?.id;
+  const userId = req.user?.id; // Ambil dari req.user setelah dimiddleware ensureAuthToken
 
   console.log("🟡 Change password attempt for user ID:", userId);
-  console.log("Session user:", req.session.user);
 
   // Validasi user ID
   if (!userId) {

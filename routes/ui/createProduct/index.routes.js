@@ -5,17 +5,17 @@ const { link } = require("../transactions/index.routes");
 
 // TAMPILAN CREATE PRODUCT
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
-    try{
+    try {
         res.render("home", {
             link: "products/create_product",
             jslink: "javascripts/createProduct_javascript.js",
             sideBarMenus: res.locals.sideBarMenus,
             activeMenu: req.path,
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
         });
-        console.log('SESSION USER:', req.session.user);
+        console.log('SESSION USER:', req.user);
     } catch (error) {
         console.log("❌ Error loading create product page:", error.message);
         res.status(500).send("Internal Server Error");

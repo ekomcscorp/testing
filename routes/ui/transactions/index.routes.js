@@ -4,15 +4,15 @@ const { auth, loadSidebar, loadNotification } = require("../../../middleware");
 const Transaction = require("../../../repositories/transactions/transaction.repository");
 
 router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
-    try { 
+    try {
         const transactions = await Transaction.getAllTransactions();
 
         res.render("home", {
             link: "transactions/transaction_list",
             jslink: "javascripts/transaction_javascript.js",
-            user: req.session.user,
-            username: req.session.user?.username || "Guest",
-            fullname: req.session.user?.fullname || "Guest",
+            user: req.user,
+            username: req.user?.username || "Guest",
+            fullname: req.user?.fullname || "Guest",
             transactions
         });
     } catch (error) {

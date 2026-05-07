@@ -67,7 +67,7 @@ class UserController {
   }
 
   async getUnreadNotifications(req, res) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user || (user.id_level !== 1 && user.id_level !== 6)) {
       return res.status(403).json({ status: "error", message: "Notifikasi hanya tersedia untuk admin" });
     }
@@ -81,7 +81,7 @@ class UserController {
   }
 
   async getPendingUserNotifications(req, res) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user || (user.id_level !== 1 && user.id_level !== 6)) {
       return res.status(403).json({ status: "error", message: "Notifikasi hanya tersedia untuk admin" });
     }

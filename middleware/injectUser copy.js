@@ -2,7 +2,7 @@ const { Menu, Akses } = require("../models");
 
 module.exports = async (req, res, next) => {
   try {
-    const user = req.session.user;
+    const user = req.user;
 
     // Kalau belum login → set default akses N
     if (!user) {
@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
       return next();
     }
 
-    let currentPath = req.originalUrl.replace(/\?.*$/, ""); 
+    let currentPath = req.originalUrl.replace(/\?.*$/, "");
     currentPath = currentPath.replace(/^\/api/, "");
 
     if (currentPath.includes("/datatables")) {
@@ -42,7 +42,7 @@ module.exports = async (req, res, next) => {
 
       return next();
     }
-    
+
     // SUPERADMIN → full akses
     if (user.id_level === 6) {
       res.locals.akses = getFullAkses();
@@ -62,29 +62,29 @@ module.exports = async (req, res, next) => {
 
     // Mapping
     const aksesMap = {};
-    for (const row of aksesList){
-      if(!Menu || !row.Menu.link) continue;
+    for (const row of aksesList) {
+      if (!Menu || !row.Menu.link) continue;
 
       let link = row.Menu.link.trim();
 
-      if( link === "#" || link === "" ) continue;
+      if (link === "#" || link === "") continue;
 
-      if(!link.startsWith("/")) link = "/" + link;
+      if (!link.startsWith("/")) link = "/" + link;
 
-       aksesMap[link] = {
-          view_level: row.view_level,
-          add_level: row.add_level,
-          edit_level: row.edit_level,
-          delete_level: row.delete_level,
-          print_level: row.print_level,
-          upload_level: row.upload_level,
+      aksesMap[link] = {
+        view_level: row.view_level,
+        add_level: row.add_level,
+        edit_level: row.edit_level,
+        delete_level: row.delete_level,
+        print_level: row.print_level,
+        upload_level: row.upload_level,
       };
     }
 
     // Cari matching akses berdasarkan link terpanjang
     const akses = matchAkses(currentPath, aksesMap) || getDefaultAkses()
-    ;
-    
+      ;
+
 
     res.locals.akses = akses;
     res.locals.username = user.username;
@@ -125,8 +125,8 @@ function matchAkses(currentPath, aksesMap) {
   let bestMatch = null;
   let longest = 0;
 
-  for(const link in aksesMap){
-    if(currentPath.startsWith(link) && link.length > longest ){
+  for (const link in aksesMap) {
+    if (currentPath.startsWith(link) && link.length > longest) {
       bestMatch = aksesMap[link];
       longest = link.length;
     }

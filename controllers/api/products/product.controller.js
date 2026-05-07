@@ -114,12 +114,12 @@ class ProductController {
   // Create new product
   async createProduct(req, res) {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ success: false, message: "Unauthorized" });
       }
     
-    console.log("SESSION USER:", req.session?.user);
+    console.log("SESSION USER:", req.user);
     // console.log("BODY:", req.body);
     // console.log("FILES:", req.files);
     let hotels = JSON.parse(req.body.hotels || "[]");
@@ -176,7 +176,7 @@ class ProductController {
   async updateProduct(req, res) {
     try {
         const { id } = req.params;
-        const userId = req.session?.user?.id;
+        const userId = req.user?.id;
         if (!userId) {
           return res.status(401).json({ success: false, message: "Unauthorized" });
         }

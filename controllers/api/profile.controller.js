@@ -5,11 +5,11 @@ class ProfileController {
     async getMyProfile(req, res) {
         try {
             // Ambil profile dari user yang login
-            if (!req.session || !req.session.user || !req.session.user.id) {
+            if (!req.session || !req.user || !req.user.id) {
                 return response.error(res, "Silakan login terlebih dahulu", 401);
             }
 
-            const userId = req.session.user.id;
+            const userId = req.user.id;
             const profiles = await profileRepo.getProfile(userId);
 
             if (!profiles || profiles.length === 0) {
@@ -45,7 +45,7 @@ class ProfileController {
     async createProfile(req, res) {
         try {
             // Validasi session user
-            if (!req.session || !req.session.user || !req.session.user.id) {
+            if (!req.session || !req.user || !req.user.id) {
                 return response.error(res, "Silakan login terlebih dahulu", 401);
             }
 
@@ -54,7 +54,7 @@ class ProfileController {
                 return response.error(res, "Body request tidak boleh kosong", 400);
             }
 
-            const userId = req.session.user.id;
+            const userId = req.user.id;
             const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body || {};
 
             // Validasi data yang diperlukan
@@ -112,7 +112,7 @@ class ProfileController {
             }
 
             // Validasi ownership - hanya user sendiri yang bisa update profile-nya
-            if (req.session && req.session.user && req.session.user.id !== profile.user_id) {
+            if (req.session && req.user && req.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk mengubah profile ini", 403);
             }
 
@@ -157,7 +157,7 @@ class ProfileController {
             }
 
             // Validasi ownership
-            if (req.session && req.session.user && req.session.user.id !== profile.user_id) {
+            if (req.session && req.user && req.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk menghapus profile ini", 403);
             }
 
