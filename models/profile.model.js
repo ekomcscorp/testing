@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('LK', 'PR'),
             allowNull: true,
         },
+        tgl_lahir:{
+            type: DataTypes.DATE,
+            allowNull: true
+        },
         no_nik: {
             type: DataTypes.BIGINT,
             allowNull: true,
