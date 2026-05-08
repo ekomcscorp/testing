@@ -10,7 +10,7 @@ class ProfileController {
             }
 
             const userId = req.user.id;
-            const profiles = await profileRepo.getProfile(userId);
+            const profiles = await profileRepo.getProfile(id);
 
             if (!profiles || profiles.length === 0) {
                 return response.error(res, "Profile tidak ditemukan", 404);
