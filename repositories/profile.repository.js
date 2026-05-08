@@ -8,7 +8,7 @@ class ProfileRepository{
         {
           model: Profile,
           as: "profile",
-          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor"]
+          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor", "tgl_lahir"]
         }
       ]
     });
@@ -20,7 +20,7 @@ class ProfileRepository{
         {
           model: Profile,
           as: "profile",
-          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor"]
+          attributes: ["image", "address", "tgl_lahir","jk", "no_nik", "no_paspor", "nama_paspor"]
         }
       ]
     });
