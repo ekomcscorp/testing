@@ -5,7 +5,7 @@ class ProfileController {
     async getMyProfile(req, res) {
         try {
             // Ambil profile dari user yang login
-            if (!req.session || !req.user || !req.user.id) {
+            if (!req.user || !req.user.id) {
                 return response.error(res, "Silakan login terlebih dahulu", 401);
             }
 
@@ -45,7 +45,7 @@ class ProfileController {
     async createProfile(req, res) {
         try {
             // Validasi session user
-            if (!req.session || !req.user || !req.user.id) {
+            if (!req.user || !req.user.id) {
                 return response.error(res, "Silakan login terlebih dahulu", 401);
             }
 
@@ -112,7 +112,7 @@ class ProfileController {
             }
 
             // Validasi ownership - hanya user sendiri yang bisa update profile-nya
-            if (req.session && req.user && req.user.id !== profile.user_id) {
+            if (req.user && req.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk mengubah profile ini", 403);
             }
 
@@ -157,7 +157,7 @@ class ProfileController {
             }
 
             // Validasi ownership
-            if (req.session && req.user && req.user.id !== profile.user_id) {
+            if (req.user && req.user.id !== profile.user_id) {
                 return response.error(res, "Anda tidak memiliki akses untuk menghapus profile ini", 403);
             }
 

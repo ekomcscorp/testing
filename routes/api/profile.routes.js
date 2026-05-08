@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const profileController = require('../../controllers/api/profile.controller');
-const { ensureAuthToken } = require("../../middleware/authJwt");
+const {ensureAuthToken} = require("../../middleware/authJwt");
 
 // Middleware untuk check authentic (opsional, sesuaikan dengan middleware Anda)
 // const ensureAuthToken = (req, res, next) => {
@@ -19,7 +19,7 @@ router.get("/my-profile", ensureAuthToken, (req, res) => {
     user: req.user
   })
 }),
-  router.get('/my-profile/:id', ensureAuthToken, profileController.getProfileById);
+router.get('/my-profile/:id', ensureAuthToken, profileController.getProfileById);
 router.post('/my-profile', ensureAuthToken, profileController.createProfile);
 router.put('/my-profile/:id', ensureAuthToken, profileController.updateProfile);
 router.delete('/my-profile/:id', ensureAuthToken, profileController.deleteProfile);
