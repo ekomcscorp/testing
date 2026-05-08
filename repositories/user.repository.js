@@ -1,9 +1,17 @@
 const { Model, Op } = require("sequelize");
-const { User, Userlevel, UserNotification } = require("../models");
+const { User, Userlevel, UserNotification, Profile } = require("../models");
 
 class UserRepository {
   async getAllUsers() {
-    return await User.findAll();
+    return await User.findAll({
+      include: [
+        {
+          model: Profile,
+          as: "profile",
+          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor"]
+        }
+      ]
+    });
   }
 
   async getAllUserNotifications() {
@@ -60,7 +68,15 @@ class UserRepository {
   }
 
   async getUserById(id) {
-    return await User.findByPk(id);
+    return await User.findByPk(id, {
+      include: [
+        {
+          model: Profile,
+          as: "profile",
+          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor"]
+        }
+      ]
+    });
   }
 
   async getUserByUsername(username) {
