@@ -1,128 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
-    <link rel="icon" type="image/webp" href="/assets/img/logo/favicon-pu.png">
-    <link rel="stylesheet" href="../../../stylesheets/output.css">
-
     <style>
-        @page {
-            size: A4;
-            margin: 20mm;
-        }
-
-        body {
-            background: white;
-        }
-
-        .invoice-container {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 10mm;
-            margin: auto;
-        }
-
-        .no-break {
-            page-break-inside: avoid;
-        }
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.4; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 10px; font-size: 14px; }
+        
+        /* Pengganti Flexbox pakai Tabel */
+        table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
+        table td { padding: 5px; vertical-align: top; }
+        
+        .header { margin-bottom: 30px; }
+        .title { font-size: 24px; font-weight: bold; text-align: right; }
+        
+        /* Styling Tabel Barang */
+        .items-table th { background: #f9f9f9; border-bottom: 2px solid #eee; font-weight: bold; padding: 10px; }
+        .items-table td { border-bottom: 1px solid #eee; padding: 10px; }
+        .text-right { text-align: right; }
+        .total-section { margin-top: 20px; float: right; width: 30%; }
+        .font-bold { font-weight: bold; }
     </style>
-
 </head>
 <body>
-    
-     <div class="invoice-container" id="invoicePrintArea">
-                    <div class="flex justify-between mb-8">
-                        <div>
-                            <div class="mb-8">
-                                    <img src="<%= logoPath %>" alt="Logo" class="h-12 w-auto">
-                            </div>
-                                <!-- <h4 class="text-2xl font-bold text-travel-dark">
-                                    
-                                    <%= data.details?.[0]?.travel_snapshot?.fullname || "TRAVEL" %>
-                                </h4>
-                                 -->
-                        </div>
-                        <div class="text-right">
-                            <h5 class="font-bold text-lg">INVOICE</h5>
-                             <p class="text-sm text-gray-600"><%= data.transaction_no %></p>
-                            <p class="text-sm text-gray-600"><% 
-                                const date = new Date(data.created_at);
-                                const year = date.getFullYear();
-                                const month = String(date.getMonth() + 1).padStart(2, '0');
-                                const invId = String(data.id).padStart(3, '0');
-                                %>#INV/<%= year %>/<%= month %>/<%= invId %>
-                            </p> 
-                        </div>
-                    </div>
+    <div class="invoice-box">
+        <!-- Header: Pakai Tabel untuk Kiri & Kanan -->
+        <table class="header">
+            <tr>
+                <td>
+                    <img src="<%= logoPath %>" style="width: 150px; height: auto;">
+                </td>
+                <td class="text-right">
+                    <div class="title">INVOICE</div>
+                    <p><%= data.transaction_no %><br>
+                       #INV/<%= new Date().getFullYear() %>/<%= String(new Date().getMonth() + 1).padStart(2, '0') %>/<%= String(data.id).padStart(3, '0') %>
+                    </p>
+                </td>
+            </tr>
+        </table>
 
-                    <div class="grid grid-cols-2 gap-8 mb-8 text-sm">
-                        <div>
-                            <p class="text-gray-400 mb-1">Ditagihkan Kepada:</p>
-                            <p class="font-bold text-gray-800"><%= data.user?.fullname %></p>
-                            <p class="text-gray-600"><%= data.user?.email || "No email"%></p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-gray-400 mb-1">Metode Pembayaran:</p>
-                            <p class="font-bold text-gray-800">Bank Central Asia (BCA)</p>
-                            <p class="text-gray-600">No Rek: 7131720452</p>
-                             <p class="text-gray-600">PT. Kolaborasi Para Sahabat</p>
-                        </div>
-                    </div>
+        <!-- Info Alamat -->
+        <table style="margin-bottom: 40px;">
+            <tr>
+                <td style="width: 50%;">
+                    <span style="color: #999;">Ditagihkan Kepada:</span><br>
+                    <span class="font-bold"><%= data.user?.fullname %></span><br>
+                    <%= data.user?.email || "No email"%>
+                </td>
+                <td class="text-right">
+                    <span style="color: #999;">Metode Pembayaran:</span><br>
+                    <span class="font-bold">Bank Central Asia (BCA)</span><br>
+                    No Rek: 7131720452<br>
+                    PT. Kolaborasi Para Sahabat
+                </td>
+            </tr>
+        </table>
 
-                    <table class="w-full text-sm text-left border-collapse mb-8">
-                        <thead>
-                            <tr class="no-break border-b">
-                                <th class="py-3 px-2 font-bold">Deskripsi Layanan</th>
-                                <th class="py-3 px-2 text-center font-bold">Qty</th>
-                                <th class="py-3 px-2 text-right font-bold">Harga</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <% if (data.details && data.details.length > 0) { %>
-                                <% data.details.forEach(detail => { %>
-                                    <tr>
-                                        <td class="py-4 px-2">
-                                            <p class="font-medium text-gray-800"><%= detail.product_name %></p>
-                                            <p class="text-xs text-gray-500 italic"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
-                                        </td>
-                                        <td class="py-4 px-2 text-center text-gray-600">(<%= detail.room_type %>)</td>
-                                        <td class="py-4 px-2 text-right font-medium">Rp <%= detail.price.toLocaleString('id-ID') %></td>
-                                    </tr>
-                                <% }) %>
-                            <% } %>
-                        </tbody>
-                    </table>
+        <!-- Tabel Produk -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Deskripsi Layanan</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th class="text-right">Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (data.details && data.details.length > 0) { %>
+                    <% data.details.forEach(detail => { %>
+                        <tr>
+                            <td>
+                                <strong><%= detail.product_name %></strong><br>
+                                <small style="color: #666;"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></small>
+                            </td>
+                            <td style="text-align: center;">(<%= detail.room_type %>)</td>
+                            <td class="text-right">Rp <%= detail.price.toLocaleString('id-ID') %></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
 
-                    <div class="flex justify-end">
-                        <div class="w-64 space-y-2">
-                            <% data.details.forEach((item) => { %>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-500"><%= item.product_name %></span>
-                                <span class="font-medium">Rp <%= item.price.toLocaleString('id-ID') %></span>
-                            </div>
-                            <% }) %>
-                            <!-- <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">Diskon</span>
-                                <span class="text-emerald-islamic">-Rp 1.000.000</span>
-                            </div> -->
-                            <div class="flex flex-col align-left justify-between border-t pt-2 mt-2">
-                                <span class="font-bold text-gray-800 uppercase">Total Akhir</span>
-                                <span class="font-bold text-xl text-travel-dark">Rp. <%= data.total_price.toLocaleString('id-ID') %></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                 <!-- <div class="flex items-center mt-16 justify-end p-6 space-x-2 border-t border-gray-200 rounded-b">
-                    <button data-modal-hide="invoiceModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5">Tutup</button>
-                    <a href="#">
-                     <button type="button" id="btnPrint"       
-                    class="text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
-                        Cetak PDF
-                    </button>
-                    </a>    
-                </div> -->
+        <!-- Total Akhir -->
+        <div class="total-section">
+            <table style="border-top: 2px solid #333;">
+                <tr>
+                    <td class="font-bold">TOTAL AKHIR</td>
+                </tr>
+                <tr>
+                    <td class="font-bold" style="font-size: 18px; color: #000;">
+                        Rp. <%= data.total_price.toLocaleString('id-ID') %>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </body>
 </html>

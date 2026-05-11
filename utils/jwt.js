@@ -9,7 +9,7 @@ function generateToken(payload) {
 }
 
 function verifyToken(token) {
-  console.log("VERIFY SECRET:", SECRET);
+  // console.log("VERIFY SECRET:", SECRET);
   return jwt.verify(token, SECRET);
 }
 

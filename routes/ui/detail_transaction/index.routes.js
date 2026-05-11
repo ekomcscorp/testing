@@ -6,6 +6,7 @@ if (!global.ReadableStream) {
 
 const express = require("express");
 const router = express.Router();
+const pdf = require("html-pdf");
 const ejs = require("ejs");
 const path = require("path");
 const { auth, loadSidebar, loadNotification } = require("../../../middleware");
@@ -16,6 +17,44 @@ const fs = require('fs');
 const logoBuffer = fs.readFileSync(path.join(process.cwd(), "public/assets/img/logo/pengenumroh.png"));
 const logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`;
 
+router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        let transaction = await Transaction.getTransactionById(id);
+        transaction = await formatTransaction(transaction);
+
+        // const cssPath = path.join(process.cwd, "public/stylesheets/output.css");
+        // const cssContent = fs.readFileSync(cssPath, "utf-8");
+        const filePath = path.join(__dirname, "../../../views/transactions/invoice.ejs");
+        const html = await ejs.renderFile(filePath, {
+            data: transaction,
+            logoPath: logoBase64,
+            // tailwindCSS: cssContent
+        });
+
+        const config = { 
+            format: 'A4', 
+            printBackground: true,
+            margin: {
+                top: "15mm",
+                right: "15mm",
+                bottom: "15mm",
+                left: "15mm"
+            }
+        };
+
+        pdf.create(html, config).toBuffer((err, buffer) => {
+            if (err) return res.status(500).send(err);
+            
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader("Content-Disposition", `attachment; filename=invoice-${transaction.transaction_no}.pdf`);
+            res.send(buffer);
+        });
+
+    } catch (error) {
+        res.status(500).send("Gagal generate PDF");
+    }
+});
 
 router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
     try {
