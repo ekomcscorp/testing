@@ -8,6 +8,9 @@ const productItineraryController = require("../../../controllers/api/products/pr
 const productNoteController = require("../../../controllers/api/products/productNote.controller.js")
 const productSnKController = require("../../../controllers/api/products/productSnK.controller.js");
 const productPriceController = require("../../../controllers/api/products/productPrices.controller.js")
+const productWishlistController = require("../../../controllers/api/products/productWishlist.controller.js");
+const {ensureAuthToken} = require("../../../middleware/authJwt.js");
+
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
@@ -56,6 +59,12 @@ router.get("/:id/itineraries/", productItineraryController.getItinerariesByProdu
 router.get("/:id/notes/", productNoteController.getNotesByProduct);
 router.get("/:id/snk/", productSnKController.getSnkByProduct);
 router.get("/:id/prices/", productPriceController.index);
+
+// Wishlist routes
+// router.get("/wishlist/:product_id",ensureAuthToken , productWishlistController.checkWishlist);
+
+// router.post("/wishlist/toggle",ensureAuthToken , productWishlistController.toggleWishlist);
+
 router.post("/", upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },

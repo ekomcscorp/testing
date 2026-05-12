@@ -73,7 +73,11 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Profile, {
         foreignKey: "user_id",
         as: "profile"
-      })
+      });
+     User.hasMany(models.Wishlist, {
+      foreignKey: "user_id",
+      as: "wishlists"
+    });
     }
   
     return User;
