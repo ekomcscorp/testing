@@ -28,7 +28,7 @@ $(document).ready(function() {
         columns: [
             { 
                 data: "id_menu",
-                className: "p-2 text-center border",
+                className: "p-2 text-center border-b",
                 render: function (data, type, row) {
                   let buttons = `<div class="flex items-center justify-center gap-2">`
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
             },
             { 
                 data: "nama_menu", 
-                className: "p-2 font-semibold text-gray-900 border dark:text-white",
+                className: "p-2 font-semibold text-gray-900 border-b dark:text-white",
                 render: (data, type, row) => `
                     <div class="flex items-center gap-2">
                         <i class="ph-bold ph-arrow-elbow-down-right text-gray-400"></i>
@@ -60,22 +60,22 @@ $(document).ready(function() {
             },
             { 
                 data: "link", 
-                className: "p-2 border",
+                className: "p-2 border-b",
                 render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>`
             },
             { 
                 data: "parent_id", // Pastikan backend melempar nama parent
-                className: "p-2 border",
+                className: "p-2 border-b",
                 render: (data, type, row) => `
-                    <span class="px-2 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-100">
+                    <span class="px-2 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold border-b border-b-indigo-100">
                         ${data || 'N/A'}
                     </span>`
             },
             { data: "urutan", 
-             className: "p-2 text-center dark:text-white border" },
+             className: "p-2 text-center dark:text-white border-b" },
             { 
                 data: "is_active", 
-                className: "p-2 border",
+                className: "p-2 border-b",
                 render: data => `
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${data === 'Y' ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-gray-100 text-gray-500'}">
                         <span class="w-1.5 h-1.5 rounded-full ${data === 'Y' ? 'bg-green-600' : 'bg-gray-400'}"></span>
@@ -109,7 +109,7 @@ $(document).ready(function() {
       <button 
         ${currentPage === 0 ? 'disabled' : ''}
         onclick="goToPage(${currentPage - 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Prev
@@ -124,7 +124,7 @@ $(document).ready(function() {
           class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
           ${i === currentPage 
             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-            : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
+            : 'border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
           ${i + 1}
         </button>
       `;
@@ -135,7 +135,7 @@ $(document).ready(function() {
       <button 
         ${currentPage === totalPages - 1 ? 'disabled' : ''}
         onclick="goToPage(${currentPage + 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Next

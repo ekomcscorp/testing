@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: 'id',
-                className: "p-2 border border-b",
+                className: "p-2 border-b ",
                 render: function (data, type, row) {
                     // console.log("Data ID:", row); // Debugging log
                     let buttons = `<div class="d-flex gap-2 justify-content-center">`;
@@ -62,12 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     return buttons;
                 }
             },
-            { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border border-b font-bold text-sm text-gray-900 dark:text-gray-400" },
-            { data: 'user_id', title: "Jama'ah", className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row){
+            { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border-b  font-bold text-sm text-gray-900 dark:text-gray-400" },
+            { data: 'user_id', title: "Jama'ah", className: "p-2 border-b  text-gray-500 dark:text-white", render: function(data, type, row){
               if(!data) return "N/A";if(!data) return "<span class='text-gray-400'>-</span>";
               return `<span>${row.user.fullname}</span>`
             } },
-            { data: 'total_price', title: 'Total Harga', className: "p-2 border border-b text-gray-500 dark:text-white", render: function(data, type, row) {
+            { data: 'total_price', title: 'Total Harga', className: "p-2 border-b  text-gray-500 dark:text-white", render: function(data, type, row) {
                 if(!data) return "Rp 0";
                 
                 const formattedAmount = new Intl.NumberFormat('id-ID', {
@@ -78,8 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 return `<span>${formattedAmount}</span>`;
             } },
-            { data: 'payment_method', title: 'Metode Pembayaran', className: "p-2 border border-b text-gray-500 dark:text-white" },
-            { data: 'status', title: 'Status', className: "p-2 border border-b", render: function(data) {
+            { data: 'payment_method', title: 'Metode Pembayaran', className: "p-2 border-b  text-gray-500 dark:text-white" },
+            { data: 'status', title: 'Status', className: "p-2 border-b ", render: function(data) {
                 let badgeClass = '';
                 let isDot = '';
                 
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //       <button 
 //         ${currentPage === 0 ? 'disabled' : ''}
 //         onclick="goToPage(${currentPage - 1})"
-//         class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+//         class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
 //         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
 //         disabled:opacity-50 transition-colors">
 //         Prev
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //           class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
 //           ${i === currentPage 
 //             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-//             : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
+//             : 'border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
 //           ${i + 1}
 //         </button>
 //       `;
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //       <button 
 //         ${currentPage === totalPages - 1 ? 'disabled' : ''}
 //         onclick="goToPage(${currentPage + 1})"
-//         class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+//         class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
 //         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
 //         disabled:opacity-50 transition-colors">
 //         Next

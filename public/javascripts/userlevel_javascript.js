@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: "id_level",
-                className: "p-2 border",
+                className: "p-2 border-b",
                 orderable: false,
                 render: function (data, type, row) {
                     let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -73,13 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 data: "id_level",
-                className: "p-2 text-center border",
+                className: "p-2 text-center border-b",
                 render: (data) =>
                     `<span class="inline-block px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded font-mono text-xs font-bold">${data}</span>`,
             },
             {
                 data: "nama_level",
-                className: "p-2 border",
+                className: "p-2 border-b",
                 render: (data) =>
                     `<span class="font-semibold text-gray-900 dark:text-white">${data}</span>`,
             },
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (paginationEl) {
             let paginationHtml = `
                 <button ${currentPage === 0 ? "disabled" : ""} onclick="goToPage(${currentPage - 1})"
-                    class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-500 
+                    class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 
                     hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors">
                     Prev
                 </button>`;
@@ -120,14 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
                         ${i === currentPage
                             ? "bg-primary-600 text-white shadow-lg shadow-primary-500/30"
-                            : "border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700"}">
+                            : "border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700"}">
                         ${i + 1}
                     </button>`;
             }
 
             paginationHtml += `
                 <button ${currentPage === totalPages - 1 ? "disabled" : ""} onclick="goToPage(${currentPage + 1})"
-                    class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-500 
+                    class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 
                     hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors">
                     Next
                 </button>`;

@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: "id",
-                className: "p-2  border border-b",
+                className: "p-2  border-b",
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
                      // Paksa munculkan teks untuk debug
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: null,
                     title: "Produk", 
-                    className: "p-2 border border-b",
+                    className: "p-2 border-b",
                     render: function(data, type, row) {
                         const thumbnail = row.thumbnail_url;
                         const nama = row.nama_produk;
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                   data: "user_id",
                   title: "Added By",
-                  className: "pl-2  text-gray-500 dark:text-white border border-b",
+                  className: "pl-2  text-gray-500 dark:text-white border-b",
                   render: function(data, type,row,){
                     if(!data) return "<span class='text-gray-400'>-</span>";
                     return `<span>${row.creator.fullname}</span>`;
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: "prices", // Ini akan mengambil seluruh array 'prices'
                     title: "Harga (Tipe Kamar)",
-                    className: "p-2  border border-b",
+                    className: "p-2  border-b",
                     render: function(data, type, row) {
                         if (!data || data.length === 0) return "Tidak ada harga";
                         
@@ -102,11 +102,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 {
                     data: "quota", title: "Stock",
-                    className: "pl-5  text-gray-500 dark:text-white border border-b" 
+                    className: "pl-5  text-gray-500 dark:text-white border-b" 
                 },
                 {
                     data: "status", title: "Status",
-                    className: "p-2  border border-b",
+                    className: "p-2  border-b",
                     render: function(data) {
                         // const isPublic = data === "publish";
                         let badgeClass = "";
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button 
         ${currentPage === 0 ? 'disabled' : ''}
         onclick="goToPage(${currentPage - 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-gray-200 dark:border-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Prev
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
           ${i === currentPage 
             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-            : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
+            : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
           ${i + 1}
         </button>
       `;
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button 
         ${currentPage === totalPages - 1 ? 'disabled' : ''}
         onclick="goToPage(${currentPage + 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-gray-200 dark:border-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Next

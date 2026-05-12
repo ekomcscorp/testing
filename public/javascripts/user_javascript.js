@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id",
-        className: "p-2 text-center border",
+        className: "p-2 text-center border-b",
         render: function (data, type, row) {
           //console.log("Data ID:", row); // Debugging log
           let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -53,10 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return buttons;
         },
       },
-      { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border" },
-      { data: "username", title: "Username", className: "p-2 border", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
+      { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
+      { data: "username", title: "Username", className: "p-2 border-b", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
       { data: "level.nama_level",
-        title: "ID Level", className: "p-2 border font-semibold text-gray-900 dark:text-white",
+        title: "ID Level", className: "p-2 border-b font-semibold text-gray-900 dark:text-white",
         render: function (data, type, row) {
           if (!data) return '';
           return data.charAt(0).toUpperCase() + data.slice(1);
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { data: "is_active", 
         title: "Status",
-        className: "p-2 border",
+        className: "p-2 border-b",
         render: function (data) {
           const isActive = data === 'Y';
           return `
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button 
         ${currentPage === 0 ? 'disabled' : ''}
         onclick="goToPage(${currentPage - 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Prev
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
           class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
           ${i === currentPage 
             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-            : 'border border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
+            : 'border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
           ${i + 1}
         </button>
       `;
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button 
         ${currentPage === totalPages - 1 ? 'disabled' : ''}
         onclick="goToPage(${currentPage + 1})"
-        class="px-3 py-1 rounded-lg border border-gray-200 dark:border-slate-700 
+        class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
         disabled:opacity-50 transition-colors">
         Next
