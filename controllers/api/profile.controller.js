@@ -2,172 +2,159 @@ const response = require("../../utils/response");
 const profileRepo = require("../../repositories/profile.repository");
 
 class ProfileController {
-    async getMyProfile(req, res) {
-        try {
-            // Ambil profile dari user yang login
-            if (!req.user || !req.user.id) {
-                return response.error(res, "Silakan login terlebih dahulu", 401);
-            }
 
-            const userId = req.user.id;
-            const profiles = await profileRepo.getProfile(id);
+  async getMyProfile(req, res) {
+    try {
 
-            if (!profiles || profiles.length === 0) {
-                return response.error(res, "Profile tidak ditemukan", 404);
-            }
+      const userId = req.user.id;
 
-            return response.success(res, "Profile berhasil diambil", profiles[0]);
-        } catch (error) {
-            return response.error(res, error.message);
-        }
+      const profile = await profileRepo.getProfileByUserId(userId);
+
+      if (!profile) {
+        return response.error(res, "Profile tidak ditemukan", 404);
+      }
+
+      return response.success(
+        res,
+        "Profile berhasil diambil",
+        profile
+      );
+
+    } catch (error) {
+      return response.error(res, error.message);
     }
+  }
 
-    async getProfileById(req, res) {
-        try {
-            const { id } = req.params;
+  async createProfile(req, res) {
+    try {
 
-            if (!id) {
-                return response.error(res, "ID profile harus disediakan");
-            }
+      const userId = req.user.id;
 
-            const profile = await profileRepo.getProfileById(id);
+      const existingProfile =
+        await profileRepo.getProfileByUserId(userId);
 
-            if (!profile) {
-                return response.error(res, "Profile tidak ditemukan", 404);
-            }
+      if (existingProfile) {
+        return response.error(
+          res,
+          "User sudah memiliki profile"
+        );
+      }
 
-            return response.success(res, "Profile berhasil diambil", profile);
-        } catch (error) {
-            return response.error(res, error.message);
-        }
+      const {
+        image,
+        address,
+        jk,
+        no_nik,
+        no_paspor,
+        nama_paspor,
+        tgl_lahir
+      } = req.body;
+
+      const profile = await profileRepo.createProfile({
+        user_id: userId,
+        image,
+        address,
+        jk,
+        no_nik,
+        no_paspor,
+        nama_paspor,
+        tgl_lahir
+      });
+
+      return response.success(
+        res,
+        "Profile berhasil dibuat",
+        profile,
+        201
+      );
+
+    } catch (error) {
+      return response.error(res, error.message);
     }
+  }
 
-    async createProfile(req, res) {
-        try {
-            // Validasi session user
-            if (!req.user || !req.user.id) {
-                return response.error(res, "Silakan login terlebih dahulu", 401);
-            }
+  async updateProfile(req, res) {
+    try {
 
-            // Validasi req.body
-            if (!req.body || Object.keys(req.body).length === 0) {
-                return response.error(res, "Body request tidak boleh kosong", 400);
-            }
+      const userId = req.user.id;
 
-            const userId = req.user.id;
-            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body || {};
+      const profile =
+        await profileRepo.getProfileByUserId(userId);
 
-            // Validasi data yang diperlukan
-            if (!address) {
-                return response.error(res, "Alamat wajib diisi");
-            }
+      if (!profile) {
+        return response.error(
+          res,
+          "Profile tidak ditemukan",
+          404
+        );
+      }
 
-            // Cek apakah user sudah punya profile
-            const existingProfile = await profileRepo.getProfile(userId);
-            if (existingProfile && existingProfile.length > 0) {
-                return response.error(res, "User sudah memiliki profile");
-            }
+      const {
+        image,
+        address,
+        jk,
+        no_nik,
+        no_paspor,
+        nama_paspor,
+        tgl_lahir
+      } = req.body;
 
-            const profileData = {
-                user_id: userId,
-                image,
-                address,
-                jk,
-                no_nik,
-                no_paspor,
-                nama_paspor
-            };
+      const updateData = {};
 
-            const profile = await profileRepo.createProfile(profileData);
+      if (image !== undefined) updateData.image = image;
+      if (address !== undefined) updateData.address = address;
+      if (jk !== undefined) updateData.jk = jk;
+      if (no_nik !== undefined) updateData.no_nik = no_nik;
+      if (no_paspor !== undefined) updateData.no_paspor = no_paspor;
+      if (nama_paspor !== undefined) updateData.nama_paspor = nama_paspor;
+      if (tgl_lahir !== undefined) updateData.tgl_lahir = tgl_lahir;
 
-            return response.success(res, "Profile berhasil dibuat", profile, 201);
-        } catch (error) {
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                const field = error.errors[0].path;
-                return response.error(res, `${field} sudah digunakan`, 400);
-            }
-            return response.error(res, error.message);
-        }
+      await profileRepo.updateProfile(
+        profile.id,
+        updateData
+      );
+
+      const updatedProfile =
+        await profileRepo.getProfileByUserId(userId);
+
+      return response.success(
+        res,
+        "Profile berhasil diupdate",
+        updatedProfile
+      );
+
+    } catch (error) {
+      return response.error(res, error.message);
     }
+  }
 
-    async updateProfile(req, res) {
-        try {
-            const { id } = req.params;
+  async deleteProfile(req, res) {
+    try {
 
-            if (!id) {
-                return response.error(res, "ID profile harus disediakan");
-            }
+      const userId = req.user.id;
 
-            // Validasi req.body
-            if (!req.body || Object.keys(req.body).length === 0) {
-                return response.error(res, "Body request tidak boleh kosong", 400);
-            }
+      const profile =
+        await profileRepo.getProfileByUserId(userId);
 
-            const { image, address, jk, no_nik, no_paspor, nama_paspor } = req.body || {};
+      if (!profile) {
+        return response.error(
+          res,
+          "Profile tidak ditemukan",
+          404
+        );
+      }
 
-            // Cek apakah profile exist
-            const profile = await profileRepo.getProfileById(id);
-            if (!profile) {
-                return response.error(res, "Profile tidak ditemukan", 404);
-            }
+      await profileRepo.deleteProfile(profile.id);
 
-            // Validasi ownership - hanya user sendiri yang bisa update profile-nya
-            if (req.user && req.user.id !== profile.user_id) {
-                return response.error(res, "Anda tidak memiliki akses untuk mengubah profile ini", 403);
-            }
+      return response.success(
+        res,
+        "Profile berhasil dihapus"
+      );
 
-            const updateData = {};
-            if (image !== undefined) updateData.image = image;
-            if (address !== undefined) updateData.address = address;
-            if (jk !== undefined) updateData.jk = jk;
-            if (no_nik !== undefined) updateData.no_nik = no_nik;
-            if (no_paspor !== undefined) updateData.no_paspor = no_paspor;
-            if (nama_paspor !== undefined) updateData.nama_paspor = nama_paspor;
-
-            if (Object.keys(updateData).length === 0) {
-                return response.error(res, "Tidak ada data untuk diupdate");
-            }
-
-            await profileRepo.updateProfile(id, updateData);
-
-            const updatedProfile = await profileRepo.getProfileById(id);
-
-            return response.success(res, "Profile berhasil diupdate", updatedProfile);
-        } catch (error) {
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                const field = error.errors[0].path;
-                return response.error(res, `${field} sudah digunakan`, 400);
-            }
-            return response.error(res, error.message);
-        }
+    } catch (error) {
+      return response.error(res, error.message);
     }
-
-    async deleteProfile(req, res) {
-        try {
-            const { id } = req.params;
-
-            if (!id) {
-                return response.error(res, "ID profile harus disediakan");
-            }
-
-            // Cek apakah profile exist
-            const profile = await profileRepo.getProfileById(id);
-            if (!profile) {
-                return response.error(res, "Profile tidak ditemukan", 404);
-            }
-
-            // Validasi ownership
-            if (req.user && req.user.id !== profile.user_id) {
-                return response.error(res, "Anda tidak memiliki akses untuk menghapus profile ini", 403);
-            }
-
-            await profileRepo.deleteProfile(id);
-
-            return response.success(res, "Profile berhasil dihapus");
-        } catch (error) {
-            return response.error(res, error.message);
-        }
-    }
+  }
 }
 
 module.exports = new ProfileController();

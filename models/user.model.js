@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "transactions"
       });
-      User.hasMany(models.Profile, {
+      User.hasOne(models.Profile, {
         foreignKey: "user_id",
         as: "profile"
       })

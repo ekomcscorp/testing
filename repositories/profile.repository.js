@@ -2,36 +2,34 @@ const {Model, where} = require("sequelize");
 const { Profile, User } = require("../models")
 
 class ProfileRepository{
-    async getProfile() {
-       return await User.findAll({
+   async getProfileByUserId(userId) {
+    return await Profile.findOne({
+      where: {
+        user_id: userId
+      },
       include: [
         {
-          model: Profile,
-          as: "profile",
-          attributes: ["image", "address", "jk", "no_nik", "no_paspor", "nama_paspor", "tgl_lahir"]
+          model: User,
+          as: "user",
+          attributes: [
+            "id",
+            "username",
+            "fullname",
+            "email"
+          ]
         }
       ]
     });
+  }
+
+    async createProfile(payload) {
+        return await Profile.create(payload)
     }
 
-    async getProfileById(id) {
-        return await User.findByPk(id, {
-      include: [
-        {
-          model: Profile,
-          as: "profile",
-          attributes: ["image", "address", "tgl_lahir","jk", "no_nik", "no_paspor", "nama_paspor"]
-        }
-      ]
-    });
-    }
-
-    async createProfile(profileData) {
-        return await Profile.create(profileData)
-    }
-
-    async updateProfile(profileId, profileData) {
-        return await Profile.update(profileData, { where: { id: profileId }})
+    async updateProfile(profileId, payload) {
+        return await Profile.update(payload, { 
+          where: { id: profileId }
+        })
     }
 
     async deleteProfile(profileId) {
