@@ -1,6 +1,6 @@
 
 const jwt = require("jsonwebtoken");
-const SECRET = process.env.JWT_SECRET || "development";
+const SECRET = process.env.JWT_SECRET;
 
 function generateToken(payload) {
   console.log("GENERATE SECRET:", SECRET);
@@ -9,7 +9,7 @@ function generateToken(payload) {
 }
 
 function verifyToken(token) {
-  // console.log("VERIFY SECRET:", SECRET);
+  console.log("VERIFY SECRET:", SECRET);
   return jwt.verify(token, SECRET);
 }
 
