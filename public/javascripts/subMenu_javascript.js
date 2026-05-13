@@ -71,6 +71,17 @@ $(document).ready(function() {
                         ${data || 'N/A'}
                     </span>`
             },
+            { 
+                data: "icon", 
+                className: "p-2 border-b ",
+                render: data => `
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                    <i class="${data} text-lg"></i>
+                    </div>
+                    <span class="text-xs text-gray-500 font-mono">${data}</span>
+                </div>`
+            },
             { data: "urutan", 
              className: "p-2 text-center dark:text-white border-b" },
             { 
