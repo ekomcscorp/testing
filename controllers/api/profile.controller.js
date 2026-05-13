@@ -40,26 +40,19 @@ class ProfileController {
         );
       }
 
-      const {
-        image,
-        address,
-        jk,
-        no_nik,
-        no_paspor,
-        nama_paspor,
-        tgl_lahir
-      } = req.body;
+      const file_image = req.profile.image;
 
-      const profile = await profileRepo.createProfile({
-        user_id: userId,
-        image,
+      const  payload = {
+        image: file_image,
         address,
         jk,
         no_nik,
         no_paspor,
         nama_paspor,
         tgl_lahir
-      });
+      };
+
+      const profile = await profileRepo.createProfile(payload);
 
       return response.success(
         res,
