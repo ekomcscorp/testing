@@ -99,6 +99,7 @@ class ProfileController {
         );
       }
 
+
       const {
         image,
         address,
@@ -114,7 +115,7 @@ class ProfileController {
 
       const updateData = {};
 
-      if (image !== undefined) updateData.image = image;
+      if (req.file) updateData.image = req.file.filename;
       if (address !== undefined) updateData.address = address;
       if (jk !== undefined) updateData.jk = jk;
       if (no_nik !== undefined) updateData.no_nik = no_nik;
