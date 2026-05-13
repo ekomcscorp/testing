@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: "id",
-                className: "p-2  border-b",
+                className: "p-2  border-b dark:text-white",
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
                      // Paksa munculkan teks untuk debug
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: null,
                     title: "Produk", 
-                    className: "p-2 border-b",
+                    className: "p-2 border-b dark:text-white",
                     render: function(data, type, row) {
                         const thumbnail = row.thumbnail_url;
                         const nama = row.nama_produk;
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     data: "prices", // Ini akan mengambil seluruh array 'prices'
                     title: "Harga (Tipe Kamar)",
-                    className: "p-2  border-b",
+                    className: "p-2  border-b dark:text-white",
                     render: function(data, type, row) {
                         if (!data || data.length === 0) return "Tidak ada harga";
                         
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 {
                     data: "status", title: "Status",
-                    className: "p-2  border-b",
+                    className: "p-2  border-b dark:text-white",
                     render: function(data) {
                         // const isPublic = data === "publish";
                         let badgeClass = "";

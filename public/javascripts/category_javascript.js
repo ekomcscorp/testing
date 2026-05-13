@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       columns: [
         {
           data: 'id',
-          className: "p-2 text-center border-b",
+          className: "p-2 text-center border-b dark:text-white",
           render: function (data, type, row) {
             let buttons = `<div class="flex items-center justify-center gap-2">`;
 
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           data: 'name', className: "p-2 font-semibold text-gray-900 dark:text-white border-b" 
         },
         { data: 'slug', 
-          className: "p-2 border-b",
+          className: "p-2 border-b dark:text-white",
           render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` 
         },
       ],

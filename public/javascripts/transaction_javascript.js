@@ -31,14 +31,16 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: 'id',
-                className: "p-2 border-b ",
+                className: "p-2 border-b dark:text-white",
                 render: function (data, type, row) {
                     // console.log("Data ID:", row); // Debugging log
                     let buttons = `<div class="d-flex gap-2 justify-content-center">`;
 
                     buttons += `
                         <a href="/detail_transaction/${row.id}">
-                            <button class="p-1.5 rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100">
+                            <button class="p-1.5 rounded-lg text-blue-600 bg-blue-50 
+                            dark:bg-blue-500/10 
+                            hover:bg-blue-100">
                                 <i class="ph-bold ph-eye text-base"></i>
                             </button>
                         </a>
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return buttons;
                 }
             },
-            { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border-b  font-bold text-sm text-gray-900 dark:text-gray-400" },
+            { data: 'transaction_no', title: 'No Transaksi', className: "p-2 border-b  font-bold text-sm text-gray-900 dark:text-white" },
             { data: 'user_id', title: "Jama'ah", className: "p-2 border-b  text-gray-500 dark:text-white", render: function(data, type, row){
               if(!data) return "N/A";if(!data) return "<span class='text-gray-400'>-</span>";
               return `<span>${row.user.fullname}</span>`
@@ -79,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return `<span>${formattedAmount}</span>`;
             } },
             { data: 'payment_method', title: 'Metode Pembayaran', className: "p-2 border-b  text-gray-500 dark:text-white" },
-            { data: 'status', title: 'Status', className: "p-2 border-b ", render: function(data) {
+            { data: 'status', title: 'Status', className: "p-2 border-b dark:text-white", render: function(data) {
                 let badgeClass = '';
                 let isDot = '';
                 

@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id",
-        className: "p-2 text-center border-b",
+        className: "p-2 text-center border-b dark:text-white",
         render: function (data, type, row) {
           //console.log("Data ID:", row); // Debugging log
           let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       },
       { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
-      { data: "username", title: "Username", className: "p-2 border-b", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
+      { data: "username", title: "Username", className: "p-2 border-b dark:text-white", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
       { data: "level.nama_level",
         title: "ID Level", className: "p-2 border-b font-semibold text-gray-900 dark:text-white",
         render: function (data, type, row) {
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { data: "is_active", 
         title: "Status",
-        className: "p-2 border-b",
+        className: "p-2 border-b dark:text-white",
         render: function (data) {
           const isActive = data === 'Y';
           return `

@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columns: [
             {
                 data: "id_level",
-                className: "p-2 border-b",
+                className: "p-2 border-b dark:text-white ",
                 orderable: false,
                 render: function (data, type, row) {
                     let buttons = `<div class="flex items-center justify-center gap-2">`;
@@ -73,13 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 data: "id_level",
-                className: "p-2 text-center border-b",
+                className: "p-2 text-center border-b dark:text-white ",
                 render: (data) =>
                     `<span class="inline-block px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded font-mono text-xs font-bold">${data}</span>`,
             },
             {
                 data: "nama_level",
-                className: "p-2 border-b",
+                className: "p-2 border-b   dark:text-white",
                 render: (data) =>
                     `<span class="font-semibold text-gray-900 dark:text-white">${data}</span>`,
             },
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const tr = document.createElement("tr");
                 tr.className = level === 0 
-                    ? "bg-primary-50/10 dark:bg-primary-900/5 hover:bg-gray-50 transition-colors" 
+                    ? "bg-primary-50/10 dark:bg-primary-900 hover:bg-gray-50 transition-colors" 
                     : "hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors";
 
                 tr.innerHTML = `
@@ -241,11 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderCheckboxTd(menuId, field, currentAkses) {
         const isChecked = currentAkses[field] === "Y" ? "checked" : "";
         return `
-            <td class="whitespace-nowrap px-3 py-4 text-center">
+            <td class="whitespace-nowrap px-3 py-4 text-center dark:text-primary-300">
                 <input type="checkbox" ${isChecked} 
                     class="checkbox-access accent-primary-600 w-4 h-4 cursor-pointer"
                     data-id_menu="${menuId}" 
-                    data-field="${field}">
+                    data-field="${field} ">
             </td>`;
     }
 

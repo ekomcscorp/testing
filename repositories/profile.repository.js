@@ -32,6 +32,12 @@ class ProfileRepository{
         })
     }
 
+    async updateUser(userId, payload) {
+      return await User.update(payload, {
+        where: { id: userId }
+      })
+    }
+
     async deleteProfile(profileId) {
         return await Profile.destroy({ where: { id: profileId }});
     }

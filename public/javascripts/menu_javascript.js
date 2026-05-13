@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id_menu",
-        className: "p-2 text-center ",
+        className: "p-2 text-center dark:text-white",
         render: function (data, type, row) {
           let buttons = `<div class="flex items-center justify-center gap-2">`;
           
@@ -55,12 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
       { data: "nama_menu", className: "p-2 font-semibold text-gray-900 dark:text-white border-b " },
       { 
         data: "link", 
-        className: "p-2 border-b ",
+        className: "p-2 border-b dark:text-white",
         render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>`
       },
       { 
         data: "icon", 
-        className: "p-2 border-b ",
+        className: "p-2 border-b dark:text-white",
         render: data => `
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { data: "urutan", className: "p-2 text-center dark:text-white border-b " },
       { 
         data: "is_active", 
-        className: "p-2 border-b ",
+        className: "p-2 border-b dark:text-white",
         render: function(data) {
           const isActive = data === 'Y';
           return `

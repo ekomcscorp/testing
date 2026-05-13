@@ -28,3 +28,7 @@
 table.dataTable tbody tr:hover {
     @apply bg-gray-50 dark:bg-slate-800/50 transition-colors;
 }
+
+.dt-paging a{
+  @apply dark:text-white dark:bg-primary-500;
+}

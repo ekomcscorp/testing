@@ -26,45 +26,62 @@ class ProfileController {
   }
 
   async createProfile(req, res) {
-    try {
+  try {
 
-      const userId = req.user.id;
+    const userId = req.user.id;
 
-      const existingProfile =
-        await profileRepo.getProfileByUserId(userId);
+    const existingProfile =
+      await profileRepo.getProfileByUserId(userId);
 
-      if (existingProfile) {
-        return response.error(
-          res,
-          "User sudah memiliki profile"
-        );
-      }
-
-      const file_image = req.profile.image;
-
-      const  payload = {
-        image: file_image,
-        address,
-        jk,
-        no_nik,
-        no_paspor,
-        nama_paspor,
-        tgl_lahir
-      };
-
-      const profile = await profileRepo.createProfile(payload);
-
-      return response.success(
+    if (existingProfile) {
+      return response.error(
         res,
-        "Profile berhasil dibuat",
-        profile,
-        201
+        "User sudah memiliki profile"
       );
-
-    } catch (error) {
-      return response.error(res, error.message);
     }
+
+    const {
+      address,
+      jk,
+      no_nik,
+      no_paspor,
+      nama_paspor,
+      tgl_lahir
+    } = req.body;
+
+    const file_image = req.file?.filename || null;
+
+    const payload = {
+      user_id: userId,
+      image: file_image,
+      address,
+      jk,
+      no_nik,
+      no_paspor,
+      nama_paspor,
+      tgl_lahir
+    };
+
+    const profile =
+      await profileRepo.createProfile(payload);
+
+    return response.success(
+      res,
+      "Profile berhasil dibuat",
+      profile,
+      201
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    return response.error(
+      res,
+      error.message
+    );
   }
+}
 
   async updateProfile(req, res) {
     try {
@@ -89,7 +106,10 @@ class ProfileController {
         no_nik,
         no_paspor,
         nama_paspor,
-        tgl_lahir
+        tgl_lahir,
+        fullname,
+        email,
+        username
       } = req.body;
 
       const updateData = {};
@@ -101,6 +121,27 @@ class ProfileController {
       if (no_paspor !== undefined) updateData.no_paspor = no_paspor;
       if (nama_paspor !== undefined) updateData.nama_paspor = nama_paspor;
       if (tgl_lahir !== undefined) updateData.tgl_lahir = tgl_lahir;
+
+      const updateUserData = {};
+
+      if(fullname !== undefined ) updateUserData.fullname = fullname;
+      if(email !== undefined ) updateUserData.email = email;
+      if(username !== undefined ) updateUserData.username = username;
+
+
+      if (Object.keys(updateData).length > 0) {
+        await profileRepo.updateProfile(
+          profile.id,
+          updateData
+      );
+    }
+
+      if (Object.keys(updateUserData).length > 0) {
+        await profileRepo.updateUser(
+          userId,
+          updateUserData
+        );
+      }
 
       await profileRepo.updateProfile(
         profile.id,
@@ -115,7 +156,6 @@ class ProfileController {
         "Profile berhasil diupdate",
         updatedProfile
       );
-
     } catch (error) {
       return response.error(res, error.message);
     }

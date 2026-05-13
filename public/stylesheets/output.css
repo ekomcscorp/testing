@@ -4781,6 +4781,13 @@ table.dataTable tbody tr:hover:is(.dark *) {
   background-color: rgb(30 41 59 / 0.5);
 }
 
+.dt-paging a:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity, 1));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
 .file\:mr-4::file-selector-button {
   margin-right: 1rem;
 }
@@ -5300,6 +5307,29 @@ table.dataTable tbody tr:hover:is(.dark *) {
   background-color: rgb(234 179 8 / 0.2);
 }
 
+.dark\:bg-indigo-400\/10:is(.dark *) {
+  background-color: rgb(129 140 248 / 0.1);
+}
+
+.dark\:bg-indigo-100\/10:is(.dark *) {
+  background-color: rgb(224 231 255 / 0.1);
+}
+
+.dark\:bg-indigo-100:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-indigo-200:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(199 210 254 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-primary-900:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(49 46 129 / var(--tw-bg-opacity, 1));
+}
+
 .dark\:text-amber-400:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(251 191 36 / var(--tw-text-opacity, 1));
@@ -5373,6 +5403,11 @@ table.dataTable tbody tr:hover:is(.dark *) {
 .dark\:text-yellow-400:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(250 204 21 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-primary-300:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(165 180 252 / var(--tw-text-opacity, 1));
 }
 
 .dark\:ring-gray-600:is(.dark *) {
