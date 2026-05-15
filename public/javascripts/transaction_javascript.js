@@ -114,17 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // // Event listener untuk entries select
-    // $('#entriesSelect').on('change', function () {
-    //   table.page.len($(this).val()).draw();
-    // });
 
-    // // Event listener untuk search input
-    // document.querySelector('input[placeholder="Cari Transaksi"]').addEventListener('keyup', function() {
-    //   table.search(this.value).draw();
-    // });
-
-    // Event listener untuk status filter
     const statusSelect = document.querySelector('select[class*="rounded-xl"]');
     if (statusSelect) {
       statusSelect.addEventListener('change', function() {
@@ -132,74 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
- 
-// function renderPagination() {
-//     var info = table.page.info();
-//     var currentPage = info.page;
-//     var totalPages = info.pages;
 
-//     // INFO TEXT
-//     var start = info.start + 1;
-//     var end = info.end;
-//     var total = info.recordsTotal;
-
-//     $('#customTableInfo').html(
-//       `Menampilkan <span class="font-semibold text-gray-900 dark:text-white">${start}-${end}</span> 
-//        dari <span class="font-semibold text-gray-900 dark:text-white">${total}</span> transaksi`
-//     );
-
-//     // PAGINATION BUTTONS
-//     var paginationHtml = '';
-
-//     // PREV
-//     paginationHtml += `
-//       <button 
-//         ${currentPage === 0 ? 'disabled' : ''}
-//         onclick="goToPage(${currentPage - 1})"
-//         class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
-//         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
-//         disabled:opacity-50 transition-colors">
-//         Prev
-//       </button>
-//     `;
-
-//     // NUMBER BUTTONS
-//     for (let i = 0; i < totalPages; i++) {
-//       paginationHtml += `
-//         <button 
-//           onclick="goToPage(${i})"
-//           class="w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center
-//           ${i === currentPage 
-//             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
-//             : 'border-b border-b-gray-200 dark:border-b-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'}">
-//           ${i + 1}
-//         </button>
-//       `;
-//     }
-
-//     // NEXT
-//     paginationHtml += `
-//       <button 
-//         ${currentPage === totalPages - 1 ? 'disabled' : ''}
-//         onclick="goToPage(${currentPage + 1})"
-//         class="px-3 py-1 rounded-lg border-b border-b-gray-200 dark:border-b-slate-700 
-//         text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 
-//         disabled:opacity-50 transition-colors">
-//         Next
-//       </button>
-//     `;
-
-//     $('#customPagination').html(paginationHtml);
-//   }
-
-//   window.goToPage = function (page) {
-//     table.page(page).draw('page');
-//   };
-
-//   renderPagination();
-//   table.on('draw.dt', function () {
-//     renderPagination();
-//   });
 });
 
 // ═════════════════════════════════════════════════════

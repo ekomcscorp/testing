@@ -79,8 +79,25 @@ class UserRepository {
     });
   }
 
-  async getUserByUsername(username) {
-    return await User.findOne({ where: { username } });
+  async getUserByUsername(username, email) {
+    if (email) {
+      return await User.findOne({
+        where: {
+          [Op.or]: [
+            { username: username },
+            { email: email }
+          ]
+        }
+      });
+    }
+    return await User.findOne({
+      where: {
+        [Op.or]: [
+          { username: username },
+          { email: username }
+        ]
+      }
+    });
   }
 
   async createUser(userData) {

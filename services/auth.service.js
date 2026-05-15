@@ -6,8 +6,8 @@ const bcrypt = require("bcrypt");
 const { sequelize } = require("../models"); // pastikan path relatifnya benar
 
 
-async function login(username, password) {
-  const user = await userRepository.getUserByUsername(username);
+async function login(identifier, password) {
+  const user = await userRepository.getUserByUsername(identifier);
   if (!user) throw new Error("User tidak ditemukan");
 
   const isMatch = await comparePassword(password, user.password);
@@ -26,11 +26,11 @@ async function login(username, password) {
 }
 
 async function registerUser(data) {
-  const { username, fullname, password } = data;
+  const { username, fullname, password, email } = data;
 
   console.log("Registering user:", username, fullname, password);
 
-  const existing = await userRepository.getUserByUsername(username);
+  const existing = await userRepository.getUserByUsername(username, email);
   if (existing) {
     return { success: false, message: "Username sudah terdaftar" };
   }

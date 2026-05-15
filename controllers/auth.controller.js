@@ -12,21 +12,24 @@ res.render("login", { error: null });
 }
 
 async login(req, res) {
-const { username, password } = req.body;
+  
+const identifier = req.body.username || req.body.email;
+const password = req.body.password;
 
 
 console.log("🟡 Login attempt");
-console.log("Username:", username);
+console.log("Identifier:", identifier);
 console.log("Password length:", password ? password.length : 0);
 
   try {
-    const { user } = await authService.login(username, password);
+    const { user } = await authService.login(identifier, password);
 
     console.log("🟢 User found in DB:", user ? user.username : null);
 
     const token = generateToken({
       id: user.id,
       username: user.username,
+      email: user.email,
       fullname: user.fullname,
       id_level: user.id_level,
     });

@@ -283,7 +283,7 @@
                                             <p class="font-medium text-gray-800"><%= detail.product_name %></p>
                                             <p class="text-xs text-gray-500 italic"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
                                         </td>
-                                        <td class="py-4 px-2 text-center text-gray-600">(<%= detail.room_type %>)</td>
+                                        <td class="py-4 px-2 text-center text-gray-600">(<%= detail.room_types %>)</td>
                                         <td class="py-4 px-2 text-right font-medium">Rp <%= detail.price.toLocaleString('id-ID') %></td>
                                     </tr>
                                 <% }) %>

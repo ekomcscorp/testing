@@ -157,7 +157,7 @@ class TransactionRepository {
                 {
                     model: TransactionDetail,
                     as: "details",
-                    attributes: ["product_name", "room_type", "price"] // Mengambil data snapshot
+                    attributes: ["product_name", "room_types", "price"] // Mengambil data snapshot
                 },
                 {
                     model: User,

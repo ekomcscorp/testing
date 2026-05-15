@@ -71,7 +71,7 @@
                                 <strong><%= detail.product_name %></strong><br>
                                 <small style="color: #666;"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></small>
                             </td>
-                            <td style="text-align: center;">(<%= detail.room_type %>)</td>
+                            <td style="text-align: center;">(<%= detail.room_types %>)</td>
                             <td class="text-right">Rp <%= detail.price.toLocaleString('id-ID') %></td>
                         </tr>
                     <% }) %>

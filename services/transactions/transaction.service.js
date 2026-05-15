@@ -20,14 +20,14 @@ class TransactionService {
         // 2. Looping untuk validasi tiap item di dalam array
         for (const item of items) {
             // Validasi tiap item harus punya product_id dan room_type
-            if (!item.product_id || !item.room_type) {
+            if (!item.product_id || !item.room_types) {
                 throw new Error("Setiap item harus memiliki product_id dan room_type");
             }
 
             const product = await productRepo.getProductById(item.product_id);
             if (!product) throw new Error(`Product ID ${item.product_id} tidak ditemukan`);
 
-            const selectedPrice = product.prices.find(p => p.room_types === item.room_type);
+            const selectedPrice = product.prices.find(p => p.room_types === item.room_types);
             if (!selectedPrice) throw new Error(`Tipe kamar ${item.room_type} tidak tersedia untuk ${product.nama_produk}`);
 
             // ... (lanjutkan proses mapping snapshot seperti yang kita bahas sebelumnya)
@@ -51,7 +51,7 @@ class TransactionService {
                 product_id: product.id,
                 product_name: product.nama_produk,
                 price: selectedPrice.price,
-                room_type: item.room_type,
+                room_types: item.room_types,
                 hotels_snapshot: JSON.stringify(hotelsSnapshot),
                 flights_snapshot: JSON.stringify(flightsSnapshot),
                 travel_snapshot: JSON.stringify(travelSnapshot),

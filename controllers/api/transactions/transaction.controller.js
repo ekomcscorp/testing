@@ -41,7 +41,11 @@ class TransactionController {
       }));
 
       return res.status(200).json({
-        ...result,
+        success: true,
+        message: "Transactions fetched successfully",
+        draw: result.draw,
+        recordsTotal: result.recordsTotal,
+        recordsFiltered: result.recordsFiltered,
         data
       });
     } catch (error) {
@@ -52,12 +56,12 @@ class TransactionController {
   async createTransaction(req, res) {
     try {
       // Validasi session user terlebih dahulu
-      if (!req.session || !req.user || !req.user.id) {
+      if (!req.user || !req.user.id) {
         return response.error(res, "Silakan login terlebih dahulu", 401);
       }
 
       const { items, payment_method } = req.body;
-      const user_id = req.user.id; // Ambil dari session agar lebih aman
+      const user_id = req.user.id;
 
       if (!items || !Array.isArray(items) || items.length === 0) {
         return response.error(res, "Keranjang belanja kosong");

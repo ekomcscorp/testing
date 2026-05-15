@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
 
-    room_type: {
+    room_types: {
       type: DataTypes.STRING,
       allowNull: true,
     },
