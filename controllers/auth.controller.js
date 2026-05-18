@@ -129,7 +129,7 @@ logout(req, res) {
 
 async changePassword(req, res) {
   const { oldPassword, newPassword, confirmPassword } = req.body;
-  const userId = req.user?.id; // Ambil dari req.user setelah dimiddleware ensureAuthToken
+  const userId = req.user.id; // Ambil dari req.user setelah dimiddleware ensureAuthToken
 
   console.log("🟡 Change password attempt for user ID:", userId);
 

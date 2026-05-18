@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
       { data: "username", title: "Username", className: "p-2 border-b dark:text-white", render: data => `<span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-xs font-mono">${data}</span>` },
+      { data: "email", title: "Email", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
       { data: "level.nama_level",
         title: "ID Level", className: "p-2 border-b font-semibold text-gray-900 dark:text-white",
         render: function (data, type, row) {
@@ -170,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = document.getElementById("hidden_id_user").value;
       const fullname = document.getElementById("fullname").value;
       const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
@@ -183,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = {
       fullname,
       username,
+      email,
       id_level: parseInt(id_level),
       is_active,
       app
@@ -293,6 +296,7 @@ window.editUser = async function(id) {
         document.getElementById("hidden_id_user").value = user.id;
         document.getElementById("fullname").value = user.fullname;
         document.getElementById("username").value = user.username;
+        document.getElementById("email").value = user.email;
         document.getElementById("id_level").value = user.id_level;
         document.getElementById("is_active").value = user.is_active;
         document.getElementById("app").value = user.app;

@@ -20,12 +20,13 @@ const FILE_TYPE = {
   "image/png": true,
   "image/jpeg": true,
   "image/jpg": true,
+  "image/webp": true
 };
 
 const diskStrorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const isValid = FILE_TYPE[file.mimetype];
-    let uploadError = new Error('Invalid image type: JPG, JPEG, PNG only allowed');
+    let uploadError = new Error('Invalid image type: JPG, JPEG, PNG, WEBP only allowed');
     let uploadPath = "public/assets/img/products/";
 
     if (file.fieldname === "thumbnail") {
