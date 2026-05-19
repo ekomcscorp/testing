@@ -268,7 +268,7 @@
                     </div>
 
                     <table class="w-full text-sm text-left border-collapse mb-8">
-                        <thead>
+                        <thead class="bg-gray-50">
                             <tr class=" border-b">
                                 <th class="py-3 px-2 font-bold">Deskripsi Layanan</th>
                                 <th class="py-3 px-2 text-center font-bold">Qty</th>
@@ -304,8 +304,8 @@
                                 <span class="text-emerald-islamic">-Rp 1.000.000</span>
                             </div> -->
                             <div class="flex flex-col align-left justify-between border-t pt-2 mt-2">
-                                <span class="font-bold text-gray-800 uppercase">Total Akhir</span>
-                                <span class="font-bold text-xl text-travel-dark">Rp. <%= data.total_price.toLocaleString('id-ID') %></span>
+                                <span class="font-bold text-gray-800 uppercase text-right">Total Akhir</span>
+                                <span class="text-right font-bold text-xl text-travel-dark">Rp. <%= data.total_price.toLocaleString('id-ID') %></span>
                             </div>
                         </div>
                     </div>

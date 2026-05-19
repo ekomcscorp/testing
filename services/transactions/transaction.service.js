@@ -27,11 +27,11 @@ class TransactionService {
             const product = await productRepo.getProductById(item.product_id);
             if (!product) throw new Error(`Product ID ${item.product_id} tidak ditemukan`);
 
+       
+
             const selectedPrice = product.prices.find(p => p.room_types === item.room_types);
             if (!selectedPrice) throw new Error(`Tipe kamar ${item.room_type} tidak tersedia untuk ${product.nama_produk}`);
 
-            // ... (lanjutkan proses mapping snapshot seperti yang kita bahas sebelumnya)
-            
             const hotelsSnapshot = product.hotels?.map(h => ({
                 name: h.name, city: h.city, rating: h.rating
             })) || [];
@@ -50,6 +50,7 @@ class TransactionService {
                 user_id: user_id,
                 product_id: product.id,
                 product_name: product.nama_produk,
+                thumbnail_product: product.thumbnail_url,
                 price: selectedPrice.price,
                 room_types: item.room_types,
                 hotels_snapshot: JSON.stringify(hotelsSnapshot),

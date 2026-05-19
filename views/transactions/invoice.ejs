@@ -13,8 +13,8 @@
         .title { font-size: 24px; font-weight: bold; text-align: right; }
         
         /* Styling Tabel Barang */
-        .items-table th { background: #f9f9f9; border-bottom: 2px solid #eee; font-weight: bold; padding: 10px; }
-        .items-table td { border-bottom: 1px solid #eee; padding: 10px; }
+        .items-table th {background-color: rgb(249, 250, 251);font-weight: bold; padding: 10px; }
+        .items-table td { border-top: 1px solid #eeeeee; padding: 10px; }
         .text-right { text-align: right; }
         .total-section { margin-top: 20px; float: right; width: 30%; }
         .font-bold { font-weight: bold; }
@@ -81,12 +81,12 @@
 
         <!-- Total Akhir -->
         <div class="total-section">
-            <table style="border-top: 2px solid #333;">
+            <table style="border-top: 1px solid #eee;">
                 <tr>
-                    <td class="font-bold">TOTAL AKHIR</td>
+                    <td class="font-bold text-right">TOTAL AKHIR</td>
                 </tr>
                 <tr>
-                    <td class="font-bold" style="font-size: 18px; color: #000;">
+                    <td class="font-bold text-right" style="font-size: 18px; color: #000;">
                         Rp. <%= data.total_price.toLocaleString('id-ID') %>
                     </td>
                 </tr>
