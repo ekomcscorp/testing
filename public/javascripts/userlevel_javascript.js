@@ -239,13 +239,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderCheckboxTd(menuId, field, currentAkses) {
-        const isChecked = currentAkses[field] === "Y" ? "checked" : "";
+        const isChecked = currentAkses[field] === "Y" ? "checked" : "N";
         return `
             <td class="whitespace-nowrap px-3 py-4 text-center dark:text-primary-300">
                 <input type="checkbox" ${isChecked} 
                     class="checkbox-access accent-primary-600 w-4 h-4 cursor-pointer"
-                    data-id_menu="${menuId}" 
-                    data-field="${field} ">
+                    data-id_menu="${menuId}" data-field="${field}">
             </td>`;
     }
 

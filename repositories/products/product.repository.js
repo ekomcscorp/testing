@@ -2,8 +2,14 @@ const { Model, Op, where, Transaction } = require("sequelize");
 const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses, User } = require("../../models");
 
 class ProductRepository {
-    async getAllProduct() {
+    async getAllProduct(user) {
+        const queryWhere = {};
+        if (user && user.id_level !== 4            ) {
+            queryWhere.user_id = user.id;
+        }
+
         return await Product.findAll({
+            where: queryWhere,
             include: [
                 {
                     model: ProductPrices,
@@ -51,13 +57,19 @@ class ProductRepository {
         });
     }
 
-    async getPaginatedProduct({ start, length, search, order, columns }) {
+    async getPaginatedProduct({ start, length, search, order, columns, user }) {
     // 1. Definisikan pencarian dengan nama field yang benar sesuai database
     const where = search ? {
         [Op.or]: [
             { nama_produk: { [Op.like]: `%${search}%` } }
         ]
     } : {};
+
+    // Tambahkan filter berdasarkan user_id jika user bukan admin (level 1)
+    if (user && user.id_level !== 1) {
+        where.user_id = user.id;
+    }
+
     console.log("SEARCH REPO:", search);
     // 2. Pastikan limit dan offset aman
     const offset = parseInt(start) || 0;
@@ -188,8 +200,12 @@ class ProductRepository {
         });
     }
 
-    async countAll() {
-        return await Product.count(); // Total semua produk tanpa filter
+    async countAll(user) {
+        const queryWhere = {};
+        if (user && user.id_level !== 1) {
+            queryWhere.user_id = user.id;
+        }
+        return await Product.count({ where: queryWhere }); // Total produk dengan atau tanpa filter
     }
 }
 

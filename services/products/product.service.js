@@ -12,8 +12,8 @@ const productItineraryRepository = require("../../repositories/products/productI
 
 
 class ProductService {
-   async getAllProduct() {
-        const product = await productRepository.getAllProduct();
+   async getAllProduct(user) {
+        const product = await productRepository.getAllProduct(user);
         return product || [] ;
    }
 
@@ -28,7 +28,7 @@ class ProductService {
 
    async getAllProductsDatatables(query) {
         // Destrukturisasi query dari datatables
-        const { draw, start, length, search, order, columns } = query;
+        const { draw, start, length, search, order, columns, user } = query;
         const searchValue =
             query.search?.value ||
             query['search[value]'] ||
@@ -41,9 +41,10 @@ class ProductService {
                 length: parseInt(length, 10) || 10,
                 search: searchValue,
                 order,
-                columns
+                columns,
+                user
             }),
-            productRepository.countAll() // ✅ Total tanpa filter
+            productRepository.countAll(user) // ✅ Total tanpa filter atau dengan filter user
         ]);
 
         // findAndCountAll mengembalikan { count, rows }

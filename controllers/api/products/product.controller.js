@@ -11,7 +11,7 @@ class ProductController {
       //   return res.status(403).json({ success: false, message: "Akses ditolak" });
       // }
 
-      const products = await productService.getAllProduct();
+      const products = await productService.getAllProduct(req.user);
       console.log("MASUK PRODUCT CONTROLLER");
       res.json({ success: true, data: products });
     } catch (error) {
@@ -28,7 +28,9 @@ class ProductController {
         return res.status(403).json({ error: "Akses ditolak" });
       }
 
-      const result = await productService.getAllProductsDatatables(req.query);
+      // Add user to the query object
+      const query = { ...req.query, user: req.user };
+      const result = await productService.getAllProductsDatatables(query);
 
       result.data = result.data.map(row => ({
         ...row.get({ plain: true }),
