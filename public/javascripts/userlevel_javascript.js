@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderCheckboxTd(menuId, field, currentAkses) {
-        const isChecked = currentAkses[field] === "Y" ? "checked" : "N";
+        const isChecked = currentAkses[field] === "Y" ? "checked" : "";
         return `
             <td class="whitespace-nowrap px-3 py-4 text-center dark:text-primary-300">
                 <input type="checkbox" ${isChecked} 
@@ -419,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 checkboxes.forEach(cb => {
                     const menuId = cb.dataset.id_menu;
-                    const field = cb.dataset.field;
+                    const field = cb.dataset.field?.trim();
                     
                     if (!aksesList[menuId]) {
                         aksesList[menuId] = {

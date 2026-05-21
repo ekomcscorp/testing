@@ -110,7 +110,8 @@ class ProfileController {
         tgl_lahir,
         fullname,
         email,
-        username
+        username,
+        no_wa
       } = req.body;
 
       const updateData = {};
@@ -128,6 +129,7 @@ class ProfileController {
       if(fullname !== undefined ) updateUserData.fullname = fullname;
       if(email !== undefined ) updateUserData.email = email;
       if(username !== undefined ) updateUserData.username = username;
+      if(no_wa !== undefined ) updateUserData.no_wa = no_wa;
 
 
       if (Object.keys(updateData).length > 0) {

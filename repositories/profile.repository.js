@@ -15,7 +15,8 @@ class ProfileRepository{
             "id",
             "username",
             "fullname",
-            "email"
+            "email",
+            "no_wa"
           ]
         }
       ]
