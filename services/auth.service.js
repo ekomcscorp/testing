@@ -8,7 +8,7 @@ const { sequelize } = require("../models"); // pastikan path relatifnya benar
 
 async function login(identifier, password) {
   const user = await userRepository.getUserByUsername(identifier);
-  if (!user) throw new Error("User tidak ditemukan");
+  if (!user) throw new Error("User tidak ditemukan atau Coba login dengan email.");
 
   const isMatch = await comparePassword(password, user.password);
   if (!isMatch) throw new Error("Password salah");
