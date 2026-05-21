@@ -5100,6 +5100,25 @@ table.dataTable tbody tr:hover:is(.dark *) {
   display: none;
 }
 
+.dark\:divide-dark-border:is(.dark *) > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(71 85 105 / var(--tw-divide-opacity, 1));
+}
+
+.dark\:border-dark-border:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(71 85 105 / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-dark-border\/50:is(.dark *) {
+  border-color: rgb(71 85 105 / 0.5);
+}
+
+.dark\:border-dark-card:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity, 1));
+}
+
 .dark\:border-gray-600:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(75 85 99 / var(--tw-border-opacity, 1));
@@ -5156,6 +5175,20 @@ table.dataTable tbody tr:hover:is(.dark *) {
 
 .dark\:bg-blue-500\/20:is(.dark *) {
   background-color: rgb(59 130 246 / 0.2);
+}
+
+.dark\:bg-dark-bg:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-dark-bg\/80:is(.dark *) {
+  background-color: rgb(15 23 42 / 0.8);
+}
+
+.dark\:bg-dark-card:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 41 59 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:bg-gray-600:is(.dark *) {

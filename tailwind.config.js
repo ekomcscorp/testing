@@ -21,7 +21,11 @@ module.exports = {
           800: '#3730a3',
           900: '#312e81',
         },
-        
+        dark: {
+          card: '#1e293b',
+          border: '#475569',
+          bg: '#0f172a',
+        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
