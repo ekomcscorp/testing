@@ -59,11 +59,55 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: 'created_at',
         updatedAt: 'updated_at',
         hooks: {
-        beforeCreate: (transaction, options) => {
-            // Format: TRX-123452026 (5 random digits + year)
-            const randomDigits = Math.floor(10000 + Math.random() * 90000); // 5 angka acak
-            const year = new Date().getFullYear();
-            transaction.transaction_no = `TRX-${randomDigits}${year}`;
+            beforeCreate: async (transaction) => {
+
+                const now = new Date();
+
+                // YY
+                const year =
+                now.getFullYear().toString().slice(-2);
+
+                // MM
+                const month =
+                String(now.getMonth() + 1)
+                    .padStart(2, "0");
+
+                // PREFIX
+                const prefix = `PU${year}${month}`;
+
+                // Cari transaksi terakhir bulan ini
+                const lastTransaction =
+                await Transaction.findOne({
+
+                    where: {
+                    transaction_no: {
+                        [sequelize.Sequelize.Op.like]:
+                        `${prefix}%`
+                    }
+                    },
+
+                    order: [["transaction_no", "DESC"]]
+                });
+
+                let sequence = 1;
+
+                if (lastTransaction) {
+
+                // Ambil 4 digit terakhir
+                const lastSequence =
+                    parseInt(
+                    lastTransaction.transaction_no.slice(-4)
+                    );
+
+                sequence = lastSequence + 1;
+                }
+
+                // 0001
+                const sequenceStr =
+                String(sequence).padStart(4, "0");
+
+                transaction.transaction_no =
+                `${prefix}${sequenceStr}`;
             }
         }
     })
