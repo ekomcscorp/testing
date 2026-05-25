@@ -77,9 +77,21 @@ class TransactionRepository {
         }
     }
 
-    async getAllTransactions() {
+    async getAllTransactions(user) {
+        const productInclude = {
+            model: Product,
+            as: "product",
+            attributes: ["id", "nama_produk", "user_id"]
+        };
+
+        if (user && user.id_level === 4) {
+            productInclude.where = { user_id: user.id };
+            productInclude.required = true;
+        }
+
         const transactions = await Transaction.findAll({
             include: [
+                productInclude,
                 {
                     model: TransactionDetail,
                     as: "details"
@@ -137,7 +149,7 @@ class TransactionRepository {
         return transaction;
     }
 
-    async getPaginatedTransaction({ start, length, search, order, columns }) {
+    async getPaginatedTransaction({ start, length, search, order, columns, user }) {
         const where = {
             ...(search && {
                 [Op.or]: [
@@ -151,13 +163,26 @@ class TransactionRepository {
             ? [[columns[order[0].column].data, order[0].dir]]
             : [["created_at", "DESC"]];
 
+        // 🟢 Logic Filter: Jika user adalah Travel (id_level 4)
+        const productInclude = {
+            model: Product,
+            as: "product",
+            attributes: ["id", "nama_produk", "user_id"]
+        };
+
+        if (user && user.id_level === 4) {
+            productInclude.where = { user_id: user.id };
+            productInclude.required = true; // INNER JOIN agar hanya transaksi milik travel ini saja
+        }
+
         const result = await Transaction.findAndCountAll({
             where,
             include: [
+                productInclude, // ⬅️ Tambahkan Product untuk filtering
                 {
                     model: TransactionDetail,
                     as: "details",
-                    attributes: ["product_name", "room_types", "price"] // Mengambil data snapshot
+                    attributes: ["product_name", "room_types", "price"]
                 },
                 {
                     model: User,
@@ -168,7 +193,7 @@ class TransactionRepository {
             order: sort,
             offset: parseInt(start) || 0,
             limit: parseInt(length) || 10,
-            distinct: true // Penting saat menggunakan include + limit agar count tidak kacau
+            distinct: true
         });
         
         // Auto-parse snapshots in all rows
@@ -185,7 +210,19 @@ class TransactionRepository {
         };
     }
 
-    async countAll() {
+    async countAll(user) {
+        if (user && user.id_level === 4) {
+            return await Transaction.count({
+                include: [
+                    {
+                        model: Product,
+                        as: "product",
+                        where: { user_id: user.id },
+                        required: true
+                    }
+                ]
+            });
+        }
         return await Transaction.count();
     }
 

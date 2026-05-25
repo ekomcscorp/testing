@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { ensureAuth } = require("../../../middleware/auth");
+const { ensureAuth, restrictToAdmin } = require("../../../middleware/auth");
 const loadSidebar = require("../../../middleware/loadSidebar"); // ✅
 const loadNotification = require("../../../middleware/loadNotification"); // ✅
 
-
-router.get("/", loadSidebar, loadNotification, (req, res) => {
+router.get("/", ensureAuth,  loadSidebar, loadNotification, (req, res) => {
   res.render("home", {
     link: "index", // nama partial konten
     jslink: "javascripts/javascript.js", // load JS eksternal

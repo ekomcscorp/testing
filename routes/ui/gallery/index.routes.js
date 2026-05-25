@@ -5,7 +5,7 @@ const galleryRepository = require("../../../repositories/gallery.repository");
 // const galleryService = require("../../../services/galleries/gallery.service");
 
 // TAMPILAN LIST
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
   try {
     const gallery = await galleryRepository.getAllGalleries();
 

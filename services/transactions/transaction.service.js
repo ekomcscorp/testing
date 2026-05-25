@@ -65,6 +65,7 @@ class TransactionService {
         // 3. Simpan Header Transaksi
         const transaction = await transactionRepo.createTransaction({
             user_id,
+            product_id: items[0].product_id, // 🟢 Tambahkan ini agar relasi ke Travel (via Product) terbentuk
             total_price: totalTransactionPrice,
             status: "UNPAID",
             payment_method: payment_method || 'TRANSFER'
@@ -88,7 +89,7 @@ class TransactionService {
     }
 }
    
-    async getAllTransactionDatatables(query) {
+    async getAllTransactionDatatables(query, user) {
         const { draw, start, length, order, columns } = query;
         const search = query["search[value]"] || query.search?.value || "";
 
@@ -100,8 +101,9 @@ class TransactionService {
                 search,
                 order,
                 columns,
+                user // 🟢 Kirim info user
             }),
-            transactionRepo.countAll(),
+            transactionRepo.countAll(user), // 🟢 Kirim info user
         ]);
 
         return {

@@ -6,7 +6,7 @@ const categoryRepository = require("../../../repositories/category.repository");
 // const galleryService = require("../../../services/galleries/gallery.service");
 
 // TAMPILAN LIST
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
   try {
     const galleryCategory = await categoryRepository.getAllCategory();
 
@@ -25,7 +25,7 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
 });
 
 // TAMPILAN FORM
-router.get("/form", auth.ensureAuth, loadSidebar, async (req, res) => {
+router.get("/form", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, async (req, res) => {
   res.render("home", {
     link: "galleries/gallery_form",
     jslink: "javascript/gallery_javascript.js",

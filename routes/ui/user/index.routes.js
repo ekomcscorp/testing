@@ -5,7 +5,7 @@ const UserRepo = require("../../../repositories/user.repository");
 const UserlevelRepo = require("../../../repositories/userlevel.repository");
 
 // TAMPILAN LIST
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
     try {
         const users = await UserRepo.getAllUsers();
         const userlevels = await UserlevelRepo.getAllUserlevels();

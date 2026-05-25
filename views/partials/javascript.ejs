@@ -531,6 +531,12 @@
                     if (!res.ok) {
                     localStorage.removeItem("token");
 
+                    // if ( data.user.id_level !== 1 && data.user.id_level !== 2){
+                    //     window.location.href = "https://produk.pengenumroh.com/users/login";
+                    //     alert("Anda tidak memiliki akses untuk login");
+                    //     return
+                    // }
+
                     window.location.href = "/login";
                     return;
                     }

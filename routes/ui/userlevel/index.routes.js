@@ -4,7 +4,7 @@ const { auth, loadSidebar, loadNotification } = require("../../../middleware");
 const UserRepo = require("../../../repositories/user.repository");
 const UserlevelRepo = require("../../../repositories/userlevel.repository");
 
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
     try {
         const userlevel = await UserlevelRepo.getAllUserlevels();
         const users = await UserRepo.getAllUsers();
@@ -25,7 +25,7 @@ router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res)
     }
 });
 
-router.get("/userAkses/:id_level", auth.ensureAuth, loadSidebar, async (req, res) => {
+router.get("/userAkses/:id_level", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, async (req, res) => {
     try {
         const users = await UserService.getAllUsers();
         const { id_level } = req.params;

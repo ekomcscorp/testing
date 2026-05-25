@@ -17,6 +17,10 @@ async function login(identifier, password) {
     throw new Error("Akun belum aktif. Menunggu persetujuan admin.");
   }
 
+  // if (user.id_level !== 1 && user.id_level !== 2) {
+  //   throw new Error ("Anda tidak memiliki akses untuk login")
+  // }
+
   // Jika kamu ingin filter hanya user web, bisa cek 'app' juga:
   // if (user.app !== 'Y') {
   //   throw new Error("Akun belum disetujui untuk akses aplikasi.");

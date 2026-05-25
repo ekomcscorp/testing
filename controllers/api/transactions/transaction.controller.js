@@ -29,7 +29,7 @@ class TransactionController {
         return response.error(res, "Akses ditolak", 403);
       }
 
-      const result = await transactionService.getAllTransactionDatatables(req.query);
+      const result = await transactionService.getAllTransactionDatatables(req.query, req.user);
 
       // Mapping akses ke dalam data (Logic UI)
       const data = result.data.map((row) => ({

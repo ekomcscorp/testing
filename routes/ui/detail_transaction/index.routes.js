@@ -56,7 +56,7 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
     }
 });
 
-router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/:id", auth.ensureAuth,  loadSidebar, loadNotification, async (req, res) => {
     try {
         const { id } = req.params;
         let transaction = await Transaction.getTransactionById(id);
@@ -89,7 +89,7 @@ router.get("/:id", auth.ensureAuth, loadSidebar, loadNotification, async (req, r
     }
 });
 
-router.get("/:id/invoice", auth.ensureAuth, async (req, res) => {
+router.get("/:id/invoice", auth.ensureAuth, auth.restrictToAdmin, async (req, res) => {
     try {
         const { id } = req.params;
 

@@ -4,7 +4,7 @@ const { auth, loadSidebar, loadNotification } = require("../../../middleware");
 const MenuRepo = require("../../../repositories/menu.repository");
 
 // TAMPILAN LIST
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
     try {
         const menu = await MenuRepo.findAll();
 
