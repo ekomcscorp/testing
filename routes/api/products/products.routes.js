@@ -50,6 +50,7 @@ const diskStrorage = multer.diskStorage({
 
 const upload = multer({storage: diskStrorage})
 
+router.get("/landing",  productController.getProductForLanding);
 router.get("/",  productController.getAllProduct);
 router.get("/datatables",  productController.getAllProductsDatatables);
 router.get("/:id", productController.getProductById);

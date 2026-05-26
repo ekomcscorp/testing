@@ -31,7 +31,7 @@
                 <td class="text-right">
                     <div class="title">INVOICE</div>
                     <p><%= data.transaction_no %><br>
-                       #INV/<%= new Date().getFullYear() %>/<%= String(new Date().getMonth() + 1).padStart(2, '0') %>/<%= String(data.id).padStart(3, '0') %>
+                       INV<%= new Date().getFullYear().toString().slice(-2) %><%= String(new Date().getMonth() + 1).padStart(2, '0') %><%= String(data.transaction_no ).slice(-4) %>
                     </p>
                 </td>
             </tr>

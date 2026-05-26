@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage});
 
 router.get("/", transactionController.getAllTransactions);
+router.get("/my-transactions", ensureAuthToken, transactionController.getMyTransactions);
 router.get("/datatables", injectUser, transactionController.getAllTransactionDatatables);
 router.get("/:id", transactionController.getTransactionById);
 router.post("/", ensureAuthToken, transactionController.createTransaction);

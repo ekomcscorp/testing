@@ -41,10 +41,6 @@
     <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-    <button id="theme-toggle" class="absolute top-6 right-6 p-2.5 rounded-full bg-white dark:bg-dark-card shadow-md border border-gray-100 dark:border-dark-border z-50 active:scale-95 transition-all">
-        <i id="theme-icon" class="ph ph-moon text-xl text-gray-600 dark:text-yellow-400"></i>
-    </button>
-
     <main class="w-full max-w-md z-10">
         <div class="bg-white dark:bg-dark-card rounded-[2rem] shadow-2xl border border-gray-100 dark:border-dark-border p-8 sm:p-10 relative">
             
@@ -152,18 +148,9 @@
 
     <script>
         $(document).ready(function() {
-            // --- 1. Dark Mode ---
-            $('#theme-toggle').click(function() {
-                $('html').toggleClass('dark');
-                const isDark = $('html').hasClass('dark');
-                localStorage.theme = isDark ? 'dark' : 'light';
-                $('#theme-icon').attr('class', isDark ? 'ph ph-sun text-xl text-yellow-400' : 'ph ph-moon text-xl text-gray-600');
-            });
-
-            if (localStorage.theme === 'dark') {
-                $('html').addClass('dark');
-                $('#theme-icon').attr('class', 'ph ph-sun text-xl text-yellow-400');
-            }
+            // --- 1. Force Light Mode ---
+            localStorage.theme = 'light';
+            $('html').removeClass('dark').addClass('light');
 
             // --- 2. Switch Form Logic ---
             $('#go-to-register').click(function() {

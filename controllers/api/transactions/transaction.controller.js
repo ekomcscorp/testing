@@ -166,6 +166,20 @@ class TransactionController {
       return response.error(res, error.message);
     }
   }
+
+  // Ambil semua transaksi user yang login
+  async getMyTransactions(req, res) {
+    try {
+      if (!req.user || !req.user.id) {
+        return response.error(res, "Silakan login terlebih dahulu", 401);
+      }
+
+      const result = await transactionService.getMyTransactions(req.user.id);
+      return response.success(res, "Data transaksi Anda berhasil diambil", result);
+    } catch (error) {
+      return response.error(res, error.message);
+    }
+  }
 }
 
 module.exports = new TransactionController();

@@ -254,6 +254,16 @@ class ProductController {
       return res.status(400).json({ success: false, message: error.message ||  "Terjadi kesalahan saat menyimpan data" });
     }
   }
+  // Get products for landing page
+  async getProductForLanding(req, res) {
+    try {
+      const products = await productService.getProductForLanding();
+      res.json({ success: true, data: products });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  }
   // Datatables endpoint
  
 }

@@ -1674,10 +1674,6 @@ input:checked + .toggle-bg {
   right: 1rem;
 }
 
-.right-6 {
-  right: 1.5rem;
-}
-
 .right-\[-10\%\] {
   right: -10%;
 }
@@ -1696,10 +1692,6 @@ input:checked + .toggle-bg {
 
 .top-4 {
   top: 1rem;
-}
-
-.top-6 {
-  top: 1.5rem;
 }
 
 .top-8 {
@@ -4329,11 +4321,6 @@ input:checked + .toggle-bg {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
-.text-yellow-400 {
-  --tw-text-opacity: 1;
-  color: rgb(250 204 21 / var(--tw-text-opacity, 1));
-}
-
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
@@ -5470,14 +5457,6 @@ table.dataTable tbody tr:hover:is(.dark *) {
     right: 1rem;
   }
 
-  .sm\:right-6 {
-    right: 1.5rem;
-  }
-
-  .sm\:top-6 {
-    top: 1.5rem;
-  }
-
   .sm\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
@@ -5620,10 +5599,6 @@ table.dataTable tbody tr:hover:is(.dark *) {
 
   .sm\:p-10 {
     padding: 2.5rem;
-  }
-
-  .sm\:p-2\.5 {
-    padding: 0.625rem;
   }
 
   .sm\:p-6 {

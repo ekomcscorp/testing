@@ -76,6 +76,7 @@ class TransactionRepository {
             throw error;
         }
     }
+    
 
     async getAllTransactions(user) {
         const productInclude = {
@@ -237,6 +238,39 @@ class TransactionRepository {
         return await Transaction.destroy({ 
             where: { id },
             transaction 
+        });
+    }
+
+    // Ambil semua transaksi milik user tertentu
+    async getTransactionByUserId(user_id) {
+        const transactions = await Transaction.findAll({
+            where: { user_id },
+            include: [
+                {
+                    model: Product,
+                    as: "product",
+                    attributes: ["id", "nama_produk", "tgl_keberangkatan", "duration", "thumbnail_url"]
+                },
+                {
+                    model: TransactionDetail,
+                    as: "details",
+                    attributes: ["product_name", "room_types", "price", "departure_date", "hotels_snapshot", "flights_snapshot"]
+                },
+                {
+                    model: User,
+                    as: "user",
+                    attributes: ["id", "fullname", "email", "no_wa"]
+                }
+            ],
+            order: [["created_at", "DESC"]]
+        });
+
+        // Auto-parse snapshots
+        return transactions.map(transaction => {
+            if (transaction.details) {
+                transaction.details = transaction.details.map(detail => parseSnapshots(detail));
+            }
+            return transaction;
         });
     }
 }

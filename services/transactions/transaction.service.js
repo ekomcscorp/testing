@@ -142,6 +142,15 @@ class TransactionService {
 
         return await transactionRepo.getTransactionById(id);
     }
+
+    async getMyTransactions(user_id) {
+        try {
+            const transactions = await transactionRepo.getTransactionByUserId(user_id);
+            return transactions || [];
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
 module.exports = new TransactionService();

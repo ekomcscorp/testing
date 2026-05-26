@@ -405,6 +405,15 @@ class ProductService {
             throw new Error(error.message);
         }
        }
+
+       async getProductForLanding() {
+        try {
+            const products = await productRepository.getProductForLanding();
+            return products || [];
+        } catch (error) {
+            throw new Error(error.message);
+        }
+       }
 }
 
 module.exports = new ProductService;

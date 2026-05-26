@@ -57,6 +57,55 @@ class ProductRepository {
         });
     }
 
+    async getProductForLanding() {
+        return await Product.findAll({
+            where: { status: 'publish' },
+            include: [
+                {
+                    model: ProductPrices,
+                    as: "prices",
+                    attributes: ["room_types", "price"]
+                },
+                {
+                    model: ProductFlight,
+                    as: "flights",
+                    attributes: ["airline_name", "type"]
+                },
+                {
+                    model: ProductHotel,
+                    as: "hotels",
+                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"]
+                },
+                {
+                    model: ProductFacility,
+                    as: "facility",
+                    attributes: ["facility", "type"]
+                },
+                {
+                    model: ProductItinerary,
+                    as: "itinerary",
+                    attributes: ["day_order", "title", "description"]
+                },
+                {
+                    model: ProductSnK,
+                    as: "snk",
+                    attributes: ["name"]
+                },
+                {
+                    model: ProductNote,
+                    as: "notes",
+                    attributes: ["note"]
+                },
+                {
+                    model: User,
+                    as: "creator",
+                    attributes: ["id", "fullname", "username"]
+                }
+            ],
+            order: [["createdAt", "DESC"]]
+        });
+    }
+
     async getPaginatedProduct({ start, length, search, order, columns, user }) {
     // 1. Definisikan pencarian dengan nama field yang benar sesuai database
     const where = search ? {
@@ -207,6 +256,8 @@ class ProductRepository {
         }
         return await Product.count({ where: queryWhere }); // Total produk dengan atau tanpa filter
     }
+
+    
 }
 
 module.exports = new ProductRepository;
