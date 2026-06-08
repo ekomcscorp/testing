@@ -81,7 +81,10 @@ class TransactionService {
         await transactionRepo.createBulkTransactionDetail(finalDetails, { transaction: t });
 
         await t.commit();
-        return transaction;
+
+        // Kembalikan transaction lengkap termasuk user.profile
+        const fullTransaction = await transactionRepo.getTransactionById(transaction.id);
+        return fullTransaction;
 
     } catch (error) {
         await t.rollback();
