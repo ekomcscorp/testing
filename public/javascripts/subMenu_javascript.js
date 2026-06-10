@@ -184,6 +184,11 @@ $(document).ready(function() {
             is_active: document.getElementById("sub_is_active").value,
         }
 
+        if(!payload.nama_menu || !payload.link || !payload.icon || !payload.parent_id || !payload.urutan) {
+            swal("Peringatan!", "Semua field wajib diisi", "warning");
+            return;
+        }
+        
         const isUpdate = id !== "";
         const url = isUpdate ? `/api/menu/${id}` : `/api/menu`;
         const method = isUpdate ? "PUT" : "POST";

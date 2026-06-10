@@ -115,7 +115,7 @@ class ProductRepository {
     } : {};
 
     // Tambahkan filter berdasarkan user_id jika user bukan admin (level 1)
-    if (user && user.id_level !== 1) {
+    if (user && user.id_level !== 1 && user.id_level !== 2) {
         where.user_id = user.id;
     }
 

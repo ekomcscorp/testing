@@ -176,6 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
       const app = document.getElementById("app").value;
+
+      if(!fullname || !username || !email || !id_level || !is_active || !password) {
+        swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
+        return;
+      }
   
     // Tentukan URL dan method berdasarkan id
     const isUpdate = id !== "";

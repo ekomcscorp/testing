@@ -91,20 +91,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 2. CREATE ATAU UPDATE LOGIC
   document.getElementById("submitMenuBtn").addEventListener("click", async () => {
+    const submitBtn = document.getElementById("submitMenuBtn");
     const id = document.getElementById("hidden_id_menu").value;
-    const payload = {
-      nama_menu: document.getElementById("nama_menu").value,
-      link: document.getElementById("link").value,
-      icon: document.getElementById("icon").value,
-      urutan: parseInt(document.getElementById("urutan").value),
-      is_active: document.getElementById("is_active").value
-    };
+    const nama = document.getElementById("nama_menu").value.trim();
+    const link = document.getElementById("link").value.trim();
+    const icon = document.getElementById("icon").value.trim();
+    const urutanVal = document.getElementById("urutan").value;
+    const urutan = urutanVal ? parseInt(urutanVal, 10) : NaN;
+    const is_active = document.getElementById("is_active").value;
+
+    // Validasi sederhana di client-side
+    if (!nama || !link || !icon || isNaN(urutan)) {
+      swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
+      return;
+    }
+
+    if (urutan <= 0) {
+      swal("Peringatan", "Field 'Urutan' harus lebih besar dari 0", "warning");
+      return;
+    }
+
+    const payload = { nama_menu: nama, link, icon, urutan, is_active };
 
     const isUpdate = id !== "";
     const url = isUpdate ? `/api/menu/${id}` : `/api/menu`;
     const method = isUpdate ? "PUT" : "POST";
 
     try {
+      submitBtn.disabled = true;
       const res = await fetch(url, {
         method: method,
         headers: { "Content-Type": "application/json" },
@@ -114,14 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (res.ok) {
-          swal("Berhasil!", data.message || "Data berhasil disimpan", "success");
-          closeMenuModal();
-          setTimeout(() => location.reload(), 1500); // Reload page setelah sukses
+        swal("Berhasil!", data.message || "Data berhasil disimpan", "success");
+        closeMenuModal();
+        setTimeout(() => location.reload(), 1500);
       } else {
         swal("Gagal!", data.message || "Terjadi kesalahan", "error");
       }
     } catch (err) {
       swal("Error!", "Gagal menghubungi server", "error");
+    } finally {
+      submitBtn.disabled = false;
     }
   });
 });

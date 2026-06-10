@@ -497,7 +497,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         const url = productId ? `/api/products/${productId}` : '/api/products';
          const method = productId ? 'PUT' : 'POST';
 
-        if (!ProductState.category_id) return swal("Oops!", "Kategori belum dipilih", "warning");
+        
+
+        // previous simple check removed — we'll validate comprehensively after parsing prices
 
         const getCleanNumber = (value) => {
             if (!value) return 0;
@@ -514,6 +516,46 @@ document.addEventListener("DOMContentLoaded", async function() {
                 p.price = getCleanNumber(p.price);
             }
         });
+
+        // --- Comprehensive Validation ---
+        const errors = [];
+
+        // Basic product fields
+        if (!ProductState.nama_produk || ProductState.nama_produk.trim() === '') errors.push('Nama produk');
+        if (!ProductState.category_id) errors.push('Kategori');
+        if (!ProductState.tgl_keberangkatan) errors.push('Tanggal keberangkatan');
+        if (!ProductState.quota || Number(ProductState.quota) <= 0) errors.push('Quota');
+        if (!ProductState.duration || Number(ProductState.duration) <= 0) errors.push('Durasi');
+        if (!ProductState.description || ProductState.description.trim() === '') errors.push('Deskripsi');
+
+        // Thumbnail required only when creating new product
+        if (!productId && !thumbnail_file) errors.push('Thumbnail produk');
+
+        // Prices: require all defined room types have a price > 0
+        ProductPriceState.forEach(p => {
+            if (!p.price || Number(p.price) <= 0) errors.push(`Harga untuk ${p.type}`);
+        });
+
+        // Flights
+        if (!ProductFlightState.Departure.airline_name || ProductFlightState.Departure.airline_name.trim() === '') errors.push('Maskapai Keberangkatan');
+        if (!ProductFlightState.Return.airline_name || ProductFlightState.Return.airline_name.trim() === '') errors.push('Maskapai Kepulangan');
+
+        // Hotels
+        if (!ProductHotelState.Mekkah.name || ProductHotelState.Mekkah.name.trim() === '') errors.push('Hotel Mekkah');
+        if (!ProductHotelState.Madinah.name || ProductHotelState.Madinah.name.trim() === '') errors.push('Hotel Madinah');
+
+        // Itinerary
+        if (!ProductItineraryState || ProductItineraryState.length === 0) errors.push('Itinerary');
+
+        // Facilities at least one
+        if ((!ProductFacilityState.INCLUDE || ProductFacilityState.INCLUDE.length === 0) && (!ProductFacilityState.EXCLUDE || ProductFacilityState.EXCLUDE.length === 0)) {
+            errors.push('Fasilitas (minimal 1)');
+        }
+
+        if (errors.length > 0) {
+            const msg = `Field berikut wajib diisi atau diperbaiki:\n- ${[...new Set(errors)].join('\n- ')}`;
+            return swal('Perhatian', msg, 'warning');
+        }
 
         const formData = new FormData();
 
@@ -543,7 +585,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (hotelImageFiles.Mekkah) formData.append("hotel_image_mekkah", hotelImageFiles.Mekkah);
         if (hotelImageFiles.Madinah) formData.append("hotel_image_madinah", hotelImageFiles.Madinah);
 
+        const submitBtn = document.getElementById('submitProductBtn');
         try {
+            if (submitBtn) submitBtn.disabled = true;
             const token = localStorage.getItem("token");
             const res = await fetch(url, { 
                 method: method, 
@@ -560,6 +604,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         } catch (err) {
             swal("Error", "Gagal menghubungi server", "error");
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
         }
     });
 
