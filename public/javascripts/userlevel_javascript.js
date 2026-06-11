@@ -40,12 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     let buttons = `<div class="flex items-center justify-center gap-2">`;
                     
                     // Tombol Akses
+                    if (row.akses?.edit) {
                     buttons += `
                         <button onclick="openAccessModal('${data}', '${row.nama_level}')"
                             class="open-access-btn p-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-400 transition-colors"
                             title="Atur Akses" style="transform: scale(0.9)">
                             <i class="ph-bold ph-key text-lg"></i>
                         </button>`;
+                    }
 
                     // Tombol Edit
                     if (row.akses?.edit) {
