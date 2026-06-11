@@ -17,7 +17,8 @@ router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotifica
             username: req.user?.username || "Guest",
             fullname: req.user?.fullname || "Guest",
             submenu,
-            menu
+            menu,
+            akses: res.locals.akses
 
         });
     } catch (error) {

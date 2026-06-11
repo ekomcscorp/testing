@@ -8,6 +8,9 @@ router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotifica
     try {
         const menu = await MenuRepo.findAll();
 
+        // Debug: tampilkan akses yang tersedia untuk view
+        console.log('DEBUG res.locals.akses for /menu =>', res.locals.akses);
+
         res.render("home", {
             link: "menu/menu_list",
             jslink: "javascripts/menu_javascript.js",
@@ -16,6 +19,7 @@ router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotifica
             user: req.user,
             username: req.user?.username || "Guest",
             fullname: req.user?.fullname || "Guest",
+            akses: res.locals.akses // pastikan akses tersedia di view scope
         });
         console.log('SESSION USER:', req.user);
 

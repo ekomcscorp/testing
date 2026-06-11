@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     columns: [
       {
         data: "id_menu",
-        className: "p-2 text-center dark:text-white",
+        className: "p-2 text-center dark:text-white border-b",
         render: function (data, type, row) {
           let buttons = `<div class="flex items-center justify-center gap-2">`;
           

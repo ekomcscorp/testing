@@ -8,12 +8,13 @@
         <span class="text-gray-800 dark:text-gray-200">Users</span>
       </nav>
     </div>
-
+    <% if (typeof akses !== 'undefined' && akses.add_level === 'Y') { %>
     <button id="addUserBtn"
       class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors shadow-lg shadow-primary-500/30">
       <i class="ph ph-plus text-lg"></i>
       <span>Tambah User</span>
     </button>
+    <% } %>
   </div>
 
   <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border overflow-hidden mb-10">
