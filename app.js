@@ -26,43 +26,10 @@ const isProduction = process.env.NODE_ENV === "production";
 const socketHandler = require("./utils/socket");
 socketHandler(io); // Kirim io ke socket
 
-// NOTE: Pasang CORS lebih awal agar header CORS tersedia untuk semua routes/static
 const extractJwt = require("./middleware/extractJwt");
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:8000",
-  "https://mediumspringgreen-meerkat-585223.hostingersite.com",
-  "https://gold-lark-507177.hostingersite.com"
-];
-
-app.use(cors({
-  origin: function(origin, callback) {
-    // Jika tidak ada origin (akses server-to-server atau same-site navigation),
-    // biarkan atau ubah sesuai kebijakan. Saat testing dengan Postman, origin = undefined.
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('CORS policy blokir origin ini'), false);
-    }
-
-    return callback(null, true);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization"
-  ],
-  credentials: true,
-}));
-
-// Handle preflight untuk semua route
-app.options("*", cors());
-
-// Pasang middleware setelah CORS agar header CORS tersedia pada middleware berikutnya
 app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Header
-app.use(injectUser); // ⬅️ Middleware global
 
+app.use(injectUser); // ⬅️ Middleware global
 app.use(express.static(path.join(__dirname, "public")));
 
 // 🌐 Middleware untuk inject data user ke view
@@ -73,33 +40,33 @@ app.use(express.static(path.join(__dirname, "public")));
 // });
 
 // 📄 Parsing Middleware
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "http://127.0.0.1:8000",
-//   "https://mediumspringgreen-meerkat-585223.hostingersite.com",
-//   "https://gold-lark-507177.hostingersite.com"
-// ];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:8000",
+  "https://mediumspringgreen-meerkat-585223.hostingersite.com",
+  "https://gold-lark-507177.hostingersite.com"
+];
 
-// app.use(cors({
-//   origin: function(origin, callback) {
+app.use(cors({
+  origin: function(origin, callback) {
 
-//     if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true);
 
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       return callback(new Error('CORS policy blokir origin ini'), false);
-//     }
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy blokir origin ini'), false);
+    }
 
-//     return callback(null, true);
-//   },
-//   methods: ["GET", "POST", "PUT", "DELETE"],
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
 
-//   allowedHeaders: [
-//     "Content-Type",
-//     "Authorization"
-//   ],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization"
+  ],
 
-//   credentials: true, // Agar cookie session bisa dipakai
-// }));
+  credentials: true, // Agar cookie session bisa dipakai
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
