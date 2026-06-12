@@ -16,9 +16,21 @@ const buildTree = (menus, parentId = null) => {
       .sort((a, b) => a.urutan - b.urutan);
     }
 
+const normalizePath = (p) => {
+  if (!p) return '';
+  // ensure leading slash and no trailing slash (except root)
+  let np = p.startsWith('/') ? p : '/' + p;
+  if (np.length > 1 && np.endsWith('/')) np = np.slice(0, -1);
+  return np;
+};
+
 const markActive = (menus, currentUrl) => {
+  const cur = normalizePath(currentUrl || '');
   return menus.map(menu => {
-    const isActive = currentUrl.startsWith(menu.link);
+    const menuLink = normalizePath(menu.link || '');
+
+    // Active only when equal or when current URL is a child path of the menu (menuLink + '/')
+    const isActive = cur === menuLink || cur.startsWith(menuLink + '/');
 
     const children = markActive(menu.children || [], currentUrl);
 
