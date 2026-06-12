@@ -4415,10 +4415,6 @@ input:checked + .toggle-bg {
   opacity: 0.75;
 }
 
-.opacity-50 {
-  opacity: 0.5;
-}
-
 .mix-blend-plus-darker {
   mix-blend-mode: plus-darker;
 }
@@ -5461,6 +5457,10 @@ table.dataTable tbody tr:hover:is(.dark *) {
     right: 1rem;
   }
 
+  .sm\:col-span-6 {
+    grid-column: span 6 / span 6;
+  }
+
   .sm\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
@@ -5561,6 +5561,10 @@ table.dataTable tbody tr:hover:is(.dark *) {
 
   .sm\:max-w-sm {
     max-width: 24rem;
+  }
+
+  .sm\:grid-cols-none {
+    grid-template-columns: none;
   }
 
   .sm\:flex-row {

@@ -54,7 +54,7 @@ $(document).ready(function() {
                 className: "p-2 font-semibold text-gray-900 border-b dark:text-white",
                 render: (data, type, row) => `
                     <div class="flex items-center gap-2">
-                        <i class="ph-bold ph-arrow-elbow-down-right text-gray-400"></i>
+                        
                         <span>${data}</span>
                     </div>`
             },
@@ -188,7 +188,7 @@ $(document).ready(function() {
             swal("Peringatan!", "Semua field wajib diisi", "warning");
             return;
         }
-        
+
         const isUpdate = id !== "";
         const url = isUpdate ? `/api/menu/${id}` : `/api/menu`;
         const method = isUpdate ? "PUT" : "POST";

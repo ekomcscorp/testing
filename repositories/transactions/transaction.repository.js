@@ -1,4 +1,4 @@
-const { Op } = require("sequelize"); 
+const { Op, where, col } = require("sequelize"); 
 const { Transaction, User, TransactionDetail, Product, Profile } = require("../../models");
 
 // Helper function untuk parse JSON snapshots
@@ -157,66 +157,77 @@ class TransactionRepository {
         return transaction;
     }
 
-    async getPaginatedTransaction({ start, length, search, order, columns, user }) {
-        const where = {
-            ...(search && {
-                [Op.or]: [
-                    { transaction_no: { [Op.like]: `%${search}%` } },
-                    { status: { [Op.like]: `%${search}%` } },
-                ]
-            })
-        };
+   async getPaginatedTransaction({ start, length, search, order, columns, user }) {
+    const whereClause = {}; // ✅ Rename agar tidak konflik
 
-        const sort = order && order.length > 0
-            ? [[columns[order[0].column].data, order[0].dir]]
-            : [["created_at", "DESC"]];
+    if (search) {
+        const orConditions = [
+            { transaction_no: { [Op.like]: `%${search}%` } },
+            { status: { [Op.like]: `%${search}%` } },
+            where(col('user.fullname'), { [Op.like]: `%${search}%` }), // ✅ `where` sekarang adalah Sequelize function
+            where(col('user.username'), { [Op.like]: `%${search}%` })
+        ];
 
-        // 🟢 Logic Filter: Jika user adalah Travel (id_level 4)
-        const productInclude = {
-            model: Product,
-            as: "product",
-            attributes: ["id", "nama_produk", "user_id"]
-        };
-
-        if (user && user.id_level === 4) {
-            productInclude.where = { user_id: user.id };
-            productInclude.required = true; // INNER JOIN agar hanya transaksi milik travel ini saja
+        const numeric = !Number.isNaN(Number(search));
+        if (numeric) {
+            orConditions.push({ total_price: Number(search) });
+        } else {
+            orConditions.push({ total_price: { [Op.like]: `%${search}%` } }); // ✅ Lebih aman pakai object biasa
         }
 
-        const result = await Transaction.findAndCountAll({
-            where,
-            include: [
-                productInclude, // ⬅️ Tambahkan Product untuk filtering
-                {
-                    model: TransactionDetail,
-                    as: "details",
-                    attributes: ["product_name", "room_types", "price"]
-                },
-                {
-                    model: User,
-                    as: "user",
-                    attributes: ["id", "fullname", "username"]
-                }
-            ],
-            order: sort,
-            offset: parseInt(start) || 0,
-            limit: parseInt(length) || 10,
-            distinct: true
-        });
-        
-        // Auto-parse snapshots in all rows
-        const parsedRows = result.rows.map(transaction => {
-            if (transaction.details) {
-                transaction.details = transaction.details.map(detail => parseSnapshots(detail));
-            }
-            return transaction;
-        });
-
-        return {
-            ...result,
-            rows: parsedRows
-        };
+        whereClause[Op.or] = orConditions; // ✅ Gunakan whereClause
     }
+
+    const sort = order && order.length > 0
+        ? [[columns[order[0].column].data, order[0].dir]]
+        : [["created_at", "DESC"]];
+
+    const productInclude = {
+        model: Product,
+        as: "product",
+        attributes: ["id", "nama_produk", "user_id"]
+    };
+
+    if (user && user.id_level === 4) {
+        productInclude.where = { user_id: user.id };
+        productInclude.required = true;
+    }
+
+    const result = await Transaction.findAndCountAll({
+        where: whereClause, // ✅ Pakai whereClause
+        include: [
+            productInclude,
+            {
+                model: TransactionDetail,
+                as: "details",
+                attributes: ["product_name", "room_types", "price"]
+            },
+            {
+                model: User,
+                as: "user",
+                attributes: ["id", "fullname", "username"],
+                required: false // ✅ LEFT JOIN agar search by user.fullname tidak drop row
+            }
+        ],
+        order: sort,
+        offset: parseInt(start) || 0,
+        limit: parseInt(length) || 10,
+        distinct: true,
+        subQuery: false // ✅ Penting! Agar col('user.fullname') bisa diakses di WHERE
+    });
+
+    const parsedRows = result.rows.map(transaction => {
+        if (transaction.details) {
+            transaction.details = transaction.details.map(detail => parseSnapshots(detail));
+        }
+        return transaction;
+    });
+
+    return {
+        ...result,
+        rows: parsedRows
+    };
+}
 
     async countAll(user) {
         if (user && user.id_level === 4) {

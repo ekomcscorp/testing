@@ -27,34 +27,30 @@ class ProductService {
    }
 
    async getAllProductsDatatables(query) {
-        // Destrukturisasi query dari datatables
-        const { draw, start, length, search, order, columns, user } = query;
-        const searchValue =
-            query.search?.value ||
-            query['search[value]'] ||
-            "";
+    const { draw, start, length, order, columns, user } = query;
+    const searchValue = query.search?.value || query['search[value]'] || "";
 
-        // Panggil repository
-         const [result, totalCount] = await Promise.all([
-            productRepository.getPaginatedProduct({
-                start: parseInt(start, 10) || 0,
-                length: parseInt(length, 10) || 10,
-                search: searchValue,
-                order,
-                columns,
-                user
-            }),
-            productRepository.countAll(user) // ✅ Total tanpa filter atau dengan filter user
-        ]);
+    // ✅ Tidak perlu Promise.all jika countAll sudah tercakup di getPaginatedProduct
+    const [paginatedResult, totalCount] = await Promise.all([
+        productRepository.getPaginatedProduct({
+            start: parseInt(start, 10) || 0,
+            length: parseInt(length, 10) || 10,
+            search: searchValue,
+            order,
+            columns,
+            user
+        }),
+        productRepository.countAll(user)
+    ]);
 
-        // findAndCountAll mengembalikan { count, rows }
-        return {
-            draw: parseInt(draw, 10) || 0,
-            recordsTotal: totalCount,
-            recordsFiltered: result.count,
-            data: result.rows // Ini yang akan di-map di controller
-        };
-    }
+    // Sekarang paginatedResult sudah { count, rows }
+    return {
+        draw: parseInt(draw, 10) || 0,
+        recordsTotal: totalCount,
+        recordsFiltered: paginatedResult.count,  // Tidak undefined
+        data: paginatedResult.rows               //  Tidak undefined
+    };
+}
 
     //    async createProduct(productData, userId) {
     //         const transaction = await sequelize.transaction();

@@ -1,4 +1,4 @@
-const { Model, Op, where, Transaction } = require("sequelize");
+const { Model, Op, where, col, Transaction } = require("sequelize");
 const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses, User } = require("../../models");
 
 class ProductRepository {
@@ -106,39 +106,64 @@ class ProductRepository {
         });
     }
 
+   // repository
     async getPaginatedProduct({ start, length, search, order, columns, user }) {
-    // 1. Definisikan pencarian dengan nama field yang benar sesuai database
-    const where = search ? {
-        [Op.or]: [
-            { nama_produk: { [Op.like]: `%${search}%` } }
-        ]
-    } : {};
+        
+        const whereClause = {};
 
-    // Tambahkan filter berdasarkan user_id jika user bukan admin (level 1)
-    if (user && user.id_level !== 1 && user.id_level !== 2) {
-        where.user_id = user.id;
-    }
-
-    console.log("SEARCH REPO:", search);
-    // 2. Pastikan limit dan offset aman
-    const offset = parseInt(start) || 0;
-    const limit = parseInt(length) || 10;
-
-    let orderBy = [['createdAt', 'DESC']];
-    if(order && order.length > 0){
-        const columnName = columns[order[0].column]?.data;
-
-        if (columnName) {
-            orderBy = [[columnName, order[0].dir]];
+        if (search) {
+            whereClause[Op.or] = [
+                { nama_produk: { [Op.like]: `%${search}%` } },
+                { status: { [Op.like]: `%${search}%` } },
+                where(col('creator.fullname'), { [Op.like]: `%${search}%` })
+            ];
         }
-    }
-         // Default order
 
-    // 3. Sertakan 'include' agar data relasi (seperti prices) ikut terambil
-    const result = await Product.findAndCountAll({
-        where,
-        include: [
-           {
+        if (user && user.id_level !== 1 && user.id_level !== 2) {
+            whereClause.user_id = user.id;
+        }
+
+        const offset = parseInt(start) || 0;
+        const limit = parseInt(length) || 10;
+
+        let orderBy = [['createdAt', 'DESC']];
+        if (order && order.length > 0) {
+            const columnName = columns[order[0].column]?.data;
+            if (columnName) {
+                orderBy = [[columnName, order[0].dir]];
+            }
+        }
+
+        // Step 1: Ambil IDs dengan pagination
+        const { count, rows: idRows } = await Product.findAndCountAll({
+            where: whereClause,
+            include: [
+                {
+                    model: User,
+                    as: "creator",
+                    attributes: [],
+                    required: false
+                }
+            ],
+            attributes: ['id'],
+            order: orderBy,
+            offset,
+            limit,
+            distinct: true,
+            subQuery: false
+        });
+
+        const productIds = idRows.map(p => p.id);
+
+        if (productIds.length === 0) {
+            return { count: 0, rows: [] };
+        }
+
+        // Step 2: Load full data berdasarkan IDs
+        const rows = await Product.findAll({
+            where: { id: { [Op.in]: productIds } },
+            include: [
+                {
                     model: ProductPrices,
                     as: "prices",
                     attributes: ["room_types", "price"]
@@ -176,18 +201,16 @@ class ProductRepository {
                 {
                     model: User,
                     as: "creator",
-                    attributes: ["id", "fullname", "username"]
+                    attributes: ["id", "fullname", "username"],
+                    required: false
                 }
-        ],
-        
-        order: orderBy,
-        offset,
-        limit,
-        distinct: true // Penting saat menggunakan 'include' agar count() akurat
-    });
+            ],
+            order: orderBy
+        });
 
-    return result;
-}
+       
+        return { count, rows };
+    }
 
     async getProductById(id) {
         return await Product.findByPk(id,{
