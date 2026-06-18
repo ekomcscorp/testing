@@ -147,6 +147,16 @@ app.get("/", (req, res) => {
   res.redirect("/login");
 });
 
+app.use((err, req, res, next) => {
+  if (err.message === 'Blocked by CORS Mentor Policy') {
+    return res.status(403).json({
+      status: 403,
+      message: "Forbidden: Anggota terlarang tidak boleh masuk (CORS Error)."
+    });
+  }
+  next(err);
+});
+
 // 🚀 Server run
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
