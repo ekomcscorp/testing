@@ -45,20 +45,23 @@ app.use(cors({
   origin: function(origin, callback) {
     
     console.log("Origin:", origin);
-    // Allow non-browser requests (no Origin) e.g. server-to-server or tools
-    if (!origin && process.env.NODE_ENV !== "production") {
-      return callback(null, true);
-    };
 
+    // If no Origin header, treat differently between environments.
+    // In production we require an Origin for browser requests (avoid proxy-stripped bypass),
+    // in development allow missing Origin for tools like curl.
     if (!origin) {
-      // Jika proxy menghapus origin, alternatifnya kita cek header 'Referer'
-      // Tapi untuk amannya, mari kita log atau handle secara strict:
-      return callback(null, true); // Jika ragu, biarkan true tapi selidiki via Solusi 2
+      if (process.env.NODE_ENV === "production") {
+        console.warn("Missing Origin header in production — refusing CORS");
+        return callback(null, false);
+      }
+      return callback(null, true);
     }
 
     // Properly check membership — `includes` returns boolean
     if (!allowedOrigins.includes(origin)) {
-      return callback(new Error('Origin is not allowed and blocked by CORS'), false);
+      console.warn(`Blocked CORS origin: ${origin}`);
+      // Signal CORS middleware to NOT set CORS headers (don't throw Error -> no 500)
+      return callback(null, false);
     }
 
     return callback(null, true);
@@ -72,6 +75,23 @@ app.use(cors({
 
   credentials: true, // Agar cookie session bisa dipakai
 }));
+
+// Middleware: Jika request datang dari browser (ada Origin) dan origin tidak diizinkan,
+// tolak dengan 403 JSON agar klien mendapatkan respons yang jelas.
+app.use((req, res, next) => {
+  const origin = req.get('Origin') || req.headers.origin;
+  if (!origin) return next(); // non-browser request
+
+  if (!allowedOrigins.includes(origin)) {
+    console.warn(`Request blocked by CORS middleware: ${origin} -> ${req.method} ${req.originalUrl}`);
+    return res.status(403).json({
+      error: 'CORS origin not allowed',
+      origin: origin
+    });
+  }
+
+  return next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
