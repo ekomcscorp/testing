@@ -141,6 +141,18 @@ const loadApiRoutes = (dir, baseRoute = "") => {
 
 loadApiRoutes(path.join(__dirname, "routes", "api"));
 
+// === MIDDLEWARE UNTUK DEBUG PRODUCTION (HAPUS SETELAH SELESAI) ===
+app.use((req, res, next) => {
+  // Kita hanya log request yang mengarah ke API atau Root agar log tidak kepenuhan oleh static files
+  if (req.url.startsWith('/api') || req.url === '/') {
+    console.log(`\n=== [DEBUG CORS PRODUCTION] ===`);
+    console.log(`Method: ${req.method} | URL: ${req.url}`);
+    console.log(`Method Origin dari req.get: ${req.get('origin')}`);
+    console.log(`Headers Lengkap:`, JSON.stringify(req.headers, null, 2));
+    console.log(`=================================\n`);
+  }
+  next();
+});
 
 // 🏠 Root redirect
 app.get("/", (req, res) => {
