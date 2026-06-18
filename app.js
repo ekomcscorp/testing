@@ -32,12 +32,6 @@ app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Heade
 app.use(injectUser); // ⬅️ Middleware global
 app.use(express.static(path.join(__dirname, "public")));
 
-// 🌐 Middleware untuk inject data user ke view
-// app.use((req, res, next) => {
-//   res.locals.username = req.user?.username || null;
-//   res.locals.fullname = req.user?.fullname || null;
-//   next();
-// });
 
 // 📄 Parsing Middleware
 const allowedOrigins = [
@@ -49,11 +43,14 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-
+    
+    console.log("Origin:", origin);
+    // Allow non-browser requests (no Origin) e.g. server-to-server or tools
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('CORS policy blokir origin ini'), false);
+    // Properly check membership — `includes` returns boolean
+    if (!allowedOrigins.includes(origin)) {
+      return callback(new Error('Origin is not allowed'), false);
     }
 
     return callback(null, true);
@@ -155,7 +152,3 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
-// server.listen(3000, '0.0.0.0', () => {
-//   console.log('Server running on http://0.0.0.0:3000');
-// });
