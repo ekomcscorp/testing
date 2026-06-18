@@ -46,11 +46,19 @@ app.use(cors({
     
     console.log("Origin:", origin);
     // Allow non-browser requests (no Origin) e.g. server-to-server or tools
-    if (!origin) return callback(null, true);
+    if (!origin && process.env.NODE_ENV !== "production") {
+      return callback(null, true);
+    };
+
+    if (!origin) {
+      // Jika proxy menghapus origin, alternatifnya kita cek header 'Referer'
+      // Tapi untuk amannya, mari kita log atau handle secara strict:
+      return callback(null, true); // Jika ragu, biarkan true tapi selidiki via Solusi 2
+    }
 
     // Properly check membership — `includes` returns boolean
     if (!allowedOrigins.includes(origin)) {
-      return callback(new Error('Origin is not allowed'), false);
+      return callback(new Error('Origin is not allowed and blocked by CORS'), false);
     }
 
     return callback(null, true);
