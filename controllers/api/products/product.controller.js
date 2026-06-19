@@ -1,6 +1,15 @@
 const { response } = require("express");
 const productService = require("../../../services/products/product.service");
 
+const handleServerError = (res, error) => {
+  console.error("SERVER ERROR:", error);
+  return res.status(500).json({ 
+    success: false, 
+    message: "Internal Server Error",
+    ...(process.env.NODE_ENV === 'development' && { error: error.message }) // Tampilkan detail error hanya di mode dev
+  });
+}
+
 class ProductController {
   // List all products
   async getAllProduct(req, res) {
@@ -13,10 +22,12 @@ class ProductController {
 
       const products = await productService.getAllProduct(req.user);
       console.log("MASUK PRODUCT CONTROLLER");
-      res.json({ success: true, data: products });
+      res.json({ 
+        success: true, 
+        data: products 
+      });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      return handleServerError(res, error);
     }
   }
 
@@ -108,8 +119,7 @@ class ProductController {
       }
       res.json({ success: true, data: product });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+      return handleServerError(res, error);
     }
   }
 
@@ -167,7 +177,7 @@ class ProductController {
     console.error(error);
     res.status(400).json({
       success: false,
-      message:  error.message || "Terjadi kesalahan saat menyimpan data",
+      message:  error.message || "Gagal menyimpan produk karena terjadi kesalahan saat menyimpan data",
 
     });
   }
@@ -231,7 +241,7 @@ class ProductController {
         res.json({ success: true, message: "Product updated" });
     } catch (error) {
         console.error(error);
-        res.status(400).json({ success: false, message:  error.message || "Terjadi kesalahan saat menyimpan data" });
+        res.status(400).json({ success: false, message:  error.message || "Terjadi kesalahan saat memperbarui data" });
     }
 }
 
@@ -260,8 +270,7 @@ class ProductController {
       const products = await productService.getProductForLanding();
       res.json({ success: true, data: products });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      return handleServerError(res, error);
     }
   }
   // Datatables endpoint

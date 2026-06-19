@@ -10,6 +10,7 @@ const productSnKController = require("../../../controllers/api/products/productS
 const productPriceController = require("../../../controllers/api/products/productPrices.controller.js")
 const productWishlistController = require("../../../controllers/api/products/productWishlist.controller.js");
 const {ensureAuthToken} = require("../../../middleware/authJwt.js");
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 
 const multer = require('multer');
 const path = require('path');
@@ -51,7 +52,7 @@ const diskStrorage = multer.diskStorage({
 const upload = multer({storage: diskStrorage})
 
 router.get("/landing",  productController.getProductForLanding);
-router.get("/",  productController.getAllProduct);
+router.get("/",  appSignature, productController.getAllProduct);
 router.get("/datatables",  productController.getAllProductsDatatables);
 router.get("/:id", productController.getProductById);
 router.get("/:id/flights/", productFlightController.getFlightsByProduct);
