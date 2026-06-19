@@ -68,17 +68,17 @@ router.get("/:id/prices/", productPriceController.index);
 
 // router.post("/wishlist/toggle",ensureAuthToken , productWishlistController.toggleWishlist);
 
-router.post("/", upload.fields([
+router.post("/", appSignature, upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.createProduct);
-router.put("/:id", upload.fields([
+router.put("/:id", appSignature, upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.updateProduct);
-router.delete("/:id",  productController.deleteProduct);
+router.delete("/:id", appSignature, productController.deleteProduct);
 
 
 module.exports = router;

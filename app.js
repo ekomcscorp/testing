@@ -26,13 +26,6 @@ const isProduction = process.env.NODE_ENV === "production";
 const socketHandler = require("./utils/socket");
 socketHandler(io); // Kirim io ke socket
 
-const extractJwt = require("./middleware/extractJwt");
-app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Header
-
-app.use(injectUser); // ⬅️ Middleware global
-app.use(express.static(path.join(__dirname, "public")));
-
-
 // 📄 Parsing Middleware
 const allowedOrigins = [
   "http://localhost:3000",
@@ -43,7 +36,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    
     console.log("Origin:", origin);
 
     // If no Origin header, treat differently between environments.
@@ -92,6 +84,12 @@ app.use((req, res, next) => {
 
   return next();
 });
+
+const extractJwt = require("./middleware/extractJwt");
+app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Header
+
+app.use(injectUser); // ⬅️ Middleware global
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
