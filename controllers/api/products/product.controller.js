@@ -147,8 +147,11 @@ class ProductController {
          return hotel;
     })
 
+    const thumbnailFile = req.files?.thumbnail?.[0]?.filename || null;
+
     const productData = {
       ...req.body,
+      thumbnail_url: thumbnailFile,
       prices: JSON.parse(req.body.prices || "[]"),
       flights: JSON.parse(req.body.flights || "[]"),
       hotels: hotels,
