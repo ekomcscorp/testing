@@ -264,7 +264,7 @@ class ProductService {
 
         await bulkInsert(productPricesRepository, validatePrices, (p, id) => ({
             product_id: id,
-            room_types: p.type,
+            room_types: p.room_types,
             price: p.price
         }));
 
