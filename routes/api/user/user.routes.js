@@ -1,10 +1,11 @@
 const express = require("express");
 const userController = require("../../../controllers/api/user.controller");
 const { injectUser } = require("../../../middleware");
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 
 const router = express.Router();
 
-router.get("/", userController.getAllUsers);
+router.get("/",appSignature, userController.getAllUsers);
 router.get("/datatables", injectUser, userController.getAllUsersDatatables);
 router.get("/:id", userController.getUserById);
 router.post("/", userController.createUser);
