@@ -2,6 +2,7 @@ const express = require('express');
 const transactionController = require('../../../controllers/api/transactions/transaction.controller');
 const { injectUser } = require ('../../../middleware');
 const {ensureAuthToken} = require("../../../middleware/authJwt");
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 const router = express.Router();
 const multer = require('multer');
 const crypto = require('crypto');
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-router.get("/", transactionController.getAllTransactions);
+router.get("/",appSignature, transactionController.getAllTransactions);
 router.get("/my-transactions", ensureAuthToken, transactionController.getMyTransactions);
 router.get("/datatables", injectUser, transactionController.getAllTransactionDatatables);
 router.get("/:id", transactionController.getTransactionById);
