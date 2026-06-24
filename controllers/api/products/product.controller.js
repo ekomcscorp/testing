@@ -267,6 +267,33 @@ class ProductController {
       return res.status(400).json({ success: false, message: error.message ||  "Terjadi kesalahan saat menyimpan data" });
     }
   }
+  
+  // Update product status (publish/draft/closed)
+  async updateStatus(req, res) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!status) return res.status(400).json({ success: false, message: 'Status is required' });
+
+      const updated = await productService.updateStatus(id, status);
+      if (!updated) return res.status(404).json({ success: false, message: 'Product not found' });
+
+      // Emit socket event to admin (if socket util available)
+      try {
+        const { getIO } = require('../../../utils/socketIO');
+        const io = getIO();
+        io.to('admin').emit('product_status_changed', { id: updated.id, status: updated.status });
+      } catch (e) {
+        // ignore if socket not initialized
+      }
+
+      return res.json({ success: true, message: 'Status updated', data: updated });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
   // Get products for landing page
   async getProductForLanding(req, res) {
     try {

@@ -394,6 +394,7 @@ class ProductService {
         }
        }
 
+       
        async deleteByProduct(id) {
         try{
             return await productRepository.deleteProduct(id);
@@ -409,6 +410,20 @@ class ProductService {
         } catch (error) {
             throw new Error(error.message);
         }
+       }
+
+       async updateStatus(id, status) {
+        const validStatuses = ['draft', 'publish', 'closed'];
+        if (!status || typeof status !== 'string') {
+            throw new Error('Status wajib diisi');
+        }
+        const normalized = status.trim().toLowerCase();
+        if (!validStatuses.includes(normalized)) {
+            throw new Error(`Invalid status. Allowed values: ${validStatuses.join(', ')}`);
+        }
+
+        await productRepository.updateProduct(id, { status: normalized });
+        return await productRepository.getProductById(id);
        }
 }
 

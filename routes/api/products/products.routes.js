@@ -78,6 +78,8 @@ router.put("/:id", appSignature, upload.fields([
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.updateProduct);
+// Update product status (publish/draft/closed)
+router.put('/:id/status', appSignature, productController.updateStatus);
 router.delete("/:id", appSignature, productController.deleteProduct);
 
 
