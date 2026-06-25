@@ -138,6 +138,70 @@
             });
 
         </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const prodEl = document.getElementById('total-products');
+                const usersEl = document.getElementById('total-users');
+                const pendingEl = document.getElementById('pending-orders');
+
+                if (!prodEl && !usersEl && !pendingEl) return;
+
+                // Fungsi tunggal penanggung jawab pembaruan UI
+                async function fetchStats() {
+                    try {
+                        const res = await fetch('/api/stats');
+                        const data = await res.json();
+                        if (data && data.status === "success" && data.data) { // Sesuaikan properti 'status' dari cURL Anda
+                            const stats = data.data;
+                            if (prodEl) prodEl.textContent = stats.totalProducts.toLocaleString('id-ID');
+                            if (usersEl) usersEl.textContent = stats.totalUsers.toLocaleString('id-ID');
+                            if (pendingEl) pendingEl.textContent = stats.pendingOrders.toLocaleString('id-ID');
+                        }
+                    } catch (err) {
+                        console.warn('Gagal fetch stats:', err.message || err);
+                    }
+                }
+
+                // 1. Initial Fetch saat halaman dimuat
+                fetchStats();
+
+                // 2. Gunakan fallback polling yang lebih longgar (misal 1 atau 2 menit)
+                const pollId = setInterval(fetchStats, 60000);
+
+                // 3. Inisialisasi Socket dengan mengirimkan Token secara eksplisit jika di localStorage
+                const token = localStorage.getItem('token');
+                const dashboardSocket = io({
+                    auth: {
+                        token: token // Dikirim ke socket.handshake.auth di backend
+                    }
+                });
+
+                // Jika token ada, Anda tidak perlu trigger 'init_user' manual, io({auth}) sudah menanganinya
+                
+                // 4. Konsistensi: Setiap ada event perubahan di sistem, lakukan re-fetch agar data akurat 100%
+                dashboardSocket.on('user_registered', () => {
+                    console.log('User baru terdaftar, memperbarui statistik...');
+                    fetchStats(); 
+                });
+
+                dashboardSocket.on('user_approved', () => {
+                    fetchStats();
+                });
+
+                // Event opsional jika Anda ingin membuat trigger global update dari backend
+                dashboardSocket.on('dashboard_global_refresh', () => {
+                    fetchStats();
+                });
+
+                // Cleanup
+                window.addEventListener('beforeunload', () => {
+                    clearInterval(pollId);
+                    try { dashboardSocket.close(); } catch (e) {}
+                });
+            });
+        </script>
+        
         <script>
             //USERLEVEL START
             document.addEventListener('DOMContentLoaded', () => {
