@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     };
 
     const ProductPriceState = [
-        { type: "Quad", price: 0 },
-        { type: "Double", price: 0 },
-        { type: "Triple", price: 0 }
+        { room_types: "Quad", price: 0 },
+        { room_types: "Double", price: 0 },
+        { room_types: "Triple", price: 0 }
     ];
 
     const ProductFlightState = {
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         $(`input[data-type="${type}"]`).val(formattedPrice);
 
-        const stateItem = ProductPriceState.find(ps => ps.type === type);
+        const stateItem = ProductPriceState.find(ps => ps.room_types === type);
         if (stateItem) stateItem.price = Number(p.price);
     });
 }
@@ -533,7 +533,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         } 
 
        ProductPriceState.forEach(p => {
-            const inputElement = document.querySelector(`[data-type="${p.type}"]`);
+            const inputElement = document.querySelector(`[data-type="${p.room_types}"]`);
             if (inputElement) {
                 p.price = getCleanNumber(inputElement.value);
             } else {
@@ -557,7 +557,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         // Prices: require all defined room types have a price > 0
         ProductPriceState.forEach(p => {
-            if (!p.price || Number(p.price) <= 0) errors.push(`Harga untuk ${p.type}`);
+            if (!p.price || Number(p.price) <= 0) errors.push(`Harga untuk ${p.room_types}`);
         });
 
         // Flights
