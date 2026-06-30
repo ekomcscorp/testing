@@ -1,4 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const resolveThumbnailUrl = (thumbnail) => {
+        if (!thumbnail) return null;
+        if (/^(https?:)?\/\//.test(thumbnail)) {
+            return thumbnail;
+        }
+        return `/assets/img/products/thumbnails/${encodeURIComponent(thumbnail)}`;
+    };
+
+    const fetchThumbnailForRow = async (productId, rowElement, rowData) => {
+        try {
+            const res = await fetch(`/api/products/${productId}`);
+            if (!res.ok) return;
+            const json = await res.json();
+            if (!json.success || !json.data || !json.data.thumbnail_url) return;
+
+            const thumbnailUrl = resolveThumbnailUrl(json.data.thumbnail_url);
+            const td = rowElement.querySelectorAll('td')[1];
+            if (!td) return;
+
+            td.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="${thumbnailUrl}" alt="Thumbnail" class="w-10 h-12 object-cover rounded flex-shrink-0">
+                    <span class="grow text-gray-900 dark:text-white break-words whitespace-normal">${rowData.nama_produk}</span>
+                </div>
+            `;
+        } catch (err) {
+            console.warn('Unable to fetch thumbnail for product', productId, err);
+        }
+    };
+
     window.productTable = $("#productTable").DataTable({
         processing: true,
         serverSide: true,
@@ -31,16 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 className: "p-2  border-b dark:text-white",
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
-                     // Paksa munculkan teks untuk debug
-                    //  console.log("Row data:", row)
                      if(row.akses?.edit) {
                         buttons += `
                            <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
                                 <i class="ph-bold ph-pencil-simple text-lg"></i>
                             </button>`;
                      }
-                     if(row.akses?.delete
-                     ) {
+                     if(row.akses?.delete) {
                         buttons += `
                            <button onclick="deleteProduct(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-colors" title="Hapus">
                                 <i class="ph-bold ph-trash text-lg"></i>
@@ -60,8 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         
                         let imgHtml = "No Image";
                         if(thumbnail) {
-                            const safeUrl = encodeURIComponent(thumbnail);
-                            imgHtml = `<img src="/assets/img/products/thumbnails/${safeUrl}" alt="Thumbnail" class="w-10 h-12 object-cover  rounded flex-shrink-0">`;
+                            const safeUrl = resolveThumbnailUrl(thumbnail);
+                            imgHtml = `<img src="${safeUrl}" alt="Thumbnail" class="w-10 h-12 object-cover rounded flex-shrink-0">`;
                         }
                         
                         return `
@@ -72,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         `;
                     }
                 },
+
                 {
                   data: "user_id",
                   title: "Added By",
@@ -130,6 +158,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 },
             ],
+            createdRow: function(rowElement, rowData) {
+                if (!rowData.thumbnail_url && rowData.id) {
+                    fetchThumbnailForRow(rowData.id, rowElement, rowData);
+                }
+            },
              drawCallback: function () {
                 // Force redraw untuk sync header & body
                 $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
