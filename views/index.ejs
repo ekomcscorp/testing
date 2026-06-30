@@ -1,71 +1,102 @@
-<div class="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth">
-   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
+<div class="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth bg-gray-50 dark:bg-zinc-900 text-gray-800 dark:text-gray-100 transition-colors duration-200">
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     
-    <div
-      class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow">
+    <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-all duration-200">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <p class="text-lg font-medium ">Total Produk</p>
-          <span class="text-gray-400 text-xs">Paket Umroh dan Haji</span>
+          <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Produk</p>
+          <span class="text-gray-400 dark:text-gray-500 text-xs">Paket Umroh dan Haji</span>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-3"><span id="total-products">0</span></h3>
         </div>
-        <!-- <div class="p-2 bg-green-50 dark:bg-green-500/10 rounded-lg text-green-600 dark:text-green-400">
-          <i class="ph-fill ph-currency-dollar text-xl"></i>
-        </div> -->
-        <div class="p-2 bg-green-50 rounded-lg text-green-600 ">
+        <div class="p-2 bg-green-50 rounded-lg text-green-600">
           <i class="ph-fill ph-basket text-xl"></i>
         </div>
       </div>
-      <!-- <div class="flex items-center text-xs">
-        <span
-          class="flex items-center text-green-500 font-medium bg-green-50 dark:bg-green-500/10 px-2 py-0.5 rounded-full">
-          <i class="ph-bold ph-arrow-up-right mr-1"></i> +12.5%
-        </span>
-        <span class="ml-2 text-gray-400">vs bulan lalu</span>
-      </div> -->
     </div>
 
-    <div
-      class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow">
+      
+
+    <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-all duration-200">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <p class="text-lg font-medium ">Total Users</p>
-          <span class="text-gray-400 text-xs">Paket Umroh dan Haji</span>
+          <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Users</p>
+          <span class="text-gray-400 dark:text-gray-500 text-xs">Jama'ah pengenumroh.com</span>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1"><span id="total-users">0</span></h3>
         </div>
         <div class="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">
           <i class="ph-fill ph-users-three text-xl"></i>
         </div>
       </div>
-      <!-- <div class="flex items-center text-xs">
-        <span
-          class="flex items-center text-green-500 font-medium bg-green-50 dark:bg-green-500/10 px-2 py-0.5 rounded-full">
-          <i class="ph-bold ph-arrow-up-right mr-1"></i> +5.2%
-        </span>
-        <span class="ml-2 text-gray-400">vs bulan lalu</span>
-      </div> -->
     </div>
 
-    <div
-      class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow">
+    <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border hover:shadow-md transition-all duration-200">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <p class="text-lg font-medium ">Pending Orders</p>
-           <span class="text-gray-400 text-xs">Paket Umroh dan Haji</span>
+          <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Pending Orders</p>
+          <span class="text-gray-400 dark:text-gray-500 text-xs">Pesanan jama'ah</span>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1"><span id="pending-orders">0</span></h3>
         </div>
         <div class="p-2 bg-orange-50 dark:bg-orange-500/10 rounded-lg text-orange-600 dark:text-orange-400">
           <i class="ph-fill ph-receipt text-xl"></i>
         </div>
       </div>
-      <!-- <div class="flex items-center text-xs">
-        <span class="flex items-center text-red-500 font-medium bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">
-          <i class="ph-bold ph-arrow-down-right mr-1"></i> -2.4%
-        </span>
-        <span class="ml-2 text-gray-400">vs bulan lalu</span>
-      </div> -->
     </div>
-  </div>
- </div> 
 
+    
+    
+  </div>
+  <div class="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border">
+      <div class="mb-6">
+        <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Quick actions</h4>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Pintas kelola data harian travel dengan sekali klik</p>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-4">
+        
+        <a href="/createProduct" class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-blue-50 dark:bg-zinc-800/50 dark:hover:bg-blue-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-blue-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-plus text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Tambah Produk</span>
+        </a >
+        
+        <a href="https://gold-lark-507177.hostingersite.com/public/marketplace" class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-emerald-50 dark:bg-zinc-800/50 dark:hover:bg-emerald-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-emerald-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-browser text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Landing page</span>
+        </a>
+
+         <!--  <button class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-purple-50 dark:bg-zinc-800/50 dark:hover:bg-purple-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-purple-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-identification-card text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Cetak Manifest</span>
+        </button>
+
+      <button class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-amber-50 dark:bg-zinc-800/50 dark:hover:bg-amber-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-amber-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-airplane-tilt text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Bloking Tiket</span>
+        </button>
+
+        <button class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-cyan-50 dark:bg-zinc-800/50 dark:hover:bg-cyan-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-cyan-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-passport text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Status Paspor</span>
+        </button>
+
+        <button class="flex flex-col items-center justify-center p-5 bg-gray-50 hover:bg-rose-50 dark:bg-zinc-800/50 dark:hover:bg-rose-500/10 border border-gray-100 dark:border-zinc-700/50 rounded-xl group transition-all w-full">
+          <div class="p-3 bg-white dark:bg-zinc-800 rounded-lg shadow-sm text-rose-600 group-hover:scale-105 transition-transform mb-3">
+            <i class="ph-bold ph-gear text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">Pengaturan</span>
+        </button> -->
+        
+      </div>
+    </div>
  
+</div>

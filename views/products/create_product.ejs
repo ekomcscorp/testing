@@ -219,14 +219,22 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Include (Termasuk)<span class="text-danger">*</span></label>
-                    <input type="text" id="include-fclty" name="include" placeholder="Ketik lalu tekan Enter" 
+                    <div class="flex gap-2">
+                         <input type="text" id="include-fclty" name="include" placeholder="Ketik lalu tekan Enter" 
                         class="w-full px-4 py-3 rounded-xl bg-green-50/30 dark:bg-green-900/10 border border-green-100 dark:border-green-800/30 outline-none focus:border-green-500 transition-all dark:text-white">
+                         
+                    </div>
+                   
                     <ul id="include-container" class="mt-3 space-y-2"></ul>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Exclude (Tidak Termasuk)<span class="text-danger">*</span></label>
-                    <input type="text" id="exclude-fclty" name="exclude"  placeholder="Ketik lalu tekan Enter" 
+                    <div class="flex gap-2">
+                         <input type="text" id="exclude-fclty" name="exclude"  placeholder="Ketik lalu tekan Enter" 
                         class="w-full px-4 py-3 rounded-xl bg-red-50/30 dark:bg-red-900/10 border border-red-100 dark:border-red-800/30 outline-none focus:border-red-500 transition-all dark:text-white">
+                         
+                    </div>
+                   
                     <ul id="exclude-container" class="mt-3 space-y-2"></ul>
                 </div>
             </div>
@@ -245,8 +253,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Syarat & Ketentuan<span class="text-danger">*</span></label>
-                        <input  type="text" id="snk" name="Snk" placeholder="Ketik lalu tekan Enter" 
+                        <div class="flex gap-2">
+                             <input  type="text" id="snk" name="Snk" placeholder="Ketik lalu tekan Enter" 
                             class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none focus:border-primary-500 dark:text-white">
+                             
+                        </div>
+                       
                         <ul id="snk-container" class="mt-3 space-y-1"></ul>
                     </div>
                     <div>
@@ -254,9 +266,7 @@
                         <div class="flex gap-2">
                             <input type="text" id="note" name="note" placeholder="Ketik catatan lalu Enter" 
                                 class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none focus:border-primary-500 dark:text-white" >
-                            <button type="button" id="addNote" class="bg-primary-600 text-white px-4 rounded-xl hover:bg-primary-700">
-                                <i class="ph ph-plus"></i>
-                            </button>
+                            
                         </div>
                         <ul id="note-container" class="mt-3 space-y-1 text-sm text-gray-600 dark:text-gray-400"></ul>
                     </div>

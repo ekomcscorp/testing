@@ -395,24 +395,48 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 });
     // Dynamic Lists (Enter Keys)
-    const setupListInput = (inputId, containerId, stateArray, color) => {
-        document.getElementById(inputId).addEventListener("keydown", (e) => {
+    const setupListInput = (inputId, containerId, stateArray, color, addButtonId) => {
+        const inputEl = document.getElementById(inputId);
+        if (!inputEl) return;
+
+        const addItem = () => {
+            const val = inputEl.value.trim();
+            if (val && !stateArray.includes(val)) {
+                stateArray.push(val);
+                createListItem(val, containerId, stateArray, color);
+                inputEl.value = "";
+            }
+        };
+
+        inputEl.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                const val = e.target.value.trim();
-                if (val && !stateArray.includes(val)) {
-                    stateArray.push(val);
-                    createListItem(val, containerId, stateArray, color);
-                    e.target.value = "";
-                }
+                addItem();
             }
         });
+
+        if (addButtonId) {
+            let btn = document.getElementById(addButtonId);
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = addButtonId;
+                btn.className = 'px-4 text-white bg-primary-600 rounded-xl hover:bg-gray-100 rounded';
+                btn.setAttribute('aria-label', 'Tambah');
+                btn.innerHTML = '<i class="ph-bold ph-plus"></i>';
+                inputEl.insertAdjacentElement('afterend', btn);
+            }
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                addItem();
+            });
+        }
     };
 
-    setupListInput("include-fclty", "include-container", ProductFacilityState.INCLUDE, "bg-green-50/50");
-    setupListInput("exclude-fclty", "exclude-container", ProductFacilityState.EXCLUDE, "bg-red-50/50");
-    setupListInput("snk", "snk-container", ProductSnKState, "bg-gray-50");
-    setupListInput("note", "note-container", ProductNoteState, "bg-blue-50/50");
+    setupListInput("include-fclty", "include-container", ProductFacilityState.INCLUDE, "bg-green-50/50", 'addIncludeBtn');
+    setupListInput("exclude-fclty", "exclude-container", ProductFacilityState.EXCLUDE, "bg-red-50/50", 'addExcludeBtn');
+    setupListInput("snk", "snk-container", ProductSnKState, "bg-gray-50", 'addSnkBtn');
+    setupListInput("note", "note-container", ProductNoteState, "bg-blue-50/50", 'addNoteBtn');
 
     // --- ITINERARY LOGIC (TAILWIND UI) ---
     document.getElementById('addRoadmap').addEventListener('click', () => {
