@@ -143,20 +143,27 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const prodEl = document.getElementById('total-products');
                 const usersEl = document.getElementById('total-users');
+                const travelsEl = document.getElementById('total-travels');
                 const pendingEl = document.getElementById('pending-orders');
 
-                if (!prodEl && !usersEl && !pendingEl) return;
+                if (!prodEl && !usersEl && !travelsEl && !pendingEl) return;
 
                 // Fungsi tunggal penanggung jawab pembaruan UI
                 async function fetchStats() {
                     try {
                         const res = await fetch('/api/stats');
                         const data = await res.json();
-                        if (data && data.status === "success" && data.data) { // Sesuaikan properti 'status' dari cURL Anda
+                        if (data && data.status === "success" && data.data) {
                             const stats = data.data;
-                            if (prodEl) prodEl.textContent = stats.totalProducts.toLocaleString('id-ID');
-                            if (usersEl) usersEl.textContent = stats.totalUsers.toLocaleString('id-ID');
-                            if (pendingEl) pendingEl.textContent = stats.pendingOrders.toLocaleString('id-ID');
+                            const totalProducts = stats.totalProducts ?? 0;
+                            const totalUsers = stats.totalUsers ?? stats.totalJamaah ?? 0;
+                            const totalTravels = stats.totalTravels ?? 0;
+                            const pendingOrders = stats.pendingOrders ?? 0;
+
+                            if (prodEl) prodEl.textContent = totalProducts.toLocaleString('id-ID');
+                            if (usersEl) usersEl.textContent = totalUsers.toLocaleString('id-ID');
+                            if (travelsEl) travelsEl.textContent = totalTravels.toLocaleString('id-ID');
+                            if (pendingEl) pendingEl.textContent = pendingOrders.toLocaleString('id-ID');
                         }
                     } catch (err) {
                         console.warn('Gagal fetch stats:', err.message || err);
