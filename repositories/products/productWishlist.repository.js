@@ -26,7 +26,7 @@ class ProductWishlistRepository {
             "nama_produk",
             "thumbnail_url",
             "tgl_keberangkatan",
-            "quota"
+            // "quota"
           ],
 
           include: [
@@ -103,7 +103,7 @@ class ProductWishlistRepository {
             "nama_produk",
             "thumbnail_url",
             "tgl_keberangkatan",
-            "quota"
+            // "quota"
           ],
 
           include: [

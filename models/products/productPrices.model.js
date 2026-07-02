@@ -17,14 +17,25 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('Quad', 'Triple', 'Double'),
             allowNull: false,
         },
+        quota: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+            defaultValue: 0
+        },
         price: {
             type: DataTypes.INTEGER,
             allowNull: false,
         }
     }, {
         tableName: 'product_prices',
-       timestamps: true,
-    underscored: true
+        timestamps: true,
+        underscored: true,
+        indexes: [
+            {
+                unique: true,
+                fields: ['product_id', 'room_types']
+            }
+        ]
     });
 
     ProductPrices.associate = (models) => {

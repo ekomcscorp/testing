@@ -61,6 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 className: "p-2  border-b dark:text-white",
                 render: function (data, type, row) {
                      let buttons = `<div class="flex items-center justify-center gap-2">`;
+
+                      buttons += `
+                        <button onclick="viewDetail()">
+                            <button class="p-2 rounded-lg text-orange-600 bg-orange-50 
+                            dark:bg-orange-500/10 
+                            hover:bg-orange-100">
+                                <i class="ph-bold ph-eye text-base"></i>
+                            </button>
+                        </button>
+                    `;
+
                      if(row.akses?.edit) {
                         buttons += `
                            <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
@@ -128,10 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }).join(''); // Menggabungkan hasil array menjadi string HTML
                     }
                 },
-                {
-                    data: "quota", title: "Stock",
-                    className: "pl-5  text-gray-500 dark:text-white border-b" 
-                },
+              
                 {
                     data: "status", title: "Status",
                     className: "p-2  border-b dark:text-white",
@@ -249,7 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
- 
 
     window.deleteProduct = (id) => {
     swal({

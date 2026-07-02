@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         category_id: null,
         nama_produk: "",
         tgl_keberangkatan: "",
-        quota: 0,
         duration: 0,
         tmp_keberangkatan: "",
         thumbnail_url: "",
@@ -37,9 +36,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     };
 
     const ProductPriceState = [
-        { room_types: "Quad", price: 0 },
-        { room_types: "Double", price: 0 },
-        { room_types: "Triple", price: 0 }
+        { room_types: "Quad", price: 0,   quota: 0, },
+        { room_types: "Double", price: 0,  quota: 0, },
+        { room_types: "Triple", price: 0,  quota: 0, }
     ];
 
     const ProductFlightState = {
@@ -73,8 +72,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     $('#status').val(data.status);
     ProductState.status = data.status;
 
-    $('#quota').val(data.quota);
-    ProductState.quota = Number(data.quota);
+    // $('#quota').val(data.quota);
+    // ProductState.quota = Number(data.quota);
 
     $('#duration').val(data.duration);
     ProductState.duration = Number(data.duration);
@@ -98,18 +97,26 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     if (data.prices && data.prices.length > 0) {
-    ProductPriceState.forEach(ps => ps.price = 0);
+        ProductPriceState.forEach(ps => {
+            ps.price = 0;
+            ps.quota = 0;
+        });
 
-    data.prices.forEach(p => {
-        const type = p.room_types; // ✅ Fix: pakai room_types bukan type
-        const formattedPrice = new Intl.NumberFormat('id-ID').format(p.price);
+        data.prices.forEach(p => {
+            const type = p.room_types;
+            const formattedPrice = new Intl.NumberFormat('id-ID').format(p.price);
+            const quotaInput = document.querySelector(`input[name="seat_${type.toLowerCase()}"]`);
 
-        $(`input[data-type="${type}"]`).val(formattedPrice);
+            $(`input[id^="price_"][data-type="${type}"]`).val(formattedPrice);
+            if (quotaInput) quotaInput.value = p.quota || 0;
 
-        const stateItem = ProductPriceState.find(ps => ps.room_types === type);
-        if (stateItem) stateItem.price = Number(p.price);
-    });
-}
+            const stateItem = ProductPriceState.find(ps => ps.room_types === type);
+            if (stateItem) {
+                stateItem.price = Number(p.price);
+                stateItem.quota = Number(p.quota) || 0;
+            }
+        });
+    }
 
     // --- 4. Data Relasi: Flights ---
     if (data.flights && data.flights.length > 0) {
@@ -317,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     document.getElementById("date").addEventListener("input", (e) => ProductState.tgl_keberangkatan = e.target.value);
     document.getElementById("tmp_keberangkatan").addEventListener("input", (e) => ProductState.tmp_keberangkatan = e.target.value);
     document.getElementById("duration").addEventListener("input", (e) => ProductState.duration = e.target.value);
-    document.getElementById("quota").addEventListener("input", (e) => ProductState.quota = Number(e.target.value));
+    // document.getElementById("quota").addEventListener("input", (e) => ProductState.quota = Number(e.target.value));
     document.getElementById("description").addEventListener("input", (e) => ProductState.description = e.target.value);
     document.getElementById("status").addEventListener("change", (e) => ProductState.status = e.target.value);
     
@@ -380,20 +387,32 @@ document.addEventListener("DOMContentLoaded", async function() {
     //         });
     //     }
     // });
-   document.querySelectorAll("[data-type]").forEach(input => {
-    input.addEventListener("input", (e) => {
-        const type = e.target.dataset.type;
-        const item = ProductPriceState.find(p => p.type === type);
+    document.querySelectorAll("input[data-type]:not([name^='seat_'])").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const type = e.target.dataset.type;
+            const item = ProductPriceState.find(p => p.room_types === type);
 
-        let rawValue = e.target.value.replace(/\D/g, "");
+            let rawValue = e.target.value.replace(/\D/g, "");
 
-        if (item) {
-            item.price = Number(rawValue);
-        }
+            if (item) {
+                item.price = Number(rawValue);
+            }
 
-        e.target.value = new Intl.NumberFormat('id-ID').format(rawValue);
+            e.target.value = new Intl.NumberFormat('id-ID').format(rawValue);
+        });
     });
-});
+
+    document.querySelectorAll("input[name^='seat_']").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const name = e.target.name;
+            const type = name.replace('seat_', '').charAt(0).toUpperCase() + name.replace('seat_', '').slice(1);
+            const item = ProductPriceState.find(p => p.room_types === type);
+
+            if (item) {
+                item.quota = Number(e.target.value) || 0;
+            }
+        });
+    });
     // Dynamic Lists (Enter Keys)
     const setupListInput = (inputId, containerId, stateArray, color, addButtonId) => {
         const inputEl = document.getElementById(inputId);
@@ -533,11 +552,17 @@ document.addEventListener("DOMContentLoaded", async function() {
         } 
 
        ProductPriceState.forEach(p => {
-            const inputElement = document.querySelector(`[data-type="${p.room_types}"]`);
+            const inputElement = document.querySelector(`input[id^="price_"][data-type="${p.room_types}"]`);
+            const seatElement = document.querySelector(`input[name="seat_${p.room_types.toLowerCase()}"]`);
+
             if (inputElement) {
                 p.price = getCleanNumber(inputElement.value);
             } else {
                 p.price = getCleanNumber(p.price);
+            }
+
+            if (seatElement) {
+                p.quota = Number(seatElement.value) || 0;
             }
         });
 
@@ -548,7 +573,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (!ProductState.nama_produk || ProductState.nama_produk.trim() === '') errors.push('Nama produk');
         if (!ProductState.category_id) errors.push('Kategori');
         if (!ProductState.tgl_keberangkatan) errors.push('Tanggal keberangkatan');
-        if (!ProductState.quota || Number(ProductState.quota) <= 0) errors.push('Quota');
         if (!ProductState.duration || Number(ProductState.duration) <= 0) errors.push('Durasi');
         if (!ProductState.description || ProductState.description.trim() === '') errors.push('Deskripsi');
 
@@ -558,6 +582,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         // Prices: require all defined room types have a price > 0
         ProductPriceState.forEach(p => {
             if (!p.price || Number(p.price) <= 0) errors.push(`Harga untuk ${p.room_types}`);
+            if (!p.quota || Number(p.quota) <= 0) errors.push(`Quota untuk ${p.room_types}`);
         });
 
         // Flights

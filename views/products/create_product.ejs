@@ -10,7 +10,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-none lg:grid-cols-3 gap-8">
              <div class="lg:col-span-1 sm:col-span-6">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Thumbnail Produk<span class="text-danger">*</span></label>
-                    <div class="file-upload-dashed w-full h-64 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative bg-gray-50 dark:bg-slate-800/20 border-2 border-dashed border-gray-200 dark:border-slate-700 overflow-hidden">
+                    <div class="file-upload-dashed w-full h-40 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative bg-gray-50 dark:bg-slate-800/20 border-2 border-dashed border-gray-200 dark:border-slate-700 overflow-hidden">
                         
                         <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" required>
                         
@@ -30,8 +30,8 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-2">
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div >
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Produk<span class="text-danger">*</span></label>
                         <input type="text" id="nama_produk" name="nama_produk" placeholder="Masukan Nama Produk" required
                             class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all dark:text-white">
@@ -53,11 +53,7 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quota (Pax)<span class="text-danger">*</span></label>
-                        <input type="number" id="quota" name="quota" value="1" required
-                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none transition-all dark:text-white">
-                    </div>
+                   
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Durasi (Hari)<span class="text-danger">*</span></label>
@@ -101,25 +97,39 @@
                 </div>
             </div>
         </div>
-
-        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
+ <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <i class="ph-fill ph-money text-green-600"></i> Harga Paket (Per Room)
+                <i class="ph-fill ph-money text-green-600"></i> Harga Paket (Per Room) dan Seats
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <%- include('../partials/price_input', { label: 'Quad (Sekamar Ber-4)', name: 'price_quad', type:"Quad",
+                    <%- include('../partials/price_input', { label: 'Quad', name: 'price_quad', type:"Quad",
                     
                 }) %>
                 </div>
                 <div>
-                    <%- include('../partials/price_input', { label: 'Triple (Sekamar Ber-3)', name: 'price_triple',type:"Triple" })  %>
+                    <%- include('../partials/price_input', { label: 'Triple', name: 'price_triple',type:"Triple" })  %>
                 </div>
                 <div>
-                    <%- include('../partials/price_input', { label: 'Double (Sekamar Ber-2)', name: 'price_double',type:"Double" })  %>
+                    <%- include('../partials/price_input', { label: 'Double', name: 'price_double',type:"Double" })  %>
+                </div>
+            </div>
+            <div class="pt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Seat Quad<span class="text-danger">*</span></label>
+                        <input type="number" name="seat_quad" data-type="Quad" placeholder="Contoh: 10" required class="w-full px-3 py-2 bg-gray-50 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                </div>
+                  <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Seat Triple<span class="text-danger">*</span></label>
+                        <input type="number" name="seat_triple" data-type="Triple" placeholder="Contoh: 10" required class="w-full px-3 py-2 bg-gray-50 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
+                </div>
+                 <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Seat Double<span class="text-danger">*</span></label>
+                        <input type="number" name="seat_double" data-type="Double" placeholder="Contoh: 10" required class="w-full px-3 py-2 bg-gray-50 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none">
                 </div>
             </div>
         </div>
+       
 
         <div class="bg-white dark:bg-dark-card rounded-2xl shadow-sm border border-gray-100 dark:border-dark-border p-6 lg:p-8">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">

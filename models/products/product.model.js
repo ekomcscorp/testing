@@ -42,10 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        quota: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+
         thumbnail_url: {
             type: DataTypes.STRING(255)
         },

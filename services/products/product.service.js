@@ -52,181 +52,6 @@ class ProductService {
     };
 }
 
-    //    async createProduct(productData, userId) {
-    //         const transaction = await sequelize.transaction();
-
-    //         try {
-    //         let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
-            
-    //         // Validasi dan normalisasi status
-    //         const validStatuses = ['draft', 'publish', 'closed'];
-    //         if (productFields.status) {
-    //             productFields.status = productFields.status.trim().toLowerCase();
-                
-    //             if (!validStatuses.includes(productFields.status)) {
-    //                 throw new Error(`Invalid status. Allowed values: ${validStatuses.join(', ')}`);
-    //             }
-    //         }
-    //         productFields.user_id = userId;
-            
-    //         console.log("Created ProductFields with status:", productFields.status);
-            
-    //        // 2. Fungsi Helper untuk mastiin data itu Array
-    //         const ensureArray = (data) => {
-    //             if (!data) return []; // Kalau null/undefined, balikin array kosong
-    //             if (Array.isArray(data)) return data; // Kalau udah array, balikin langsung
-    //             if (typeof data === 'string') {
-    //                 try {
-    //                     return JSON.parse(data);
-    //                 } catch (e) {
-    //                     return [];
-    //                 }
-    //             }
-    //             return [data]; // Kalau cuma 1 objek, bungkus jadi array
-    //         };
-
-    //         const validatePrices = ensureArray(prices);
-    //         const validateFlights = ensureArray(flights);
-    //         const validateNotes = ensureArray(notes);
-    //         const validateSnks = ensureArray(snks);
-    //         const validateFacilities = ensureArray(facilities);
-    //         const validateHotels = ensureArray(hotels);
-    //         const validateItineraries = ensureArray(itineraries);
-            
-
-
-    //         // if (typeof prices === "string") prices = JSON.parse(prices);
-    //         // if (typeof flights === "string") flights = JSON.parse(flights);
-    //         // if (typeof notes === "string") notes = JSON.parse(notes);
-    //         // if (typeof snks === "string") snks = JSON.parse(snks);
-    //         // if (typeof facilities === "string") facilities = JSON.parse(facilities);
-    //         // if (typeof hotels === "string") hotels = JSON.parse(hotels);
-    //         // if (typeof itineraries === "string") itineraries = JSON.parse(itineraries);
-
-
-    //         //  create product
-    //         const newProduct = await productRepository.createProduct(
-    //             productFields,
-    //             transaction
-    //         );
-
-    //         // console.log("Cek Tipe Data Prices:", typeof validatePrices);
-    //         // console.log("Is Array?:", Array.isArray(validatePrices));
-    //         // console.log("Isi Data:", validatePrices);
-    //         //  create prices
-    //         if (validatePrices?.length) {
-    //             const pricePayload = validatePrices.map(p => ({
-    //             product_id: newProduct.id,
-    //             room_types: p.type,
-    //             price: p.price
-    //             }));
-
-    //             await productPricesRepository.createMany(  pricePayload,
-    //             transaction);   
-    //             console.log("price payload:", pricePayload)
-    //         }
-
-    //         // create flights
-    //         if (validateFlights?.length) {
-    //             const flightPayload = validateFlights.map(f => ({
-    //             product_id: newProduct.id,
-    //             airline_name: f.airline_name,
-    //             type: f.type // DEPARTURE / RETURN
-               
-    //             }));
-
-    //             await productFlightRepository.createMany(
-    //             flightPayload,
-    //             transaction
-    //             );
-    //             console.log("flight payload:", flightPayload)
-    //         }
-
-    //         // create notes
-    //         if (validateNotes?.length) {
-    //             const notePayload = validateNotes.map(n => ({
-    //             product_id: newProduct.id,
-    //             note: n.note
-    //             }));
-
-    //             await productNoteRepository.createMany(
-    //             notePayload,
-    //             transaction
-    //             );
-    //             console.log("note payload:", notePayload)
-    //         }
-
-    //         // create SnK
-    //         if(validateSnks?.length) {
-    //             const snkPayload = validateSnks.map(s => ({
-    //             product_id: newProduct.id,
-    //             name: s.name
-    //             }));
-
-    //             await productSnKRepository.createMany(
-    //             snkPayload,
-    //             transaction
-    //             );
-    //             console.log("snk payload:", snkPayload)
-    //         }
-
-    //         //creare Facility
-    //         if(validateFacilities?.length) {
-    //             const facilityPayload = validateFacilities.map(f => ({
-    //             product_id: newProduct.id,
-    //             facility: f.facility,
-    //             type: f.type
-    //             }));
-
-    //             await productFacilityRepository.createMany(
-    //             facilityPayload,
-    //             transaction
-    //             );
-    //             console.log("facility payload:", facilityPayload)
-    //         }
-
-    //         // createMany Hotel
-    //         if(validateHotels?.length) {
-    //             const hotelPayload = validateHotels.map(h => ({
-    //                product_id: newProduct.id,
-    //                 name: h.name,
-    //                 city: h.city,
-    //                 rating: h.rating,
-    //                 jarak: h.jarak,
-    //                 image: h.image,
-    //                 facilities: h.facilities
-    //             }));
-
-    //             await productHotelRepository.createMany(
-    //             hotelPayload,
-    //             transaction
-    //             );
-    //             console.log("hotel payload:", hotelPayload)
-    //         }
-    //         // 
-    //         if(validateItineraries?.length){
-    //             const itineraryPayload = validateItineraries.map(i => ({
-    //                 product_id: newProduct.id,
-    //                 day_order: i.day_order,
-    //                 title: i.title,
-    //                 description: i.description
-    //             }));
-
-    //             await productItineraryRepository.createMany(
-    //                 itineraryPayload,
-    //                 transaction
-    //             );
-    //             console.log("itinerary payload:", itineraryPayload)
-    //         }
-
-    //         await transaction.commit();
-    //         return newProduct;
-
-    //         } catch (error) {
-    //         await transaction.rollback();
-    //         throw new Error(error.message);
-    //         }
-    //     }
     async createProduct(productData, userId) {
     const transaction = await sequelize.transaction();
 
@@ -265,7 +90,8 @@ class ProductService {
         await bulkInsert(productPricesRepository, validatePrices, (p, id) => ({
             product_id: id,
             room_types: p.room_types,
-            price: p.price
+            price: p.price,
+            quota: p.quota || 0
         }));
 
         await bulkInsert(productFlightRepository, validateFlights, (f, id) => ({
@@ -350,7 +176,9 @@ class ProductService {
              // 2. Proses Semua Relasi
                     await updateRelation(productPricesRepository, prices, (p, pid) => ({
                         product_id: pid, 
-                        room_types: p.type || p.room_types, price: p.price
+                        room_types: p.type || p.room_types, 
+                        price: p.price,
+                        quota: p.quota || 0
                     }));
 
                     await updateRelation(productFlightRepository, flights, (f, pid) => ({
@@ -396,12 +224,12 @@ class ProductService {
 
        
        async deleteByProduct(id) {
-        try{
-            return await productRepository.deleteProduct(id);
-        } catch (error) {
-            throw new Error(error.message);
+            try{
+                    return await productRepository.deleteProduct(id);
+            } catch (error) {
+                    throw new Error(error.message);
+            }
         }
-       }
 
        async getProductForLanding() {
         try {

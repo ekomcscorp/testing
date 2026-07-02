@@ -15,7 +15,8 @@ class ProductPriceService {
         const pricePayload = validatePrices.map(p => ({
             product_id: productId,
             price: p.price,
-            room_type: p.room_type
+            room_type: p.room_type,
+            quota: p.quota || 0
         }));
         return await ProductPriceRepository.createMany(pricePayload, transaction);
     }

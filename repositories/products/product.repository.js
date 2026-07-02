@@ -14,7 +14,7 @@ class ProductRepository {
                 {
                     model: ProductPrices,
                     as: "prices",
-                    attributes: ["room_types", "price"]
+                    attributes: ["room_types", "price", "quota"]
                 },
                 {
                     model: ProductFlight,
@@ -64,7 +64,7 @@ class ProductRepository {
                 {
                     model: ProductPrices,
                     as: "prices",
-                    attributes: ["room_types", "price"]
+                    attributes: ["room_types", "price", "quota"]
                 },
                 {
                     model: ProductFlight,
@@ -166,7 +166,7 @@ class ProductRepository {
                 {
                     model: ProductPrices,
                     as: "prices",
-                    attributes: ["room_types", "price"]
+                    attributes: ["room_types", "price", "quota"]
                 },
                 {
                     model: ProductFlight,
@@ -218,7 +218,7 @@ class ProductRepository {
                 {
                     model: ProductPrices,
                     as: "prices",
-                    attributes: ["room_types", "price"]
+                    attributes: ["room_types", "price", "quota"]
                 },
                 {
                     model: ProductFlight,
