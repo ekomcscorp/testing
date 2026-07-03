@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const resolveThumbnailUrl = (thumbnail) => {
+    window.resolveThumbnailUrl = (thumbnail) => {
         if (!thumbnail) return null;
         if (/^(https?:)?\/\//.test(thumbnail)) {
             return thumbnail;
@@ -60,32 +60,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 data: "id",
                 className: "p-2  border-b dark:text-white",
                 render: function (data, type, row) {
-                     let buttons = `<div class="flex items-center justify-center gap-2">`;
+                   let buttons = `<div class="flex items-center justify-center gap-2">`;
 
-                      buttons += `
-                        <button onclick="viewDetail()">
-                            <button class="p-2 rounded-lg text-orange-600 bg-orange-50 
-                            dark:bg-orange-500/10 
-                            hover:bg-orange-100">
-                                <i class="ph-bold ph-eye text-base"></i>
-                            </button>
-                        </button>
-                    `;
+                    buttons += `
+                    <button onclick="viewDetail(${row.id})" class="p-2 rounded-lg text-orange-600 bg-orange-50 dark:bg-orange-500/10 hover:bg-orange-100" title="Lihat">
+                      <i class="ph-bold ph-eye text-base"></i>
+                    </button>
+                  `;
 
-                     if(row.akses?.edit) {
-                        buttons += `
-                           <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
-                                <i class="ph-bold ph-pencil-simple text-lg"></i>
-                            </button>`;
-                     }
-                     if(row.akses?.delete) {
-                        buttons += `
-                           <button onclick="deleteProduct(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-colors" title="Hapus">
-                                <i class="ph-bold ph-trash text-lg"></i>
-                            </button>`;
-                     }
-                     buttons += `</div>`;
-                     return buttons;
+                   if(row.akses?.edit) {
+                    buttons += `
+                       <button onclick="editProduct(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
+                        <i class="ph-bold ph-pencil-simple text-lg"></i>
+                      </button>`;
+                   }
+                   if(row.akses?.delete) {
+                    buttons += `
+                       <button onclick="deleteProduct(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-colors" title="Hapus">
+                        <i class="ph-bold ph-trash text-lg"></i>
+                      </button>`;
+                   }
+                   buttons += `</div>`;
+                   return buttons;
                 }
                 },
                 {
@@ -284,6 +280,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     });
   }
+
+  window.viewDetail = async (id) => {
+    try {
+      const res = await fetch(`/api/products/${id}`);
+      if(!res.ok) throw new Error("Failed to fetch product details");
+
+      const resJson = await res.json();
+      if (!resJson.success || !resJson.data) return;
+      const item = resJson.data;
+
+      // Thumbnail
+      const thumbEl = document.getElementById('md-thumbnail');
+      if (item.thumbnail_url) {
+        thumbEl.src = resolveThumbnailUrl(item.thumbnail_url); 
+        thumbEl.classList.remove('hidden');
+      } else {
+        thumbEl.src = '';
+        thumbEl.classList.add('hidden');
+      }
+
+      // Status badge
+      const statusEl = document.getElementById('md-status');
+      if (statusEl) {
+        const st = item.status || 'draft';
+        let badgeClass = '';
+        let dotClass = '';
+        if (st === 'publish') { badgeClass = 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400'; dotClass = 'bg-green-600'; }
+        else if (st === 'closed') { badgeClass = 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400'; dotClass = 'bg-red-600'; }
+        else { badgeClass = 'bg-yellow-500/20 text-yellow-600'; dotClass = 'bg-yellow-400'; }
+
+        statusEl.innerHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}"><span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>${st}</span>`;
+      }
+
+      // Basic fields
+      document.getElementById('md-nama').innerText = item.nama_produk || '-';
+      document.getElementById('md-creator').innerText = item.creator?.fullname || '-';
+
+      // Prices & quotas
+      const prices = Array.isArray(item.prices) ? item.prices : [];
+      const pricesList = document.getElementById('md-prices-list');
+      if (pricesList) {
+        pricesList.innerHTML = prices.map(p => {
+          const formatted = new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(p.price || 0);
+          const q = p.quota || 0;
+          return `<div class="p-3 flex items-center justify-between"><div><div class=\"font-semibold\">${p.room_types}</div><div class=\"text-sm text-gray-500\">${formatted}</div></div><div class=\"text-sm text-gray-700 dark:text-gray-200\">${q} Seat</div></div>`;
+        }).join('');
+      }
+
+      // Update summary room counts
+      const getQuotaFor = (type) => {
+        const it = prices.find(x => x.room_types === type);
+        return it ? (it.quota || 0) : 0;
+      }
+      const quadCount = document.getElementById('md-room-count-quad');
+      const tripleCount = document.getElementById('md-room-count-triple');
+      const doubleCount = document.getElementById('md-room-count-double');
+      if (quadCount) quadCount.innerText = `${getQuotaFor('Quad')} Seat`;
+      if (tripleCount) tripleCount.innerText = `${getQuotaFor('Triple')} Seat`;
+      if (doubleCount) doubleCount.innerText = `${getQuotaFor('Double')} Seat`;
+
+      // Flights
+      const dep = (item.flights || []).find(f => f.type === 'Departure');
+      const ret = (item.flights || []).find(f => f.type === 'Return');
+      document.getElementById('md-flight-airline').innerText = `${dep?.airline_name || '-'} `;
+      document.getElementById('md-flight-airline-return').innerText = `${ret?.airline_name || '-'} `;
+      document.getElementById('md-flight-departure-airport').innerText = item.tmp_keberangkatan || '-';
+      document.getElementById('md-flight-arrival-time').innerText = item.tgl_keberangkatan || "-"
+      // show modal
+      document.getElementById('detailProductModal').classList.remove('hidden');
+    } catch (err) {
+      console.error('Error loading product detail', err);
+      swal('Error', 'Gagal mengambil detail produk', 'error');
+    }
+  }
+
+    window.closeDetailModal = () => {
+    const el = document.getElementById('detailProductModal');
+    if (el) el.classList.add('hidden');
+    }
 
   window.editProduct = (id) => {
     // Alihkan user ke halaman create dengan membawa parameter ID
