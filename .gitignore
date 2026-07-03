@@ -16,6 +16,6 @@ Thumbs.db
 # build files
 dist/
 build/
-.env.local
+# .env.local
 config/config.json
-.env
+# .env
