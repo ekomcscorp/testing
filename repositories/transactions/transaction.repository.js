@@ -115,8 +115,9 @@ class TransactionRepository {
         });
     }
 
-    async getTransactionById(id) {
+    async getTransactionById(id, options = {}) {
         const transaction = await Transaction.findByPk(id, {
+            ...options,
             include: [
                 {
                     model: Product,

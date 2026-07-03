@@ -212,8 +212,9 @@ class ProductRepository {
         return { count, rows };
     }
 
-    async getProductById(id) {
+    async getProductById(id, options = {}) {
         return await Product.findByPk(id,{
+            ...options,
             include: [
                 {
                     model: ProductPrices,

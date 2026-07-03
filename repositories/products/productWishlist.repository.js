@@ -130,7 +130,8 @@ class ProductWishlistRepository {
               as: "prices",
               attributes: [
                 "room_types",
-                "price"
+                "price",
+                "quota"
               ]
             }
           ]

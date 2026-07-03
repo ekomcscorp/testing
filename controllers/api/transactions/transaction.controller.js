@@ -156,7 +156,7 @@ class TransactionController {
     try {
       const { id } = req.params;
 
-      const deleted = await transactionRepo.deleteTransaction(id);
+      const deleted = await transactionService.deleteTransaction(id);
       return res.status(200).json({
         success: true,
         message: "Transaction deleted successfully",

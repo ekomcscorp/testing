@@ -18,3 +18,4 @@ dist/
 build/
 .env.local
 config/config.json
+.env
