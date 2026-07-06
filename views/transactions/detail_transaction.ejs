@@ -1,5 +1,4 @@
-
-    <div class="max-w-5xl mx-auto px-4 py-8">
+<div class="max-w-5xl mx-auto px-4 py-8">
         <!-- <div class="bg-black text-green-400 p-4 font-mono text-xs">
     DEBUG DATA DETAIL 0:
     <%= JSON.stringify(data.details[0]) %>
@@ -47,8 +46,24 @@
     Raw data: <%= JSON.stringify(data.details[0].flights_snapshot) %>
 </pre> -->
                     <div class="p-6">
-                    <% if (data.details && data.details.length > 0) { %>
-                        <h3 class="text-xl font-bold text-gray-800 mb-4"><%= data.details[0].product_name %></h3>
+                    <% if (data.details && data.details.length > 0) {
+                            const packageCounts = data.details.reduce((acc, detail) => {
+                                const type = detail.room_types || 'Unknown';
+                                acc[type] = (acc[type] || 0) + 1;
+                                return acc;
+                            }, {});
+                        %>    
+                        <div class="grid grid-cols-2 items-center gap-4 mb-4">
+                             <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2"><%= data.details[0].product_name %></h3>
+                                <!-- <p class="text-sm text-gray-500">Jumlah Pesanan: <%= data.details.length %></p> -->
+                             </div>
+                             <div class="grid grid-cols-1">
+                                <% Object.entries(packageCounts).forEach(([roomType, qty]) => { %>
+                                    <span class="text-gray-400 text-sm"><%= qty %>x <%= roomType %></span>
+                                <% }) %>
+                             </div>
+                        </div>
                         <div class="grid grid-cols-2 gap-y-4 text-sm">
                             <% if (data.details[0].flights_snapshot && Array.isArray(data.details[0].flights_snapshot)) { %>
                                 <% data.details[0].flights_snapshot.forEach(flight => { %>
@@ -79,7 +94,7 @@
                             </div>
                         </div>
                     <% } %>
-                </div>
+                    </div>
                 </div>
 
                 <div id="accordion-jamaah" data-accordion="collapse" class="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -267,15 +282,31 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <% if (data.details && data.details.length > 0) { %>
-                                <% data.details.forEach(detail => { %>
+                            <% if (data.details && data.details.length > 0) {
+                                const groupedInvoiceItems = data.details.reduce((acc, detail) => {
+                                    const key = `${detail.product_name || 'Produk'}|${detail.room_types || 'Unknown'}`;
+                                    if (!acc[key]) {
+                                        acc[key] = {
+                                            product_name: detail.product_name,
+                                            room_types: detail.room_types,
+                                            departure_date: detail.departure_date,
+                                            price: 0,
+                                            qty: 0
+                                        };
+                                    }
+                                    acc[key].qty += 1;
+                                    acc[key].price += Number(detail.price || 0);
+                                    return acc;
+                                }, {});
+                            %>
+                                <% Object.values(groupedInvoiceItems).forEach(item => { %>
                                     <tr>
                                         <td class="py-4 px-2">
-                                            <p class="font-medium text-gray-800"><%= detail.product_name %></p>
-                                            <p class="text-xs text-gray-500 italic"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                                            <p class="font-medium text-gray-800"><%= item.product_name %></p>
+                                            <p class="text-xs text-gray-500 italic"><%= new Date(item.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
                                         </td>
-                                        <td class="py-4 px-2 text-center text-gray-600">1 (<%= detail.room_types %>)</td>
-                                        <td class="py-4 px-2 text-right font-medium">Rp <%= detail.price.toLocaleString('id-ID') %></td>
+                                        <td class="py-4 px-2 text-center text-gray-600"><%= item.qty %>x <%= item.room_types %></td>
+                                        <td class="py-4 px-2 text-right font-medium">Rp <%= item.price.toLocaleString('id-ID') %></td>
                                     </tr>
                                 <% }) %>
                             <% } %>

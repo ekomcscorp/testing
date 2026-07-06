@@ -59,20 +59,36 @@
             <thead>
                 <tr>
                     <th>Deskripsi Layanan</th>
-                    <th style="text-align: center;">Qty</th>
+                    <th style="text-align: center;">Jumlah Pesan</th>
                     <th class="text-right">Harga</th>
                 </tr>
             </thead>
             <tbody>
-                <% if (data.details && data.details.length > 0) { %>
-                    <% data.details.forEach(detail => { %>
+                <% if (data.details && data.details.length > 0) {
+                    const groupedInvoiceItems = data.details.reduce((acc, detail) => {
+                        const key = `${detail.product_name || 'Produk'}|${detail.room_types || 'Unknown'}`;
+                        if (!acc[key]) {
+                            acc[key] = {
+                                product_name: detail.product_name,
+                                room_types: detail.room_types,
+                                departure_date: detail.departure_date,
+                                price: 0,
+                                qty: 0
+                            };
+                        }
+                        acc[key].qty += 1;
+                        acc[key].price += Number(detail.price || 0);
+                        return acc;
+                    }, {});
+                %>
+                    <% Object.values(groupedInvoiceItems).forEach(item => { %>
                         <tr>
                             <td>
-                                <strong><%= detail.product_name %></strong><br>
-                                <small style="color: #666;"><%= new Date(detail.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></small>
+                                <strong><%= item.product_name %></strong><br>
+                                <small style="color: #666;"><%= new Date(item.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></small>
                             </td>
-                            <td style="text-align: center;">(<%= detail.room_types %>)</td>
-                            <td class="text-right">Rp <%= detail.price.toLocaleString('id-ID') %></td>
+                            <td style="text-align: center;"><%= item.qty %>x <%= item.room_types %></td>
+                            <td class="text-right">Rp <%= item.price.toLocaleString('id-ID') %></td>
                         </tr>
                     <% }) %>
                 <% } %>
