@@ -14,16 +14,6 @@ class UserRepository {
     });
   }
 
-  async getAllUserNotifications() {
-    return await User.findAll({
-      where: {
-        [Op.or]: [
-          { is_active: 'N' },
-          { id_level: 1 }
-        ]
-      }
-    });
-  }
 
   async countAll() {
     return await User.count();

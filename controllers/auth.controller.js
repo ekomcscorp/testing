@@ -99,28 +99,7 @@ async apiLogin(req, res) {
     });
   }
 
-async registerUser(req, res) {
-console.log("🟡 Register attempt:", req.body.username);
 
-
-try {
-  const result = await authService.registerUser(req.body);
-
-  console.log("Register result:", result);
-
-  if (result.success) {
-    res.render("login", {
-      error: "Akun berhasil dibuat. Menunggu persetujuan admin.",
-    });
-  } else {
-    res.render("login", { error: result.message });
-  }
-} catch (err) {
-  console.error("❌ Register error:", err);
-  res.render("login", { error: "Terjadi kesalahan saat registrasi." });
-}
-
-}
 
 logout(req, res) {
   // Hanya API response kalau mau dipanggil pakai fetch

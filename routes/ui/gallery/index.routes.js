@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { auth, loadSidebar, loadNotification } = require("../../../middleware");
+const { auth, loadSidebar } = require("../../../middleware");
 const galleryRepository = require("../../../repositories/gallery.repository");
 // const galleryService = require("../../../services/galleries/gallery.service");
 
 // TAMPILAN LIST
-router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, async (req, res) => {
   try {
     const gallery = await galleryRepository.getAllGalleries();
 

@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { auth, loadSidebar, loadNotification } = require("../../../middleware");
+const { auth, loadSidebar } = require("../../../middleware");
 const { link } = require("../transactions/index.routes");
 
 // TAMPILAN CREATE PRODUCT
-router.get("/", auth.ensureAuth, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, loadSidebar, async (req, res) => {
     try {
         res.render("home", {
             link: "products/create_product",

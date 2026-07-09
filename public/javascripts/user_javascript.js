@@ -35,9 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (row.akses && row.akses.edit) {
             buttons += `
-              <button class="userApproval p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-500/10 dark:text-green-400 transition-colors" title="Approve" data-id="${row.id}">
-                <i class="ph-bold ph-check text-lg"></i>
-              </button>
+           
               <button onclick="editUser(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
                 <i class="ph-bold ph-pencil-simple text-lg"></i>
               </button>`;
@@ -75,18 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </span>`;
         }
       },
-      { data: "app", 
-        title: "Approval",
-        className: "p-2 border-b dark:text-white",
-        render: function (data) {
-          const isApproved = data === 'Y';
-          return `
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isApproved ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-gray-100 text-gray-500'}">
-              <span class="w-1.5 h-1.5 rounded-full ${isApproved ? 'bg-green-600' : 'bg-gray-400'}"></span>
-              ${isApproved ? 'Y' : 'N'}
-            </span>`;
-        }
-      }
+      
     ],
     columnDefs: [
       // { responsivePriority: 1, targets: 0 }, // Title
@@ -187,9 +174,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
       const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
-      const app = document.getElementById("app").value;
 
-      if(!fullname || !username || !email || !id_level || !is_active || !app) {
+
+      if(!fullname || !username || !email || !id_level || !is_active ) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
         return;
       }
@@ -205,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
       email,
       id_level: parseInt(id_level),
       is_active,
-      app
+      
     };
 
     if (!isUpdate) {
@@ -249,47 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // APPROVAL USER
-    document.getElementById("userTable").addEventListener("click", async (e) => {
-      if (e.target.closest(".userApproval")) {
-      e.preventDefault();
-      const btn = e.target.closest(".userApproval");
-      const id = btn.getAttribute("data-id");
     
-      swal({
-        title: "Apakah anda mau menyetujui pengguna ini?",
-        icon: "warning",
-        buttons: ["Batal", "Ya!"],
-        dangerMode: true,
-      }).then(async (willDelete) => {
-        if (willDelete) {
-        try {
-          const res = await fetch(`/api/user/${id}/approve`, {
-          method: "PUT",
-          });
-    
-          const data = await res.json();
-    
-          if (data.status === "success") {
-          swal({
-            icon: "success",
-            title: "Disetujui!",
-            text: data.message,
-            timer: 1500,
-            buttons: false,
-          }).then(() => {
-            location.reload();
-          });
-          } else {
-          swal("Gagal!", data.message || "Terjadi kesalahan", "error");
-          }
-        } catch (err) {
-          swal("Error!", "Gagal menghubungi server", "error");
-        }
-        }
-      });
-      }
-    });
 
 // function openUserModal() {
 //   document.getElementById("userFormModal").reset();
@@ -316,7 +263,7 @@ window.editUser = async function(id) {
         document.getElementById("email").value = user.email;
         document.getElementById("id_level").value = user.id_level;
         document.getElementById("is_active").value = user.is_active;
-        document.getElementById("app").value = user.app;
+     
 
         document.getElementById("modalTitle").innerHTML = 'Edit User';
         document.getElementById("userFormModal").classList.remove("hidden");

@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { auth, loadSidebar, loadNotification } = require("../../../middleware");
+const { auth, loadSidebar } = require("../../../middleware");
 const UserRepo = require("../../../repositories/user.repository");
 const UserlevelRepo = require("../../../repositories/userlevel.repository");
 
-router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, async (req, res) => {
     try {
         const userlevel = await UserlevelRepo.getAllUserlevels();
         const users = await UserRepo.getAllUsers();

@@ -9,11 +9,11 @@ router.get("/api/me", ensureAuthToken, authController.getMe);
 
 // UI route, biarkan frontend yg putuskan redirect jika ada token
 router.get("/login", authController.showLoginForm);
-router.post("/register", authController.registerUser);
+// router.post("/register", authController.registerUser);
 router.post("/login", authController.login);
 router.get("/logout", authController.logout);
 router.post("/changePassword", ensureAuthToken, authController.changePassword);
 router.post("/api/login", authController.apiLogin);
-router.post("/api/register", authController.registerUser);
+// router.post("/api/register", authController.registerUser);
 
 module.exports = router;

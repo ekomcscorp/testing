@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { auth, loadSidebar, loadNotification } = require("../../../middleware");
+const { auth, loadSidebar } = require("../../../middleware");
 const Transaction = require("../../../repositories/transactions/transaction.repository");
 
-router.get("/", auth.ensureAuth,  loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth,  loadSidebar, async (req, res) => {
     try {
         const transactions = await Transaction.getAllTransactions(req.user);
 

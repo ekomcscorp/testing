@@ -9,7 +9,7 @@ const router = express.Router();
 const pdf = require("html-pdf");
 const ejs = require("ejs");
 const path = require("path");
-const { auth, loadSidebar, loadNotification } = require("../../../middleware");
+const { auth, loadSidebar } = require("../../../middleware");
 const Transaction = require("../../../repositories/transactions/transaction.repository");
 const transactionController = require("../../../controllers/api/transactions/transaction.controller");
 const { formatTransaction } = require("../../../utils/transactionFormatter");
@@ -56,7 +56,7 @@ router.get("/:id/invoice/pdf", auth.ensureAuth, async (req, res) => {
     }
 });
 
-router.get("/:id", auth.ensureAuth,  loadSidebar, loadNotification, async (req, res) => {
+router.get("/:id", auth.ensureAuth,  loadSidebar, async (req, res) => {
     try {
         const { id } = req.params;
         let transaction = await Transaction.getTransactionById(id);

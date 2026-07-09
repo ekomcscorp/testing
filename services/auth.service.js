@@ -1,5 +1,4 @@
 const userRepository = require("../repositories/user.repository");
-const userNotificationRepository = require("../repositories/userNotification.repository");
 const { getIO } = require("../utils/socketIO");
 const { comparePassword } = require("../utils/hash");
 const bcrypt = require("bcrypt");
@@ -28,74 +27,6 @@ async function login(identifier, password) {
   return { message: "Login berhasil", user };
 }
 
-async function registerUser(data) {
-  const { username, fullname, password, email } = data;
-
-  console.log("Registering user:", username, fullname, password);
-
-  const existing = await userRepository.getUserByUsername(username, email);
-  if (existing) {
-    return { success: false, message: "Username sudah terdaftar" };
-  }
-
-  const t = await sequelize.transaction();
-  try {
-    const hashed = await bcrypt.hash(password, 10);
-
-    const newUser = await userRepository.registerUser({
-      username,
-      fullname,
-      password: hashed,
-      id_level: 4, // default user
-      is_active: "N",
-      app: "N",
-    }, t);
-
-    await userNotificationRepository.createNotification({
-      userId: newUser.id,
-      message: `${newUser.username} Pendaftaran berhasil. Menunggu persetujuan admin.`,
-      isRead: false,
-    }, t);
-
-    await t.commit();
-
-    // Emit ke admin room
-    getIO().to("admin").emit("user_registered", {
-      id: newUser.id,
-      username: newUser.username,
-      fullname: newUser.fullname,
-      message: "User baru mendaftar dan menunggu persetujuan admin.",
-    });
-
-    return { success: true };
-  } catch (err) {
-    await t.rollback();
-    console.error("Register failed:", err);
-    return { success: false, message: "Gagal mendaftar, coba lagi nanti" };
-  }
-}
-
-async function approveUser(userId) {
-  const user = await userRepository.getById(userId);
-  if (!user) throw new Error("User tidak ditemukan");
-
-  const updated = await userRepository.updateUser(userId, {
-    is_active: 'Y',
-    app: 'Y'
-  });
-
-  const delete_notification = await userRepository.deleteNotification(userId)
-
-  // Emit notifikasi ke room 'admin'
-  getIO().to('admin').emit('user_approved', {
-    id: user.id,
-    username: user.username,
-    fullname: user.fullname,
-    message: "Akun sudah diaktifkan",
-  });
-
-  return updated, delete_notification;
-}
 
 async function updatePassword(userId, oldPassword, newPassword) {
   const user = await userRepository.getUserById(userId);
@@ -115,4 +46,4 @@ async function updatePassword(userId, oldPassword, newPassword) {
 }
 
 
-module.exports = { login, registerUser, updatePassword };
+module.exports = { login,updatePassword };

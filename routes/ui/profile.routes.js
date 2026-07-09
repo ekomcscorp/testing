@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { auth, loadSidebar, loadNotification } = require("../../middleware");
+const { auth, loadSidebar,  } = require("../../middleware");
 
 // TAMPILAN PROFILE
-router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar, loadNotification, async (req, res) => {
+router.get("/", auth.ensureAuth, auth.restrictToAdmin, loadSidebar,  async (req, res) => {
     try {
         res.render("home", {
             link: "profile/user_profile", // Path ke file view untuk profile
