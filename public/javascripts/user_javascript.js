@@ -33,14 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
           //console.log("Data ID:", row); // Debugging log
           let buttons = `<div class="flex items-center justify-center gap-2">`;
 
-          if (row.akses && row.akses.edit) {
+          if (row.akses?.edit) {
             buttons += `
            
               <button onclick="editUser(${row.id})" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 transition-colors" title="Edit">
                 <i class="ph-bold ph-pencil-simple text-lg"></i>
               </button>`;
           }
-          if (row.akses && row.akses.delete) {
+          if (row.akses?.delete) {
             buttons += `
              <button onclick="deleteUser(${row.id})" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-colors" title="Hapus">
                 <i class="ph-bold ph-trash text-lg"></i>

@@ -36,8 +36,8 @@ class UserController {
       const data = result.rows.map((user) => ({
         ...user.get({ plain: true }),
         akses: {
-          edit:   akses.edit_level   === "Y",
-          delete: akses.delete_level === "Y",
+          edit:   akses.edit_level?.trim()   === "Y",
+          delete: akses.delete_level?.trim() === "Y",
         },
       }));
 

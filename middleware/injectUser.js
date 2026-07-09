@@ -20,42 +20,41 @@ module.exports = async (req, res, next) => {
     // ─── Handler khusus path /datatables ───
     if (currentPath.includes("/datatables")) {
 
-      // hapus /datatables dari path
-      let menuPath =currentPath.replace(/\/datatables$/, "");
+      let menuPath = currentPath.replace(/\/datatables$/, "");
+      if (!menuPath.startsWith("/")) menuPath = "/" + menuPath;
+      menuPath = menuPath.replace(/\/+$/, "");
 
-      menuPath = "/" + menuPath.split("/")[1];
-
-      const aksesData = await Akses.findOne({
+      // Ambil SEMUA akses untuk level ini (bukan cari 1 row spesifik)
+      const aksesList = await Akses.findAll({
         where: { id_level: user.id_level },
         include: {
           model: Menu,
           attributes: ["link"],
-          where: {
-            [Op.or]: [
-              { link: menuPath },
-              { link: `/${menuPath}` },
-              { link: { [Op.like]: `${menuPath}%` } }
-            ]
-          }
-        }
+          where: { is_active: "Y" },
+        },
       });
 
-      if (aksesData) {
-        res.locals.akses = {
-          view_level: aksesData.view_level?.trim() ?? "N",
-          add_level: aksesData.add_level?.trim() ?? "N",
-          edit_level: aksesData.edit_level?.trim() ?? "N",
-          delete_level: aksesData.delete_level?.trim() ?? "N",
-          print_level: aksesData.print_level?.trim() ?? "N",
-          upload_level: aksesData.upload_level?.trim() ?? "N"
+      const aksesMap = {};
+      for (const row of aksesList) {
+        if (!row.Menu || !row.Menu.link) continue;
+        let link = row.Menu.link.trim();
+        if (link === "#" || link === "" || link.startsWith("#")) continue;
+        if (!link.startsWith("/")) link = "/" + link;
+
+        aksesMap[link] = {
+          view_level: row.view_level?.trim() ?? "N",
+          add_level: row.add_level?.trim() ?? "N",
+          edit_level: row.edit_level?.trim() ?? "N",
+          delete_level: row.delete_level?.trim() ?? "N",
+          print_level: row.print_level?.trim() ?? "N",
+          upload_level: row.upload_level?.trim() ?? "N",
         };
-      } else {
-        res.locals.akses = getDefaultAkses();
       }
 
-      console.log(`[RBAC /datatables] path: ${menuPath} | akses:`, res.locals.akses);
-      console.log("🔥 currentPath:", currentPath);
-      console.log("🔥 menuPath:", menuPath);
+      // pakai ulang matchAkses (longest-prefix), sama kayak branch non-datatables
+      res.locals.akses = matchAkses(menuPath, aksesMap) || getDefaultAkses();
+
+      console.log(`[RBAC /datatables] path: ${menuPath} | matched akses:`, res.locals.akses);
       return next();
     }
 
