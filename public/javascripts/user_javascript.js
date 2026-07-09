@@ -75,6 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
             </span>`;
         }
       },
+      { data: "app", 
+        title: "Approval",
+        className: "p-2 border-b dark:text-white",
+        render: function (data) {
+          const isApproved = data === 'Y';
+          return `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isApproved ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400' : 'bg-gray-100 text-gray-500'}">
+              <span class="w-1.5 h-1.5 rounded-full ${isApproved ? 'bg-green-600' : 'bg-gray-400'}"></span>
+              ${isApproved ? 'Y' : 'N'}
+            </span>`;
+        }
+      }
     ],
     columnDefs: [
       // { responsivePriority: 1, targets: 0 }, // Title
@@ -177,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const is_active = document.getElementById("is_active").value;
       const app = document.getElementById("app").value;
 
-      if(!fullname || !username || !email || !id_level || !is_active || !password) {
+      if(!fullname || !username || !email || !id_level || !is_active || !app) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
         return;
       }

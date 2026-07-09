@@ -2,20 +2,11 @@ const { sequelize, Transaction, TransactionDetail, ProductPrices } = require("..
 const transactionRepo = require("../../repositories/transactions/transaction.repository");
 const productRepo = require("../../repositories/products/product.repository");
 
-// 🟢 Mapping multiplier pengurangan/pengembalian quota berdasarkan tipe kamar.
-// Contoh: 1 booking "quad" mengurangi quota sebanyak 1, "triple" sebanyak 3, "double" sebanyak 4.
-// Tipe kamar yang tidak terdaftar di sini akan default menggunakan multiplier 1.
-const ROOM_TYPE_QUOTA_MULTIPLIER = {
-    quad: 1,
-    triple: 3,
-    double: 4
-};
-
-// Helper untuk mengambil multiplier quota berdasarkan nama room_types (case-insensitive, trim spasi)
-function getQuotaMultiplier(roomType) {
-    if (!roomType) return 1;
-    const key = roomType.toString().trim().toLowerCase();
-    return ROOM_TYPE_QUOTA_MULTIPLIER[key] ?? 1;
+// Quota handling: setiap booking mengurangi quota sebanyak 1 per item,
+// terlepas dari tipe kamar. Fungsi helper tetap disediakan untuk
+// konsistensi kode dan kemungkinan perluasan di masa depan.
+function getQuotaMultiplier(/* roomType */) {
+    return 1; // selalu kurangi 1 seat per item
 }
 
 class TransactionService {

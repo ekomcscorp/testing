@@ -16,7 +16,6 @@ async function login(identifier, password) {
   if (user.is_active !== 'Y') {
     throw new Error("Akun belum aktif. Menunggu persetujuan admin.");
   }
-
   // if (user.id_level !== 1 && user.id_level !== 2) {
   //   throw new Error ("Anda tidak memiliki akses untuk login")
   // }
