@@ -25,7 +25,7 @@ class UserRepository {
         [Op.or]: [
           { fullname: { [Op.like]: `%${search}%` } },
           { username: { [Op.like]: `%${search}%` } },
-          { id_level: { [Op.like]: `%${search}%` } },
+          { '$level.nama_level$': { [Op.like]: `%${search}%` } },
           { is_active: { [Op.like]: `%${search}%` } }
         ],
       }),
@@ -45,11 +45,14 @@ class UserRepository {
       order: sort,
       offset,
       limit,
+      subQuery:false,
       include: [
         {
           model: Userlevel,
           as: 'level',
-          attributes: ['nama_level'], // atau atribut lain yang kamu butuh
+          attributes: ['nama_level'],
+          required: false
+           // atau atribut lain yang kamu butuh
         }
       ]
     });
