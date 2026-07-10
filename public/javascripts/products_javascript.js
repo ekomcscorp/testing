@@ -346,7 +346,12 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('md-flight-airline').innerText = `${dep?.airline_name || '-'} `;
       document.getElementById('md-flight-airline-return').innerText = `${ret?.airline_name || '-'} `;
       document.getElementById('md-flight-departure-airport').innerText = item.tmp_keberangkatan || '-';
-      document.getElementById('md-flight-arrival-time').innerText = item.tgl_keberangkatan || "-"
+     
+
+      const date = new Date(item.tgl_keberangkatan).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'
+      });
+      document.getElementById('md-flight-arrival-time').innerText = date || "-";
+
       // show modal
       document.getElementById('detailProductModal').classList.remove('hidden');
     } catch (err) {
