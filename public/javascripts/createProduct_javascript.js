@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         // Prices: require all defined room types have a price > 0
         ProductPriceState.forEach(p => {
             if (!p.price || Number(p.price) <= 0) errors.push(`Harga untuk ${p.room_types}`);
-            if (!p.quota || Number(p.quota) <= 0) errors.push(`Quota untuk ${p.room_types}`);
+            if (!p.quota || Number(p.quota) <= 0) errors.push(`Seat untuk ${p.room_types}`);
         });
 
         // Flights
@@ -598,8 +598,13 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         // Facilities at least one
         if ((!ProductFacilityState.INCLUDE || ProductFacilityState.INCLUDE.length === 0) && (!ProductFacilityState.EXCLUDE || ProductFacilityState.EXCLUDE.length === 0)) {
-            errors.push('Fasilitas (minimal 1)');
+            errors.push('Fasilitas');
         }
+
+        if(!ProductSnKState || ProductSnKState.length === 0) errors.push('Syarat & Ketentuan');
+
+         if(!ProductNoteState || ProductNoteState.length === 0) errors.push('Catatan');
+
 
         if (errors.length > 0) {
             const msg = `Field berikut wajib diisi atau diperbaiki:\n- ${[...new Set(errors)].join('\n- ')}`;
