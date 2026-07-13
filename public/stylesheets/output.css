@@ -1893,10 +1893,6 @@ input:checked + .toggle-bg {
   margin-left: 1rem;
 }
 
-.ml-8 {
-  margin-left: 2rem;
-}
-
 .ml-auto {
   margin-left: auto;
 }
@@ -2228,10 +2224,6 @@ input:checked + .toggle-bg {
 
 .w-5 {
   width: 1.25rem;
-}
-
-.w-6 {
-  width: 1.5rem;
 }
 
 .w-64 {
@@ -5129,10 +5121,6 @@ table.dataTable tbody tr:hover:is(.dark *) {
   border-color: rgb(71 85 105 / var(--tw-border-opacity, 1));
 }
 
-.dark\:border-dark-border\/50:is(.dark *) {
-  border-color: rgb(71 85 105 / 0.5);
-}
-
 .dark\:border-dark-card:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(30 41 59 / var(--tw-border-opacity, 1));
@@ -5226,11 +5214,6 @@ table.dataTable tbody tr:hover:is(.dark *) {
 
 .dark\:bg-gray-800\/50:is(.dark *) {
   background-color: rgb(31 41 55 / 0.5);
-}
-
-.dark\:bg-green-400:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:bg-green-500\/10:is(.dark *) {
@@ -5924,11 +5907,6 @@ table.dataTable tbody tr:hover:is(.dark *) {
   .lg\:px-10 {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
-  }
-
-  .lg\:px-8 {
-    padding-left: 2rem;
-    padding-right: 2rem;
   }
 
   .lg\:shadow-none {

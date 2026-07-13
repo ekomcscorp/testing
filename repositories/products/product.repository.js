@@ -19,32 +19,38 @@ class ProductRepository {
                 {
                     model: ProductFlight,
                     as: "flights",
-                    attributes: ["airline_name", "type"]
+                    attributes: ["airline_name", "type"],
+                    separate: true
                 },
                 {
                     model: ProductHotel,
                     as: "hotels",
-                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"]
+                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"],
+                    separate: true
                 },
                 {
                     model: ProductFacility,
                     as: "facility",
-                    attributes: ["facility", "type"]
+                    attributes: ["facility", "type"],
+                    separate: true
                 },
                 {
                     model: ProductItinerary,
                     as: "itinerary",
-                    attributes: ["day_order", "title", "description"]
+                    attributes: ["day_order", "title", "description"],
+                    separate: true
                 },
                 {
                     model: ProductSnK,
                     as: "snk",
-                    attributes: ["name"]
+                    attributes: ["name"],
+                    separate: true
                 },
                 {
                     model: ProductNote,
                     as: "notes",
-                    attributes: ["note"]
+                    attributes: ["note"],
+                    separate: true
                 },
                 {
                     model: User,
@@ -69,32 +75,38 @@ class ProductRepository {
                 {
                     model: ProductFlight,
                     as: "flights",
-                    attributes: ["airline_name", "type"]
+                    attributes: ["airline_name", "type"],
+                     separate: true
                 },
                 {
                     model: ProductHotel,
                     as: "hotels",
-                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"]
+                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"],
+                     separate: true
                 },
                 {
                     model: ProductFacility,
                     as: "facility",
-                    attributes: ["facility", "type"]
+                    attributes: ["facility", "type"],
+                     separate: true
                 },
                 {
                     model: ProductItinerary,
                     as: "itinerary",
-                    attributes: ["day_order", "title", "description"]
+                    attributes: ["day_order", "title", "description"],
+                     separate: true
                 },
                 {
                     model: ProductSnK,
                     as: "snk",
-                    attributes: ["name"]
+                    attributes: ["name"],
+                     separate: true
                 },
                 {
                     model: ProductNote,
                     as: "notes",
-                    attributes: ["note"]
+                    attributes: ["note"],
+                     separate: true
                 },
                 {
                     model: User,
@@ -171,32 +183,38 @@ class ProductRepository {
                 {
                     model: ProductFlight,
                     as: "flights",
-                    attributes: ["airline_name", "type"]
+                    attributes: ["airline_name", "type"],
+                     separate: true
                 },
                 {
                     model: ProductHotel,
                     as: "hotels",
-                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"]
+                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"],
+                     separate: true
                 },
                 {
                     model: ProductFacility,
                     as: "facility",
-                    attributes: ["facility", "type"]
+                    attributes: ["facility", "type"],
+                     separate: true
                 },
                 {
                     model: ProductItinerary,
                     as: "itinerary",
-                    attributes: ["day_order", "title", "description"]
+                    attributes: ["day_order", "title", "description"],
+                     separate: true
                 },
                 {
                     model: ProductSnK,
                     as: "snk",
-                    attributes: ["name"]
+                    attributes: ["name"],
+                     separate: true
                 },
                 {
                     model: ProductNote,
                     as: "notes",
-                    attributes: ["note"]
+                    attributes: ["note"],
+                     separate: true
                 },
                 {
                     model: User,
@@ -224,32 +242,38 @@ class ProductRepository {
                 {
                     model: ProductFlight,
                     as: "flights",
-                    attributes: ["airline_name", "type"]
+                    attributes: ["airline_name", "type"],
+                     separate: true
                 },
                 {
                     model: ProductHotel,
                     as: "hotels",
-                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"]
+                    attributes: ["name", "city", "rating", "jarak", "image", "facilities"],
+                     separate: true
                 },
                 {
                     model: ProductFacility,
                     as: "facility",
-                    attributes: ["facility", "type"]
+                    attributes: ["facility", "type"],
+                     separate: true
                 },
                 {
                     model: ProductItinerary,
                     as: "itinerary",
-                    attributes: ["day_order", "title", "description"]
+                    attributes: ["day_order", "title", "description"],
+                     separate: true
                 },
                 {
                     model: ProductSnK,
                     as: "snk",
-                    attributes: ["name"]
+                    attributes: ["name"],
+                     separate: true
                 },
                 {
                     model: ProductNote,
                     as: "notes",
-                    attributes: ["note"]
+                    attributes: ["note"],
+                     separate: true
                 },
                 {
                     model: User,
