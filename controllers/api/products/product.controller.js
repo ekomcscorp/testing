@@ -68,48 +68,6 @@ class ProductController {
        });
     }
   }
-//   async getAllProductsDatatables(req, res) {
-//   try {
-//     // 1. Ambil langsung objek akses dari res.locals
-//     // Jika res.locals.akses tidak ada, gunakan objek kosong {} agar .view_level tidak crash
-//     const {akses} = res.locals;
-
-//     // 2. Cek izin akses
-//     if (akses.view_level?.trim() !== 'Y') {
-//       return res.status(403).json({ error: "Akses ditolak" });
-//     }
-
-//     const result = await productService.getAllProductsDatatables(req.query);
-
-//     // 3. Pastikan result.data ada sebelum di-map
-//     if (result && result.data) {
-//       result.data = result.data.map(row => {
-//         // Gunakan pengecekan instance sequelize agar .get() tidak error
-//         const plainData = typeof row.get === 'function' ? row.get({ plain: true }) : row;
-        
-//         return {
-//           ...plainData,
-//           akses: {
-//             edit: akses.edit_level === 'Y',
-//             delete: akses.delete_level === 'Y'
-//           }
-//         };
-//       });
-//     }
-
-//     return res.json({
-//     draw: result.draw,
-//     recordsTotal: result.recordsTotal,
-//     recordsFiltered: result.recordsFiltered,
-//     data: result.data
-// });
-//   } catch (error) {
-//     console.error("DEBUG ERROR:", error);
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// }
-
-  // Get product by ID
   async getProductById(req, res) {
     try {
       const { id } = req.params;
@@ -202,12 +160,12 @@ class ProductController {
             if (hotel.city === "Mekkah") {
                 hotel.image = req.files?.hotel_image_mekkah
                     ? req.files.hotel_image_mekkah[0].filename
-                    : hotel.existing_image || null;
+                    : hotel.existing_image || hotel.image || null;
             }
             if (hotel.city === "Madinah") {
                 hotel.image = req.files?.hotel_image_madinah
                     ? req.files.hotel_image_madinah[0].filename
-                    : hotel.existing_image || null;
+                    : hotel.existing_image || hotel.image || null;
             }
             return hotel;
         });
