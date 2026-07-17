@@ -1,5 +1,5 @@
 const { Model, Op, where, col, Transaction } = require("sequelize");
-const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses, User } = require("../../models");
+const { Product, ProductPrices, ProductFlight, ProductHotel, ProductFacility, ProductItinerary, ProductSnK, ProductNote, Akses, User, Profile } = require("../../models");
 
 class ProductRepository {
     async getAllProduct(user) {
@@ -55,7 +55,14 @@ class ProductRepository {
                 {
                     model: User,
                     as: "creator",
-                    attributes: ["id", "fullname", "username"]
+                    attributes: ["id", "fullname", "username"],
+                    include: [
+                        {
+                            model: Profile,
+                            as: "profile",
+                            attributes: ["image"]
+                        }
+                    ]
 
                 }
             ],
@@ -220,7 +227,14 @@ class ProductRepository {
                     model: User,
                     as: "creator",
                     attributes: ["id", "fullname", "username"],
-                    required: false
+                    required: false,
+                    include: [
+                        {
+                            model: Profile,
+                            as: "profile",
+                            attributes: ["image"]
+                        }
+                    ]
                 }
             ],
             order: orderBy
@@ -278,7 +292,14 @@ class ProductRepository {
                 {
                     model: User,
                     as: "creator",
-                    attributes: ["id", "fullname", "username"]
+                    attributes: ["id", "fullname", "username"],
+                    include: [
+                        {
+                            model: Profile,
+                            as: "profile",
+                            attributes: ["image"]
+                        }
+                    ]
                 }
             ],
         });

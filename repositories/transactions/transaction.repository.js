@@ -94,14 +94,15 @@ class TransactionRepository {
             include: [
                 productInclude,
                 {
-                    model: TransactionDetail,
-                    as: "details"
-                },
-                {
                     model: User,
                     as: "user",
                     attributes: ["id", "fullname", "username", "email", "no_wa"]
-                }
+                },
+                {
+                    model: TransactionDetail,
+                    as: "details"
+                },
+                
             ],
             order: [["created_at", "DESC"]]
         });
@@ -131,11 +132,6 @@ class TransactionRepository {
                     ]
                 },
                 {
-                    model: TransactionDetail,
-                    as: "details",
-                    
-                },
-                {
                     model: User,
                     as: "user",
                     attributes: ["id", "fullname", "username", "email", 'no_wa'],
@@ -146,7 +142,11 @@ class TransactionRepository {
                             attributes: ['image']
                         }
                     ]
-                }
+                },
+                {
+                    model: TransactionDetail,
+                    as: "details",      
+                },
             ]
         });
         
