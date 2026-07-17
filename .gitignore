@@ -19,3 +19,6 @@ build/
 # .env.local
 config/config.json
 # .env
+
+# Graphifyy output folder
+graphify-out/
