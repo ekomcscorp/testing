@@ -7,92 +7,92 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('tbl_transaction_details', {
      id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
 
     transaction_id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
 
     user_id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
 
 
     product_id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: true,
     },
 
     product_name: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: true,
     },
 
     thumbnail_product: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: true
     },
 
     price: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
 
     room_types: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: true,
     },
 
 
     hotels_snapshot: {
-        type: DataTypes.JSON,
+        type: Sequelize.JSON,
         allowNull: true
     },
 
 
     flights_snapshot: {
-        type: DataTypes.JSON,
+        type: Sequelize.JSON,
         allowNull: true
     },
 
     travel_snapshot: {
-        type: DataTypes.JSON,
+        type: Sequelize.JSON,
         allowNull: true
     },
 
     departure_date: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
       allowNull: true,
     },
 
     duration: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: true,
     },
 
 
     subtotal: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
     // invoice_no: {
-    //     type: DataTypes.STRING,
+    //     type: Sequelize.STRING,
     //     allowNull: true,
     //     unique: true
     // },
     created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
     },
 
     updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
     },
     });
   },

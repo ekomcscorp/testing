@@ -4,13 +4,13 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Products', {
       id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             autoIncrement: true,
             allowNull: false,
             primaryKey: true,
         },
         category_id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
             model: 'categories',
@@ -18,7 +18,7 @@ module.exports = {
             }
         },
         user_id:{
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             allowNull: false,
             references: {
                 model: "tbl_user",
@@ -26,31 +26,31 @@ module.exports = {
             }
         },
         nama_produk: {
-            type: DataTypes.STRING(255),
+            type: Sequelize.STRING(255),
             allowNull: false,
         },
         tgl_keberangkatan: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false
         },
         tmp_keberangkatan: {
-            type: DataTypes.STRING(255),
+            type: Sequelize.STRING(255),
             allowNull: false
         },
         duration: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             allowNull: false
         },
 
         thumbnail_url: {
-            type: DataTypes.STRING(255)
+            type: Sequelize.STRING(255)
         },
         description: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: true,
         },
         status: {
-            type: DataTypes.ENUM('draft', 'publish', 'closed'),
+            type: Sequelize.ENUM('draft', 'publish', 'closed'),
             allowNull: true
         },
        
