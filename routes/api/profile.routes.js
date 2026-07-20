@@ -4,7 +4,7 @@ const profileController = require('../../controllers/api/profile.controller');
 const {ensureAuthToken} = require("../../middleware/authJwt");
 const multer = require('multer');
 const path = require('path');
-const { up } = require('../../migrations/20260511000000-create-product-wishlist');
+
 
 const diskStorage = multer.diskStorage({
   destination: function (req, file, cb ) {

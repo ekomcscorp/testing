@@ -125,6 +125,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "transaction_id",
             as: "details"
         });
+        Transaction.hasMany(models.TransactionJamaah, {
+            foreignKey: "transaction_id",
+            as: "jamaah",
+            onDelete: "CASCADE"
+        });
     }
 
     return Transaction;

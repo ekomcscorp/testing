@@ -6,95 +6,94 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('tbl_transaction_details', {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
+     id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
 
-      transaction_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'tbl_transaction',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      },
+    transaction_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
 
-      jamaah_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
 
-      // 🔥 SNAPSHOT PRODUCT
-      product_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
 
-      product_name: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
 
-      // 🔥 SNAPSHOT PRICE
-      price: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
+    product_name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
 
-      room_type: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+    thumbnail_product: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
 
-      // 🔥 SNAPSHOT HOTEL
-      hotel_name: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+    price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
 
-      hotel_city: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+    room_types: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
 
-      // 🔥 SNAPSHOT FLIGHT
-      airline_name: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
 
-      // 🔥 SCHEDULE
-      departure_date: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
+    hotels_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
 
-      duration: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
 
-      // 🔥 TOTAL PER JEMAAH
-      subtotal: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
+    flights_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
 
-      created_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
+    travel_snapshot: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
 
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
+    departure_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
+
+    subtotal: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    // invoice_no: {
+    //     type: DataTypes.STRING,
+    //     allowNull: true,
+    //     unique: true
+    // },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
     });
   },
 

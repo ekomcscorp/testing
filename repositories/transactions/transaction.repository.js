@@ -1,5 +1,5 @@
 const { Op, where, col } = require("sequelize"); 
-const { Transaction, User, TransactionDetail, Product, Profile } = require("../../models");
+const { Transaction, User, TransactionDetail, Product, Profile, TransactionJamaah } = require("../../models");
 
 // Helper function untuk parse JSON snapshots
 const parseSnapshots = (detail) => {
@@ -102,6 +102,10 @@ class TransactionRepository {
                     model: TransactionDetail,
                     as: "details"
                 },
+                {
+                    model: TransactionJamaah,
+                    as: "jamaah"
+                }
                 
             ],
             order: [["created_at", "DESC"]]
@@ -147,6 +151,10 @@ class TransactionRepository {
                     model: TransactionDetail,
                     as: "details",      
                 },
+                {
+                    model: TransactionJamaah,
+                    as: "jamaah"
+                }
             ]
         });
         

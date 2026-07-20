@@ -1,5 +1,6 @@
 const express = require('express');
 const transactionController = require('../../../controllers/api/transactions/transaction.controller');
+const transactionJamaahRoutes = require('./transaction_jamaah.routes');
 const { injectUser } = require ('../../../middleware');
 const {ensureAuthToken} = require("../../../middleware/authJwt");
 const appSignature = require("../../../middleware/appSignatureGuard.js")
@@ -19,6 +20,11 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
+// � Nested routes untuk Transaction Jamaah (HARUS SEBELUM /:id route)
+// Routes akan menjadi /api/transactions/jamaah/*
+router.use("/jamaah", transactionJamaahRoutes);
+
+// 📋 Transaction routes
 router.get("/",appSignature, transactionController.getAllTransactions);
 router.get("/my-transactions", ensureAuthToken, transactionController.getMyTransactions);
 router.get("/datatables", injectUser, transactionController.getAllTransactionDatatables);
@@ -27,6 +33,5 @@ router.post("/", ensureAuthToken, transactionController.createTransaction);
 router.put("/:id", upload.single('evidence_url'),transactionController.uploadPayment);
 router.patch("/:id", injectUser ,transactionController.approvePayment)
 router.delete("/:id", transactionController.deleteTransaction);
-
 
 module.exports = router; 
