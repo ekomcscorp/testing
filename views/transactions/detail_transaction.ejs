@@ -42,7 +42,7 @@
     Type of flights: <%= typeof data.details[0].flights_snapshot %>
     Raw data: <%= JSON.stringify(data.details[0].flights_snapshot) %>
     </pre> -->
-                    <div class="p-6">
+                    <div class="py-14 px-6">
                     <% if (data.details && data.details.length > 0) {
                             const packageCounts = data.details.reduce((acc, detail) => {
                                 const type = detail.room_types || 'Unknown';
@@ -94,40 +94,11 @@
                     </div>
                 </div>
 
-                <div id="accordion-jamaah" data-accordion="collapse" class="bg-white rounded-xl shadow-sm border border-gray-100">
-                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h2 class="font-bold text-gray-800">Data Jamaah</h2>
-                    </div>
-                    
-                    <h2 id="accordion-heading-1">
-                        <div class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-100 " >
-                            <span><%= data.user?.fullname %></span>
-                            <!-- <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
-                            </svg> -->
-                        </div>
-                    </h2>
-                    <div id="body-1" >
-                        <div class="p-5 border-b border-gray-100 bg-gray-50/50">
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                                
-                                <div>
-                                    <p class="text-gray-400 text-xs">No HP</p>
-                                    <p class="font-semibold"><%= data.user?.no_wa || "N/A"%></p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-400 text-xs">Email</p>
-                                    <p class="font-semibold text-xs"><%= data.user?.email || "N/A"%></p>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-md border border-gray-100 sticky top-8">
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 ">
                     <div class="p-6">
                         <h2 class="text-lg font-bold text-gray-800 mb-6 pb-2 border-b">Ringkasan Pembayaran</h2>
                         <div class="space-y-4 mb-6">
@@ -159,12 +130,153 @@
                 </div>
             </div>
         </div>
+        <div id="accordion-jamaah" data-accordion="collapse" class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="font-bold text-gray-800">Data Jamaah</h2>
+                    </div>
+                    <table class="w-full text-sm text-left border-collapse mb-8 ">
+                        <thead class="bg-gray-50">
+                            <tr class=" border-b">
+                                <th class="py-3 px-10 font-bold">Fullname</th>
+                                <th class="py-3 px-10 font-bold">Email</th>
+                                <th class="py-3 px-10 text-center font-bold">No Telp</th>
+                                <th class="py-3 px-10 text-center font-bold">Gender</th>
+                                <th class="py-3 px-10 text-center font-bold">Detail</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <% if (Array.isArray(data.jamaah) && data.jamaah.length > 0) { %>
+                                <% data.jamaah.forEach((jamaah, index) => { %>
+                                    <tr>
+                                        <td class="py-4 px-10">
+                                            <p class="font-medium text-left text-gray-800"><%= jamaah.fullname %></p>
+                                        </td>
+                                        <td class="py-4 px-10">
+                                            <p class="font-medium text-left text-gray-800"><%= jamaah.email %></p>
+                                        </td>
+                                        <td class="py-4 px-10">
+                                            <p class="font-medium text-center text-gray-800"><%= jamaah.phone %></p>
+                                        </td>
+                                        <td class="py-4 px-10">
+                                            <p class="font-medium text-center text-gray-800"><%= jamaah.gender === 'L' ? 'Laki-laki' : jamaah.gender === 'P' ? 'Perempuan' : jamaah.gender %></p>
+                                        </td>
+                                        <td class="py-4 px-10">
+                                             <button onclick="openDocumentModal('<%= jamaah.fullname %>', '<%= jamaah.img_ktp %>', '<%= jamaah.img_kk %>', '<%= jamaah.img_passpor %>')" class="flex items-center gap-2 px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition shadow-md">
+                                                View Detail
+                                            </button>
+                                        </td>
+                                        
+                                        
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td class="py-4 px-10 text-center text-gray-500" colspan="7">Belum ada data jamaah untuk transaksi ini.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <!-- <h2 id="accordion-heading-1">
+                        <div class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-100 " >
+                            <span><%= data.user?.fullname %></span>
+                           
+                        </div>
+                    </h2> -->
+                    <!-- <div id="body-1" >
+                        <div class="p-5 border-b border-gray-100 bg-gray-50/50">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                                
+                                <div>
+                                    <p class="text-gray-400 text-xs">No HP</p>
+                                    <p class="font-semibold"><%= data.user?.no_wa || "N/A"%></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-xs">Email</p>
+                                    <p class="font-semibold text-xs"><%= data.user?.email || "N/A"%></p>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div> -->
+            </div>
     </div>
         <!-- <div class="bg-black text-green-400 p-4 font-mono text-xs">
     DEBUG DATA DETAIL 0:
     <%= JSON.stringify(data.details[0]) %>
 </div>  -->
        
+    </div>
+
+    <div id="detailJamaah" aria-hidden="true" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50 backdrop-blur-sm">
+        <div class="relative w-full max-w-4xl max-h-full">
+            <div class="relative bg-white rounded-2xl shadow-2xl border border-gray-100">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-100 rounded-t-2xl bg-gradient-to-r from-green-500 to-green-600">
+                    <h3 class="text-2xl font-bold text-white">
+                        Dokumen Jamaah: <span id="jamaahName"></span>
+                    </h3>
+                    <button type="button" onclick="closeDocumentModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="flex border-b border-gray-100 bg-gray-50">
+                    <button onclick="switchDocumentTab('ktp')" id="tab-ktp" class="flex-1 py-4 px-6 font-semibold text-gray-700 border-b-2 border-green-500 bg-white hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
+                        KTP
+                    </button>
+                    <button onclick="switchDocumentTab('kk')" id="tab-kk" class="flex-1 py-4 px-6 font-semibold text-gray-700 border-b-2 border-transparent hover:border-gray-300 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
+                        KK
+                    </button>
+                    <button onclick="switchDocumentTab('passpor')" id="tab-passpor" class="flex-1 py-4 px-6 font-semibold text-gray-700 border-b-2 border-transparent hover:border-gray-300 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
+                        Passpor
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-8">
+                    <!-- KTP Tab -->
+                    <div id="content-ktp" class="document-content block">
+                        <p class="text-gray-600 font-semibold mb-4">Kartu Tanda Penduduk (KTP)</p>
+                        <div class="flex justify-center">
+                            <img id="ktp-image" src="" alt="KTP" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
+                        </div>
+                        <p id="ktp-empty" class="text-gray-400 text-center italic">Tidak ada data KTP</p>
+                    </div>
+
+                    <!-- KK Tab -->
+                    <div id="content-kk" class="document-content hidden">
+                        <p class="text-gray-600 font-semibold mb-4">Kartu Keluarga (KK)</p>
+                        <div class="flex justify-center">
+                            <img id="kk-image" src="" alt="KK" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
+                        </div>
+                        <p id="kk-empty" class="text-gray-400 text-center italic">Tidak ada data KK</p>
+                    </div>
+
+                    <!-- Passpor Tab -->
+                    <div id="content-passpor" class="document-content hidden">
+                        <p class="text-gray-600 font-semibold mb-4">Passpor</p>
+                        <div class="flex justify-center">
+                            <img id="passpor-image" src="" alt="Passpor" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
+                        </div>
+                        <p id="passpor-empty" class="text-gray-400 text-center italic">Tidak ada data Passpor</p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50">
+                    <button onclick="closeDocumentModal()" class="px-5 py-2.5 text-gray-700 font-semibold bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="approvePaymentModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
@@ -420,4 +532,108 @@
                     renderNoEvidence();
                 });
         })();
+
+        // Modal Jamaah Dokumen Functions
+        function openDocumentModal(jamaahName, ktpImage, kkImage, pasportImage) {
+            const modal = document.getElementById('detailJamaah');
+            
+            // Set jamaah name
+            document.getElementById('jamaahName').textContent = jamaahName;
+            
+            // Resolve image URLs
+            const resolveImageUrl = (imageName) => {
+                if (!imageName || imageName === 'null' || imageName === '') {
+                    return null;
+                }
+                if (/^(https?:)?\/\//.test(imageName)) {
+                    return imageName;
+                }
+                return `/assets/img/transactions/jamaah/${encodeURIComponent(imageName)}`;
+            };
+            
+            // Setup KTP
+            const ktpUrl = resolveImageUrl(ktpImage);
+            const ktpImageEl = document.getElementById('ktp-image');
+            const ktpEmptyEl = document.getElementById('ktp-empty');
+            if (ktpUrl) {
+                ktpImageEl.src = ktpUrl;
+                ktpImageEl.style.display = 'block';
+                ktpEmptyEl.style.display = 'none';
+            } else {
+                ktpImageEl.style.display = 'none';
+                ktpEmptyEl.style.display = 'block';
+            }
+            
+            // Setup KK
+            const kkUrl = resolveImageUrl(kkImage);
+            const kkImageEl = document.getElementById('kk-image');
+            const kkEmptyEl = document.getElementById('kk-empty');
+            if (kkUrl) {
+                kkImageEl.src = kkUrl;
+                kkImageEl.style.display = 'block';
+                kkEmptyEl.style.display = 'none';
+            } else {
+                kkImageEl.style.display = 'none';
+                kkEmptyEl.style.display = 'block';
+            }
+            
+            // Setup Passpor
+            const pasportUrl = resolveImageUrl(pasportImage);
+            const pasportImageEl = document.getElementById('passpor-image');
+            const pasportEmptyEl = document.getElementById('passpor-empty');
+            if (pasportUrl) {
+                pasportImageEl.src = pasportUrl;
+                pasportImageEl.style.display = 'block';
+                pasportEmptyEl.style.display = 'none';
+            } else {
+                pasportImageEl.style.display = 'none';
+                pasportEmptyEl.style.display = 'block';
+            }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDocumentModal() {
+            const modal = document.getElementById('detailJamaah');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+            
+            // Reset to first tab
+            switchDocumentTab('ktp');
+        }
+
+        function switchDocumentTab(tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.document-content');
+            contents.forEach(content => content.classList.add('hidden'));
+            
+            // Remove active state from all tabs
+            const tabs = document.querySelectorAll('[id^="tab-"]');
+            tabs.forEach(tab => tab.classList.remove('border-blue-500', 'bg-white'));
+            tabs.forEach(tab => tab.classList.add('border-transparent'));
+            
+            // Show selected content
+            const selectedContent = document.getElementById(`content-${tabName}`);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+            
+            // Set active state on selected tab
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.classList.remove('border-transparent');
+                selectedTab.classList.add('border-blue-500', 'bg-white');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('detailJamaah').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeDocumentModal();
+            }
+        });
     </script>

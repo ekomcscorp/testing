@@ -13,12 +13,10 @@ const storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, "public/assets/img/transactions/jamaah/")
     },
-    filename(req, file, cb) {
-        const ext = path.extname(file.originalname);
-
-        const hash = crypto.randomBytes(16).toString("hex");
-
-        cb(null, `${file.fieldname}_${hash}${ext}`);
+    filename: function(req, file, cb) {
+        const ext = file.originalname.split(".").pop();
+        const hash = crypto.randomBytes(16).toString('hex');
+        cb(null, `${hash}.${ext}`);
     }
 })
 const upload = multer({storage: storage});
