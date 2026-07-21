@@ -6,7 +6,22 @@ const { ensureAuthToken } = require("../../../middleware/authJwt");
 
 const router = express.Router();
 const multer = require('multer');
+const crypto = require("crypto");
 
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, "public/assets/img/transactions/jamaah/")
+    },
+    filename(req, file, cb) {
+        const ext = path.extname(file.originalname);
+
+        const hash = crypto.randomBytes(16).toString("hex");
+
+        cb(null, `${file.fieldname}_${hash}${ext}`);
+    }
+})
+const upload = multer({storage: storage});
 
 /**
  * @route POST /api/transactions/bulk
@@ -74,7 +89,13 @@ router.get('/', transactionJamaahController.getAllJamaah);
  * @access Private (optional - jalankan validasi sendiri di controller jika tidak ada auth)
  * @body {Object} jamaahData - Jamaah data
  */
-router.post('/', transactionJamaahController.createJamaah);
+router.post('/', upload.fields([
+    { name: 'img_ktp', maxCount: 1},
+    { name: 'img_kk', maxCount: 1},
+    { name: 'img_passpor', maxCount: 1},
+    { name: 'img_diri', maxCount: 1},
+    { name: 'img_akta_kelahiran', maxCount: 1}
+]) ,transactionJamaahController.createJamaah);
 
 /**
  * @route GET /api/transactions/jamaah/:id

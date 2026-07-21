@@ -145,6 +145,19 @@ class TransactionJamaahController {
                 return response.error(res, "Data jamaah tidak boleh kosong", 400);
             }
 
+            if (req.files) {
+                jamaahData.img_ktp = req.files.img_ktp?.[0]?.filename ?? null;
+
+                jamaahData.img_kk = req.files.img_kk?.[0]?.filename ?? null;
+
+                jamaahData.img_passpor = req.files.img_passpor?.[0]?.filename ?? null;
+
+                jamaahData.img_diri = req.files.img_diri?.[0]?.filename ?? null;
+
+                jamaahData.img_akta_kelahiran =
+                req.files.img_akta_kelahiran?.[0]?.filename ?? null;
+            }
+
             const result = await transactionJamaahService.createJamaah(jamaahData);
             const formatted = transactionJamaahService.formatJamaahResponse(result);
 
