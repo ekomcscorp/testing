@@ -96,7 +96,13 @@ class TransactionRepository {
                 {
                     model: User,
                     as: "user",
-                    attributes: ["id", "fullname", "username", "email", "no_wa"]
+                    attributes: ["id", "fullname", "username", "email", "no_wa"],
+                    include: [
+                        {
+                            model: Profile,
+                            as: "profile",
+                        }
+                    ]
                 },
                 {
                     model: TransactionDetail,
@@ -143,7 +149,6 @@ class TransactionRepository {
                         {
                             model: Profile,
                             as: 'profile',
-                            attributes: ['image']
                         }
                     ]
                 },
