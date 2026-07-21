@@ -162,6 +162,11 @@ class TransactionJamaahRepository {
         });
     }
 
+    async getAllJamaah() {
+        return await TransactionJamaah.findAll()
+    }
+
+
     /**
      * Ambil semua jamaah dari satu detail transaksi
      * @param {Number} transactionDetailId - ID transaction detail
