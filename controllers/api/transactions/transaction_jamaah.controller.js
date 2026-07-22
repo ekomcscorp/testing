@@ -1,6 +1,26 @@
 const response = require("../../../utils/response");
 const transactionJamaahService = require("../../../services/transactions/transaction_jamaah.service");
 
+function mapUploadedFiles(files = {}) {
+    const uploadedFiles = {};
+
+    const fileFields = [
+        "img_ktp",
+        "img_kk",
+        "img_passpor",
+        "img_diri",
+        "img_akta_kelahiran"
+    ];
+
+    fileFields.forEach(field => {
+        if (files[field]?.length > 0) {
+            uploadedFiles[field] = files[field][0].filename;
+        }
+    });
+
+    return uploadedFiles;
+}
+
 class TransactionJamaahController {
     /**
      * Get semua jamaah dengan datatable pagination
@@ -139,23 +159,13 @@ class TransactionJamaahController {
      */
     async createJamaah(req, res) {
         try {
-            const jamaahData = req.body;
+            const jamaahData = {
+                ...req.body,
+                ...mapUploadedFiles(req.files)
+            };
 
             if (!jamaahData || Object.keys(jamaahData).length === 0) {
                 return response.error(res, "Data jamaah tidak boleh kosong", 400);
-            }
-
-            if (req.files) {
-                jamaahData.img_ktp = req.files.img_ktp?.[0]?.filename ?? null;
-
-                jamaahData.img_kk = req.files.img_kk?.[0]?.filename ?? null;
-
-                jamaahData.img_passpor = req.files.img_passpor?.[0]?.filename ?? null;
-
-                jamaahData.img_diri = req.files.img_diri?.[0]?.filename ?? null;
-
-                jamaahData.img_akta_kelahiran =
-                req.files.img_akta_kelahiran?.[0]?.filename ?? null;
             }
 
             const result = await transactionJamaahService.createJamaah(jamaahData);
@@ -202,7 +212,10 @@ class TransactionJamaahController {
     async updateJamaah(req, res) {
         try {
             const { id } = req.params;
-            const updateData = req.body;
+            const updateData = {
+                ...req.body,
+                ...mapUploadedFiles(req.files)
+            };
 
             if (!id || isNaN(id)) {
                 return response.error(res, "ID jamaah tidak valid", 400);
