@@ -109,7 +109,7 @@ class TransactionJamaahRepository {
                             as: 'product',
                             attributes: [
                                 'id', 'nama_produk', 'tgl_keberangkatan', 'duration',
-                                'thumbnail_url', 'deskripsi'
+                                'thumbnail_url'
                             ]
                         },
                         {
