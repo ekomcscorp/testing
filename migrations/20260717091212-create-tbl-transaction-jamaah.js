@@ -60,22 +60,22 @@ module.exports = {
 
       img_ktp: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
 
       img_kk: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
 
       img_passpor: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
 
       img_diri: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
 
       img_akta_kelahiran: {

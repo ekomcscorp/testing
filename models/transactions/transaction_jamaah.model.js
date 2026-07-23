@@ -58,22 +58,22 @@ module.exports = (sequelize, DataTypes) => {
 
         img_ktp: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         img_kk: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         img_passpor: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         img_diri: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         img_akta_kelahiran: {
