@@ -7,19 +7,15 @@ class TransactionJamaahService {
      * @param {Object} jamaahData - Data jamaah yang akan divalidasi
      * @throws {Error} Jika validasi gagal
      */
-    validateJamaahData(jamaahData) {
+    validateCreateJamaah(jamaahData) {
         const requiredFields = [
-            'transaction_id',
-            'transaction_detail_id',
-            'fullname',
-            'email',
-            'phone',
-            'gender',
-            'status',
-            'img_ktp',
-            'img_kk',
-            'img_passpor',
-            'img_diri'
+            "transaction_id",
+            "transaction_detail_id",
+            "fullname",
+            "email",
+            "phone",
+            "gender",
+            "status"
         ];
 
         for (const field of requiredFields) {
@@ -28,29 +24,52 @@ class TransactionJamaahService {
             }
         }
 
-        // Validasi format gender
-        if (!['L', 'P'].includes(jamaahData.gender)) {
-            throw new Error('Gender harus "L" (Laki-laki) atau "P" (Perempuan)');
-        }
-
-        // Validasi format status pernikahan
-        if (!['belum menikah', 'menikah'].includes(jamaahData.status)) {
-            throw new Error('Status pernikahan harus "belum menikah" atau "menikah"');
-        }
-
-        // Validasi email format (basic)
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(jamaahData.email)) {
-            throw new Error('Format email tidak valid');
-        }
-
-        // Validasi phone format (minimal 10 digit, maximal 15)
-        const phoneRegex = /^[\d+\-\s()]{10,15}$/;
-        if (!phoneRegex.test(jamaahData.phone)) {
-            throw new Error('Format nomor telepon tidak valid (10-15 digit)');
-        }
+        this.validateCommon(jamaahData);
     }
 
+    validateUpdateJamaah(updateData) {
+        this.validateCommon(updateData);
+    }
+        validateCommon(data) {
+
+        if (data.gender &&
+            !["L", "P"].includes(data.gender)) {
+            throw new Error(
+                'Gender harus "L" atau "P"'
+            );
+        }
+
+        if (data.status &&
+            !["belum menikah", "menikah"].includes(data.status)) {
+            throw new Error(
+                'Status harus "belum menikah" atau "menikah"'
+            );
+        }
+
+        if (data.email) {
+
+            const emailRegex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(data.email)) {
+                throw new Error("Format email tidak valid");
+            }
+
+        }
+
+        if (data.phone) {
+
+            const phoneRegex =
+                /^[\d+\-\s()]{10,15}$/;
+
+            if (!phoneRegex.test(data.phone)) {
+                throw new Error(
+                    "Format nomor telepon tidak valid"
+                );
+            }
+
+        }
+    }
     /**
      * Create jamaah baru
      * @param {Object} jamaahData - Data jamaah
@@ -58,17 +77,19 @@ class TransactionJamaahService {
      * @returns {Promise<Jamaah>}
      */
     async createJamaah(jamaahData, options = {}) {
-        // Validasi dulu
-        this.validateJamaahData(jamaahData);
 
-        // Cek apakah transaction & transaction_detail ada
+        this.validateCreateJamaah(jamaahData);
+
         const transaction = await transactionRepo.getTransactionById(jamaahData.transaction_id);
         if (!transaction) {
-            throw new Error(`Transaksi dengan ID ${jamaahData.transaction_id} tidak ditemukan`);
+            throw new Error(
+                `Transaksi ${jamaahData.transaction_id} tidak ditemukan`
+            );
         }
-
-        // Create jamaah
-        return await transactionJamaahRepo.createJamaah(jamaahData, options);
+        return await transactionJamaahRepo.createJamaah(
+            jamaahData,
+            options
+        );
     }
 
     /**
@@ -80,7 +101,7 @@ class TransactionJamaahService {
     async createBulkJamaah(jamaahDataArray, options = {}) {
         // Validasi setiap jamaah
         for (const jamaahData of jamaahDataArray) {
-            this.validateJamaahData(jamaahData);
+            this.validateCreateJamaah(jamaahData);
         }
 
         // Create bulk
@@ -158,7 +179,7 @@ class TransactionJamaahService {
         if (updateData.fullname || updateData.email || updateData.phone ||
             updateData.gender || updateData.status) {
             const mergedData = { ...jamaah.get(), ...updateData };
-            this.validateJamaahData(mergedData);
+            this.validateUpdateJamaah(mergedData);
         }
 
         // Update

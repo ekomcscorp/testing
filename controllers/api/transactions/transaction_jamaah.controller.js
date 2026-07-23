@@ -210,31 +210,55 @@ class TransactionJamaahController {
      * @body {Object} updateData
      */
     async updateJamaah(req, res) {
+
         try {
+
             const { id } = req.params;
+
+            if (!id || isNaN(id)) {
+                return response.error(
+                    res,
+                    "ID jamaah tidak valid",
+                    400
+                );
+            }
+
             const updateData = {
                 ...req.body,
                 ...mapUploadedFiles(req.files)
             };
 
-            if (!id || isNaN(id)) {
-                return response.error(res, "ID jamaah tidak valid", 400);
+            if (Object.keys(updateData).length === 0) {
+                return response.error(
+                    res,
+                    "Data update tidak boleh kosong",
+                    400
+                );
             }
 
-            if (!updateData || Object.keys(updateData).length === 0) {
-                return response.error(res, "Data update tidak boleh kosong", 400);
+            const result =
+                await transactionJamaahService.updateJamaah(
+                    Number(id),
+                    updateData
+                );
+
+            return response.success(
+                res,
+                "Jamaah berhasil diupdate",
+                transactionJamaahService
+                    .formatJamaahResponse(result)[0]
+            );
+
+        } catch (err) {
+
+            if (err.message.includes("tidak ditemukan")) {
+                return response.error(res, err.message, 404);
             }
 
-            const result = await transactionJamaahService.updateJamaah(parseInt(id), updateData);
-            const formatted = transactionJamaahService.formatJamaahResponse(result);
+            return response.error(res, err.message, 400);
 
-            return response.success(res, "Jamaah berhasil diupdate", formatted[0]);
-        } catch (error) {
-            if (error.message.includes("tidak ditemukan")) {
-                return response.error(res, error.message, 404);
-            }
-            return response.error(res, error.message, 400);
         }
+
     }
 
     /**
