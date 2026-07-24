@@ -603,8 +603,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         if(!ProductSnKState || ProductSnKState.length === 0) errors.push('Syarat & Ketentuan');
 
-         if(!ProductNoteState || ProductNoteState.length === 0) errors.push('Catatan');
-
 
         if (errors.length > 0) {
             const msg = `Field berikut wajib diisi atau diperbaiki:\n- ${[...new Set(errors)].join('\n- ')}`;
