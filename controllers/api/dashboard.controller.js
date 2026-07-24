@@ -2,7 +2,7 @@ const response = require('../../utils/response');
 const ProductRepository = require('../../repositories/products/product.repository');
 const UserRepository = require('../../repositories/user.repository');
 const TransactionRepository = require('../../repositories/transactions/transaction.repository');
-const { Transaction, User } = require('../../models');
+const { Transaction, User,  TransactionJamaah} = require('../../models');
 
 class DashboardController {
   async getStats(req, res) {
@@ -11,7 +11,7 @@ class DashboardController {
         ProductRepository.countAll(),
       ]);
 
-      const totalUsers = await User.count({ where: { id_level: 3 } });
+      const totalUsers = await TransactionJamaah.count();
       const totalTravels = await User.count({ where: { id_level: 4 } });
 
       // Pending orders (status PENDING)
