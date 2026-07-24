@@ -141,11 +141,11 @@
                         <table class="w-full text-sm text-left border-collapse mb-8 ">
                             <thead class="bg-gray-50">
                                 <tr class=" border-b">
-                                    <th class="py-3 px-10 font-bold">Fullname</th>
-                                    <th class="py-3 px-10 font-bold">Email</th>
-                                    <th class="py-3 px-10 text-center font-bold">No Telp</th>
-                                    <th class="py-3 px-10 text-center font-bold">Gender</th>
-                                    <th class="py-3 px-10 text-center font-bold">Detail</th>
+                                    <th class="py-3 px-10 font-bold text-left">Fullname</th>
+                                    <th class="py-3 px-10 font-bold text-left">Email</th>
+                                    <th class="py-3 px-10 text-left font-bold">No Telp</th>
+                                    <th class="py-3 px-10 text-left font-bold">Gender</th>
+                                    <th class="py-3 px-10 text-left font-bold">Dokumen</th>
                                     
                                 </tr>
                             </thead>
@@ -160,14 +160,14 @@
                                                 <p class="font-medium text-left text-gray-800"><%= jamaah.email %></p>
                                             </td>
                                             <td class="py-4 px-10">
-                                                <p class="font-medium text-center text-gray-800"><%= jamaah.phone %></p>
+                                                <p class="font-medium text-left text-gray-800"><%= jamaah.phone %></p>
                                             </td>
                                             <td class="py-4 px-10">
-                                                <p class="font-medium text-center text-gray-800"><%= jamaah.gender === 'L' ? 'Laki-laki' : jamaah.gender === 'P' ? 'Perempuan' : jamaah.gender %></p>
+                                                <p class="font-medium text-left text-gray-800"><%= jamaah.gender === 'L' ? 'Laki-laki' : jamaah.gender === 'P' ? 'Perempuan' : jamaah.gender %></p>
                                             </td>
-                                            <td class="py-4 px-10">
-                                                <button onclick="openDocumentModal('<%= jamaah.fullname %>', '<%= jamaah.img_ktp %>', '<%= jamaah.img_kk %>', '<%= jamaah.img_passpor %>')" class="flex items-center gap-2 px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition shadow-md">
-                                                    View Detail
+                                            <td class="py-4 px-10 flex justify-left ">
+                                                <button onclick="openDocumentModal('<%= jamaah.fullname %>', '<%= jamaah.img_ktp %>', '<%= jamaah.img_kk %>', '<%= jamaah.img_passpor %>', '<%= jamaah.img_diri %>', '<%= jamaah.img_akta_kelahiran %>')" class="flex  items-center gap-2 px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition shadow-md">
+                                                    Lihat
                                                 </button>
                                             </td>
                                             
@@ -220,6 +220,14 @@
                         <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
                         Passpor
                     </button>
+                    <button onclick="switchDocumentTab('photo')" id="tab-photo" class="flex-1 py-4 px-6 font-semibold text-gray-700 border-b-2 border-transparent transition">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
+                        Pas Foto
+                    </button>
+                     <button onclick="switchDocumentTab('akta')" id="tab-akta" class="flex-1 py-4 px-6 font-semibold text-gray-700 border-b-2 border-transparent transition">
+                        <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 100 2H4a1 1 0 100-2V4z"></path></svg>
+                        Akta Kelahiran
+                    </button>
                 </div>
 
                 <!-- Content -->
@@ -249,6 +257,21 @@
                             <img id="passpor-image" src="" alt="Passpor" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
                         </div>
                         <p id="passpor-empty" class="text-gray-400 text-center italic">Tidak ada data Passpor</p>
+                    </div>
+
+                    <div id="content-photo" class="document-content hidden">
+                        <p class="text-gray-600 font-semibold mb-4">Pas Foto</p>
+                        <div class="flex justify-center">
+                            <img id="photo-image" src="" alt="Pas Foto" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
+                        </div>
+                        <p id="photo-empty" class="text-gray-400 text-center italic">Tidak ada data Pas Foto</p>
+                    </div>
+                    <div id="content-akta" class="document-content hidden">
+                        <p class="text-gray-600 font-semibold mb-4">Akta Kelahiran</p>
+                        <div class="flex justify-center">
+                            <img id="akta-image" src="" alt="Pas Foto" class="max-w-full max-h-96 rounded-lg shadow-lg border border-gray-200">
+                        </div>
+                        <p id="akta-empty" class="text-gray-400 text-center italic">Tidak ada data Akta kelahiran/Jamaah tidak mengupload Akta</p>
                     </div>
                 </div>
 
@@ -517,7 +540,7 @@
         })();
 
         // Modal Jamaah Dokumen Functions
-        function openDocumentModal(jamaahName, ktpImage, kkImage, pasportImage) {
+        function openDocumentModal(jamaahName, ktpImage, kkImage, pasportImage, photoImage, aktaImage) {
             const modal = document.getElementById('detailJamaah');
             
             // Set jamaah name
@@ -571,6 +594,30 @@
             } else {
                 pasportImageEl.style.display = 'none';
                 pasportEmptyEl.style.display = 'block';
+            }
+
+            // Setup pas foto
+            const photoUrl = resolveImageUrl(photoImage);
+            const photoImageEl = document.getElementById('photo-image');
+            const photoEmptyEl = document.getElementById('photo-empty');
+            if(photoUrl) {
+                photoImageEl.src = photoUrl;
+                photoImageEl.style.display = "block";
+                photoEmptyEl.style.display = "none";
+            }else {
+                photoImageEl.style.display = "none";
+                pasportEmptyEl.style.display = "block"
+            }
+            const aktaUrl = resolveImageUrl(aktaImage);
+            const aktaImageEl = document.getElementById('akta-image');
+            const aktaEmptyEl = document.getElementById('akta-empty');
+            if(aktaUrl) {
+                aktaImageEl.src = aktaUrl;
+                aktaImageEl.style.display = "block";
+                aktaEmptyEl.style.display = "none";
+            }else {
+                aktaImageEl.style.display = "none";
+                aktaEmptyEl.style.display = "block"
             }
             
             // Show modal

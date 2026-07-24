@@ -24,6 +24,7 @@ const table = $("#userTable").DataTable({
       dataSrc: (json) => json.data,
     },
     columns: [
+
       { data: "fullname", title: "fullname", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
       { data: "email", title: "Email", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
       { data: "phone", title: "Phone", className: "font-semibold text-gray-900 dark:text-white p-2 border-b" },
