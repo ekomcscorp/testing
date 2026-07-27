@@ -2,10 +2,10 @@ const express = require("express");
 const userlevelController = require("../../../controllers/api/userlevel.controller");
 const { injectUser } = require("../../../middleware");
 const { ensureAuth } = require("../../../middleware/auth");
-
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 const router = express.Router();
 
-router.get("/", userlevelController.getAllUserlevel);
+router.get("/",appSignature, userlevelController.getAllUserlevel);
 router.get("/datatables", ensureAuth, injectUser, userlevelController.getAllUserlevelDatatables);
 router.get("/by-level/:id_level", ensureAuth,injectUser, userlevelController.getUserlevelByLevel);
 router.get("/:id", userlevelController.getUserlevelById);

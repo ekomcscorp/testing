@@ -1,10 +1,11 @@
 const express = require("express");
 const CategoryController = require("../../../controllers/api/category.controller");
 const { injectUser } = require("../../../middleware");
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 
 const router = express.Router();
 
-router.get("/", CategoryController.getAllCategory);
+router.get("/",appSignature, CategoryController.getAllCategory);
 router.get("/datatables", injectUser, CategoryController.getAllCategoryDatatables);
 router.get("/:id", CategoryController.getCategoryById);
 router.post("/", CategoryController.createCategory);

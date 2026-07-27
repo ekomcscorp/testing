@@ -1,13 +1,13 @@
 const express = require("express");
 const menuController = require("../../../controllers/api/menu.controller");
-
+const appSignature = require("../../../middleware/appSignatureGuard.js")
 const { injectUser } = require("../../../middleware");
 const { ensureAuth } = require("../../../middleware/auth");
 const { route } = require("../../auth.routes");
 
 const router = express.Router();
 
-router.get("/", menuController.getAll);
+router.get("/", appSignature, menuController.getAll);
 
 router.get("/parent", menuController.getParentByLevel);
 router.get("/parent/datatables", ensureAuth, injectUser, (req, res) => menuController.getDatatablesParent(req, res));
