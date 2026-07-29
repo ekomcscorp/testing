@@ -54,31 +54,49 @@ class TransactionController {
   }
 
   async createTransaction(req, res) {
-    try {
-      // Validasi session user terlebih dahulu
-      if (!req.user || !req.user.id) {
-        return response.error(res, "Silakan login terlebih dahulu", 401);
-      }
-
-      const { items, payment_method } = req.body;
-      const user_id = req.user.id;
-
-      if (!items || !Array.isArray(items) || items.length === 0) {
-        return response.error(res, "Keranjang belanja kosong");
-      }
-
-      // Kirim ke service dengan format yang seragam
-      const result = await transactionService.checkout({
-        user_id,
-        items, // Array berisi { product_id, room_type }
-        payment_method
-      });
-
-      return response.success(res, "Transaksi berhasil dibuat", result);
-    } catch (error) {
-      return response.error(res, error.message);
+  try {
+    // 1. Validasi session user
+    if (!req.user || !req.user.id) {
+      return response.error(res, "Silakan login terlebih dahulu", 401);
     }
+
+    const user_id = req.user.id;
+    let { items, payment_method, payment_selection, paymentSelection } = req.body;
+
+    // 2. Normalisasi / Support camelCase & snake_case dari Request Body
+    let resolvedPaymentSelection = payment_selection || paymentSelection || null;
+
+    // 3. Jaga-jaga jika payment_selection dikirim dalam bentuk String JSON (misal via multipart form)
+    if (typeof resolvedPaymentSelection === 'string') {
+      try {
+        resolvedPaymentSelection = JSON.parse(resolvedPaymentSelection);
+      } catch (e) {
+        // Abaikan parse error, biarkan nilainya tetap string/invalid untuk di-handle service
+      }
+    }
+
+    // DEBUG LOG: Cek tepat di pintu masuk Controller
+    console.log('[CHECKOUT CONTROLLER] Raw req.body:', JSON.stringify(req.body));
+    console.log('[CHECKOUT CONTROLLER] Resolved Selection:', resolvedPaymentSelection);
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return response.error(res, "Keranjang belanja kosong");
+    }
+
+    // 4. Kirim data yang SUDAH TERNORMALISASI ke transactionService
+    const result = await transactionService.checkout({
+      user_id,
+      items, // Array berisi { product_id, room_types }
+      payment_method,
+      payment_selection: resolvedPaymentSelection
+    });
+
+    return response.success(res, "Transaksi berhasil dibuat", result);
+  } catch (error) {
+    console.error('[CHECKOUT CONTROLLER ERROR]:', error);
+    return response.error(res, error.message);
   }
+}
 
   async renderDetailPage(req, res) {
     try {

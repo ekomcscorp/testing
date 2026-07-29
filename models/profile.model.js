@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'users',
+                model: 'tbl_user', // Disamakan nama tabelnya
                 key: 'id'
             }
         },
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('LK', 'PR'),
             allowNull: true,
         },
-        tgl_lahir:{
+        tgl_lahir: {
             type: DataTypes.DATE,
             allowNull: true
         },
@@ -43,6 +43,18 @@ module.exports = (sequelize, DataTypes) => {
         nama_paspor: {
             type: DataTypes.STRING(255),
             allowNull: true
+        },
+        rekening_mode: {
+            type: DataTypes.ENUM('MARKETPLACE', 'MANDIRI'),
+            allowNull: false,
+            defaultValue: 'MARKETPLACE',
+            comment: 'MARKETPLACE = escrow platform, MANDIRI = transfer langsung ke travel'
+        },
+        allow_marketplace: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+            comment: 'true = travel mengizinkan jamaah bayar via rekening marketplace'
         }
     }, {
         tableName: 'tbl_profile',
@@ -56,6 +68,12 @@ module.exports = (sequelize, DataTypes) => {
         Profile.belongsTo(models.User, {
             foreignKey: 'user_id',
             as: 'user'
+        });
+        // Opsional: Relasi langsung dari Profile ke Rekening via user_id
+        Profile.hasMany(models.TravelRekening, {
+            foreignKey: 'user_id',
+            sourceKey: 'user_id',
+            as: 'rekening_list'
         });
     };
 

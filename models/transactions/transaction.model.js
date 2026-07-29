@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.ENUM('PENDING', 'SUCCESS', 'UNPAID','FAILED'),
+            type: DataTypes.ENUM('PENDING', 'SUCCESS', 'UNPAID', 'FAILED'),
             allowNull: false,
             defaultValue: 'PENDING'
         },
@@ -43,6 +43,30 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: true,
         },
+        // Snapshot rekening travel saat transaksi dibuat
+        rekening_mode: {
+            type: DataTypes.ENUM('MARKETPLACE', 'MANDIRI'),
+            allowNull: true,
+            defaultValue: null,
+            comment: 'Mode rekening travel saat checkout'
+        },
+        travel_rekening_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            comment: 'ID rekening travel yang dipilih jamaah'
+        },
+        rekening_type: {
+            type: DataTypes.ENUM('MARKETPLACE', 'MANDIRI'),
+            allowNull: true,
+            defaultValue: 'MARKETPLACE',
+            comment: 'Pilihan jenis rekening oleh jamaah'
+        },
+        rekening_snapshot: {
+            type: DataTypes.JSON,
+            allowNull: true,
+            defaultValue: null,
+            comment: 'Snapshot { nama_bank, no_rekening, atas_nama } — immutable setelah dibuat'
+        },
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -53,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
-    },{
+    }, {
         tableName: 'tbl_transaction',
         timestamps: true,
         createdAt: 'created_at',
@@ -65,49 +89,49 @@ module.exports = (sequelize, DataTypes) => {
 
                 // YY
                 const year =
-                now.getFullYear().toString().slice(-2);
+                    now.getFullYear().toString().slice(-2);
 
                 // MM
                 const month =
-                String(now.getMonth() + 1)
-                    .padStart(2, "0");
+                    String(now.getMonth() + 1)
+                        .padStart(2, "0");
 
                 // PREFIX
                 const prefix = `PU${year}${month}`;
 
                 // Cari transaksi terakhir bulan ini
                 const lastTransaction =
-                await Transaction.findOne({
+                    await Transaction.findOne({
 
-                    where: {
-                    transaction_no: {
-                        [sequelize.Sequelize.Op.like]:
-                        `${prefix}%`
-                    }
-                    },
+                        where: {
+                            transaction_no: {
+                                [sequelize.Sequelize.Op.like]:
+                                    `${prefix}%`
+                            }
+                        },
 
-                    order: [["transaction_no", "DESC"]]
-                });
+                        order: [["transaction_no", "DESC"]]
+                    });
 
                 let sequence = 1;
 
                 if (lastTransaction) {
 
-                // Ambil 4 digit terakhir
-                const lastSequence =
-                    parseInt(
-                    lastTransaction.transaction_no.slice(-4)
-                    );
+                    // Ambil 4 digit terakhir
+                    const lastSequence =
+                        parseInt(
+                            lastTransaction.transaction_no.slice(-4)
+                        );
 
-                sequence = lastSequence + 1;
+                    sequence = lastSequence + 1;
                 }
 
                 // 0001
                 const sequenceStr =
-                String(sequence).padStart(4, "0");
+                    String(sequence).padStart(4, "0");
 
                 transaction.transaction_no =
-                `${prefix}${sequenceStr}`;
+                    `${prefix}${sequenceStr}`;
             }
         }
     })
@@ -120,6 +144,10 @@ module.exports = (sequelize, DataTypes) => {
         Transaction.belongsTo(models.Product, {
             foreignKey: "product_id",
             as: "product"
+        });
+        Transaction.belongsTo(models.TravelRekening, {
+            foreignKey: "travel_rekening_id",
+            as: "travel_rekening"
         });
         Transaction.hasMany(models.TransactionDetail, {
             foreignKey: "transaction_id",

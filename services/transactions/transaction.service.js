@@ -1,6 +1,7 @@
-const { sequelize, Transaction, TransactionDetail, ProductPrices } = require("../../models"); // Import model di sini
+const { sequelize, Transaction, TransactionDetail, ProductPrices } = require("../../models");
 const transactionRepo = require("../../repositories/transactions/transaction.repository");
 const productRepo = require("../../repositories/products/product.repository");
+const travelRekeningService = require("../travel_rekening.service");
 
 // Quota handling: setiap booking mengurangi quota sebanyak 1 per item,
 // terlepas dari tipe kamar. Fungsi helper tetap disediakan untuk
@@ -11,7 +12,7 @@ function getQuotaMultiplier(/* roomType */) {
 
 class TransactionService {
     async checkout(payload) {
-        const { user_id, items, payment_method } = payload;
+        const { user_id, items, payment_method, payment_selection } = payload;
 
         // Validasi: Cek user_id dan pastikan array items ada isinya
         if (!user_id || !items || !Array.isArray(items) || items.length === 0) {
@@ -109,13 +110,37 @@ class TransactionService {
                 });
             }
 
+            // ============================================================
+            // Resolve pilihan rekening jamaah dari produk pertama
+            // (asumsi 1 transaksi = 1 travel, karena items dari produk sama)
+            // ============================================================
+            const firstProduct = productCache[items[0].product_id];
+            let rekeningType = 'MARKETPLACE';
+            let travelRekeningId = null;
+            let rekeningSnapshot = null;
+
+            if (firstProduct && firstProduct.user_id) {
+                const resolvedRekening = await travelRekeningService.resolvePaymentSelection(
+                    firstProduct.user_id,
+                    payment_selection
+                );
+                rekeningType = resolvedRekening.rekening_type;
+                travelRekeningId = resolvedRekening.travel_rekening_id;
+                rekeningSnapshot = resolvedRekening.snapshot;
+                console.log(`[REKENING CHECKOUT] Travel user_id=${firstProduct.user_id} | type=${rekeningType} | travel_rekening_id=${travelRekeningId}`);
+            }
+
             // Simpan Header Transaksi
             const transaction = await transactionRepo.createTransaction({
                 user_id,
                 product_id: items[0].product_id,
                 total_price: totalTransactionPrice,
                 status: "UNPAID",
-                payment_method: payment_method || 'TRANSFER'
+                payment_method: payment_method || 'TRANSFER',
+                rekening_mode: rekeningType,
+                rekening_type: rekeningType,
+                travel_rekening_id: travelRekeningId,
+                rekening_snapshot: rekeningSnapshot
             }, { transaction: t });
 
             // Pasangkan ID Transaksi ke Detail & simpan (Bulk Create)

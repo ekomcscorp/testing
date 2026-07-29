@@ -59,7 +59,8 @@ class ProfileController {
       no_nik,
       no_paspor,
       nama_paspor,
-      tgl_lahir
+      tgl_lahir,
+      rekening_mode: 'MARKETPLACE' // Default saat profile pertama kali dibuat
     };
 
     const profile =
@@ -112,6 +113,9 @@ class ProfileController {
         email,
         username,
         no_wa
+        // Catatan: rekening_mode TIDAK diupdate di sini.
+        // Gunakan endpoint PUT /api/travel/rekening/mode
+        // agar business rules validasi MANDIRI tetap dijalankan.
       } = req.body;
 
       const updateData = {};

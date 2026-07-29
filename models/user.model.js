@@ -58,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'id_level', 
         as: 'level' 
       });
+      User.hasOne(models.Profile, {
+        foreignKey: "user_id",
+        as: "profile"
+      });
       User.hasMany(models.Product, {
         foreignKey: "user_id",
         as: "products"
@@ -66,13 +70,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "transactions"
       });
-      User.hasOne(models.Profile, {
-        foreignKey: "user_id",
-        as: "profile"
-      });
      User.hasMany(models.Wishlist, {
       foreignKey: "user_id",
       as: "wishlists"
+    });
+    User.hasMany(models.TravelRekening, {
+      foreignKey: "user_id",
+      as: "rekening_list"
     });
     }
   
