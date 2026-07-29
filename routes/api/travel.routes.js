@@ -5,7 +5,7 @@ const { ensureAuthToken } = require('../../middleware/authJwt');
 const appSignature = require("../../middleware/appSignatureGuard.js");
 
 // Pasang appSignature di seluruh route file ini (opsional tapi disarankan demi konsistensi)
-router.use(appSignature);
+// router.use(appSignature);
 
 // ==========================================
 // TRAVEL ENDPOINTS (AUTHENTICATED)
