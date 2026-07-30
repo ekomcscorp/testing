@@ -39,6 +39,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('CASH', 'TRANSFER'),
             allowNull: true,
         },
+        payment_type: {
+            type: DataTypes.ENUM('FULL', 'INSTALLMENT'),
+            allowNull: false,
+            defaultValue: 'FULL'
+        },
+        installment_status: {
+            type: DataTypes.ENUM('NOT_STARTED', 'DP_PAID', 'PARTIALLY_PAID', 'FULLY_PAID'),
+            allowNull: false,
+            defaultValue: 'NOT_STARTED'
+        },
         evidence_url: {
             type: DataTypes.STRING(255),
             allowNull: true,
@@ -158,6 +168,11 @@ module.exports = (sequelize, DataTypes) => {
             as: "jamaah",
             onDelete: "CASCADE"
         });
+        Transaction.hasMany(models.TransactionInstallment, {
+            foreignKey: "transaction_id",
+            as: "installments",
+            onDelete: "CASCADE"
+        })
     }
 
     return Transaction;

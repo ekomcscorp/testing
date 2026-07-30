@@ -1,27 +1,30 @@
 const response = require("../../../utils/response");
 const transactionService = require("../../../services/transactions/transaction.service");
-const transactionRepo = require("../../../repositories/transactions/transaction.repository")
+const transactionRepo = require("../../../repositories/transactions/transaction.repository");
 
 class TransactionController {
-  // Gunakan Service untuk mengambil data
+  // ==========================================
+  // 1. GET ALL TRANSACTIONS (RAW & DATATABLES)
+  // ==========================================
   async getAllTransactions(req, res) {
     try {
-      // Logic ambil semua data
       const result = await transactionRepo.getAllTransactions();
       return response.success(res, "Data berhasil diambil", result);
     } catch (error) {
       return response.error(res, error.message);
     }
   }
+
   async getTransactionById(req, res) {
     try {
       const { id } = req.params;
       const result = await transactionRepo.getTransactionById(id);
-      return response.success(res, "Data berhasil diambil", result)
+      return response.success(res, "Data berhasil diambil", result);
     } catch (error) {
-      return response.error(res, error.message)
+      return response.error(res, error.message);
     }
   }
+
   async getAllTransactionDatatables(req, res) {
     try {
       const { akses } = res.locals;
@@ -31,7 +34,6 @@ class TransactionController {
 
       const result = await transactionService.getAllTransactionDatatables(req.query, req.user);
 
-      // Mapping akses ke dalam data (Logic UI)
       const data = result.data.map((row) => ({
         ...row.get({ plain: true }),
         akses: {
@@ -53,78 +55,93 @@ class TransactionController {
     }
   }
 
+  // ==========================================
+  // 2. CHECKOUT REGULER & CICILAN
+  // ==========================================
   async createTransaction(req, res) {
-  try {
-    // 1. Validasi session user
-    if (!req.user || !req.user.id) {
-      return response.error(res, "Silakan login terlebih dahulu", 401);
-    }
-
-    const user_id = req.user.id;
-    let { items, payment_method, payment_selection, paymentSelection } = req.body;
-
-    // 2. Normalisasi / Support camelCase & snake_case dari Request Body
-    let resolvedPaymentSelection = payment_selection || paymentSelection || null;
-
-    // 3. Jaga-jaga jika payment_selection dikirim dalam bentuk String JSON (misal via multipart form)
-    if (typeof resolvedPaymentSelection === 'string') {
-      try {
-        resolvedPaymentSelection = JSON.parse(resolvedPaymentSelection);
-      } catch (e) {
-        // Abaikan parse error, biarkan nilainya tetap string/invalid untuk di-handle service
-      }
-    }
-
-    // DEBUG LOG: Cek tepat di pintu masuk Controller
-    console.log('[CHECKOUT CONTROLLER] Raw req.body:', JSON.stringify(req.body));
-    console.log('[CHECKOUT CONTROLLER] Resolved Selection:', resolvedPaymentSelection);
-
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return response.error(res, "Keranjang belanja kosong");
-    }
-
-    // 4. Kirim data yang SUDAH TERNORMALISASI ke transactionService
-    const result = await transactionService.checkout({
-      user_id,
-      items, // Array berisi { product_id, room_types }
-      payment_method,
-      payment_selection: resolvedPaymentSelection
-    });
-
-    return response.success(res, "Transaksi berhasil dibuat", result);
-  } catch (error) {
-    console.error('[CHECKOUT CONTROLLER ERROR]:', error);
-    return response.error(res, error.message);
-  }
-}
-
-  async renderDetailPage(req, res) {
     try {
-      const { id } = req.params;
-      // Gunakan Repo yang sudah kita buat sebelumnya
-      // Repository sudah otomatis parse snapshots
-      const transaction = await transactionRepo.getTransactionById(id);
-
-      if (!transaction) {
-        return res.status(404).send("Transaksi tidak ditemukan");
+      if (!req.user || !req.user.id) {
+        return response.error(res, "Silakan login terlebih dahulu", 401);
       }
 
-      // Snapshots sudah di-parse oleh repository
-      res.render("transactions/detail_transaction", {
-        transaction: transaction
+      const user_id = req.user.id;
+      let { items, payment_method, payment_selection, paymentSelection } = req.body;
+
+      let resolvedPaymentSelection = payment_selection || paymentSelection || null;
+      if (typeof resolvedPaymentSelection === 'string') {
+        try {
+          resolvedPaymentSelection = JSON.parse(resolvedPaymentSelection);
+        } catch (e) {
+          // Abaikan jika bukan JSON string
+        }
+      }
+
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return response.error(res, "Keranjang belanja kosong", 400);
+      }
+
+      const result = await transactionService.checkout({
+        user_id,
+        items,
+        payment_method,
+        payment_selection: resolvedPaymentSelection
       });
+
+      return response.success(res, "Transaksi berhasil dibuat", result, 201);
     } catch (error) {
-      console.error("Error rendering detail page:", error);
-      res.status(500).send("Error: " + error.message);
+      console.error('[CHECKOUT CONTROLLER ERROR]:', error);
+      return response.error(res, error.message);
     }
   }
 
+  async createInstallmentTransaction(req, res) {
+    try { 
+      if (!req.user || !req.user.id) {
+        return response.error(res, "Silakan login terlebih dahulu", 401);
+      }
+
+      const user_id = req.user.id;
+      // 💡 due_dates dihapus dari destructuring req.body
+      let { items, payment_method, payment_selection, paymentSelection } = req.body;
+
+      // Normalisasi payment_selection
+      let resolvedPaymentSelection = payment_selection || paymentSelection || null;
+      if (typeof resolvedPaymentSelection === 'string') {
+        try {
+          resolvedPaymentSelection = JSON.parse(resolvedPaymentSelection);
+        } catch (e) {
+          // Abaikan parse error
+        }
+      }
+
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return response.error(res, "Keranjang belanja kosong", 400);
+      }
+
+      // 💡 Hapus validasi "due_dates wajib diisi" di controller
+
+      // Panggil service tanpa mengirimkan due_dates
+      const result = await transactionService.checkoutInstallment({
+        user_id,
+        items,
+        payment_method,
+        payment_selection: resolvedPaymentSelection
+      });
+
+      return response.success(res, "Transaksi cicilan berhasil dibuat", result, 201);
+    } catch (error) {
+      console.error('[CHECKOUT INSTALLMENT CONTROLLER ERROR]:', error);
+      return response.error(res, error.message);
+    }
+  }
+
+  // ==========================================
+  // 3. UPLOAD BUKTI PEMBAYARAN (REGULER & TERMIN)
+  // ==========================================
   async uploadPayment(req, res) {
     try {
       const { id } = req.params;
-
       let evidence_url = null;
-      let status = req.body.status || 'PENDING';
 
       if (req.file) {
         evidence_url = req.file.filename;
@@ -133,59 +150,107 @@ class TransactionController {
       }
 
       if (!evidence_url) {
-        return res.status(400).json({
-          status: "error",
-          message: "Bukti transfer (evidence) wajib diunggah"
-        });
+        return response.error(res, "Bukti transfer wajib diunggah", 400);
       }
 
       const result = await transactionService.updatePayment(id, {
-        evidence_url: evidence_url,
-        status: "PENDING" // Status baru menunggu dicek admin
+        evidence_url,
+        status: "PENDING"
       });
 
-      return res.status(200).json({
-        status: "success",
-        message: "Pembayaran berhasil diupdate"
-      });
+      return response.success(res, "Pembayaran berhasil diperbarui", result);
     } catch (error) {
-      return res.status(500).json({ status: "error", message: error.message });
-
+      return response.error(res, error.message);
     }
   }
 
+  async uploadInstallmentPayment(req, res) {
+    try {
+      const { installment_id } = req.params;
+      let evidence_url = null;
+
+      // Mendukung via Multer Upload File atau JSON Body (URL)
+      if (req.file) {
+        evidence_url = req.file.filename;
+      } else if (req.body.evidence_url) {
+        evidence_url = req.body.evidence_url;
+      }
+
+      if (!evidence_url) {
+        return response.error(res, "Bukti pembayaran wajib diunggah", 400);
+      }
+
+      const result = await transactionService.updateInstallmentPayment(installment_id, {
+        evidence_url,
+        payment_method: req.body.payment_method || 'TRANSFER'
+      });
+
+      return response.success(res, "Bukti pembayaran termin berhasil diunggah", result);
+    } catch (error) {
+      console.error('[UPLOAD INSTALLMENT CONTROLLER ERROR]:', error);
+      return response.error(res, error.message);
+    }
+  }
+
+  // ==========================================
+  // 4. VERIFIKASI & APPROVAL ADMIN
+  // ==========================================
   async approvePayment(req, res) {
     try {
       const { id } = req.params;
-
-      // Panggil service dengan status 'PAID' atau 'SUCCESS'
-      await transactionService.updateStatus(id, 'SUCCESS');
-
-      return res.status(200).json({
-        status: "success",
-        message: "Status transaksi berhasil diperbarui menjadi SUCCESS"
-      });
+      const result = await transactionService.updateStatus(id, 'SUCCESS');
+      return response.success(res, "Status transaksi berhasil diperbarui menjadi SUCCESS", result);
     } catch (error) {
-      return res.status(500).json({ status: "error", message: error.message });
+      return response.error(res, error.message);
+    }
+  }
+
+  async updateInstallmentStatus(req, res) {
+    try {
+      const { installment_id } = req.params;
+      const { status } = req.body;
+
+      // 💡 Untuk MVP Simpel, Admin hanya melakukan APPROVE ke 'SUCCESS'
+      if (!status || status !== 'SUCCESS') {
+        return response.error(res, "Status pembayaran termin hanya mendukung 'SUCCESS'", 400);
+      }
+
+      const result = await transactionService.updateInstallmentStatus(installment_id, status);
+      return response.success(res, `Status cicilan berhasil disetujui (SUCCESS)`, result);
+    } catch (error) {
+      console.error('[UPDATE INSTALLMENT STATUS CONTROLLER ERROR]:', error);
+      return response.error(res, error.message);
+    }
+  }
+  // ==========================================
+  // 5. USER & RENDER ACTIONS
+  // ==========================================
+  async renderDetailPage(req, res) {
+    try {
+      const { id } = req.params;
+      const transaction = await transactionRepo.getTransactionById(id);
+
+      if (!transaction) {
+        return res.status(404).send("Transaksi tidak ditemukan");
+      }
+
+      res.render("transactions/detail_transaction", { transaction });
+    } catch (error) {
+      console.error("Error rendering detail page:", error);
+      res.status(500).send("Error: " + error.message);
     }
   }
 
   async deleteTransaction(req, res) {
     try {
       const { id } = req.params;
-
       const deleted = await transactionService.deleteTransaction(id);
-      return res.status(200).json({
-        success: true,
-        message: "Transaction deleted successfully",
-        data: deleted,
-      });
+      return response.success(res, "Transaction deleted successfully", deleted);
     } catch (error) {
       return response.error(res, error.message);
     }
   }
 
-  // Ambil semua transaksi user yang login
   async getMyTransactions(req, res) {
     try {
       if (!req.user || !req.user.id) {

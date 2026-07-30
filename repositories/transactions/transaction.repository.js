@@ -1,5 +1,5 @@
 const { Op, where, col } = require("sequelize"); 
-const { Transaction, User, TransactionDetail, Product, Profile, TransactionJamaah } = require("../../models");
+const { Transaction, User, TransactionDetail, Product, Profile, TransactionJamaah, TransactionInstallment } = require("../../models");
 
 // Helper function untuk parse JSON snapshots
 const parseSnapshots = (detail) => {
@@ -111,10 +111,17 @@ class TransactionRepository {
                 {
                     model: TransactionJamaah,
                     as: "jamaah"
+                },
+                {
+                    model: TransactionInstallment,
+                    as: "installments"
                 }
                 
             ],
-            order: [["created_at", "DESC"]]
+            order: [
+                ["created_at", "DESC"],
+                [{ model: TransactionInstallment, as: "installments" }, "installment_number", "ASC"]
+            ]
         });
         
         // Auto-parse snapshots in all details
@@ -159,8 +166,15 @@ class TransactionRepository {
                 {
                     model: TransactionJamaah,
                     as: "jamaah"
+                },
+                {
+                    model: TransactionInstallment,
+                    as: "installments"
                 }
-            ]
+                
+            ], order: [
+                    [{ model: TransactionInstallment, as: "installments" }, "installment_number", "ASC"]
+                ]
         });
         
         // Auto-parse snapshots in details
@@ -299,9 +313,16 @@ class TransactionRepository {
                             attributes: ['image']
                         }
                     ]
+                },
+                {
+                    model: TransactionInstallment,
+                    as: "installments"
                 }
             ],
-            order: [["created_at", "DESC"]]
+            order: [
+                ["created_at", "DESC"],
+                [{ model: TransactionInstallment, as: "installments" }, "installment_number", "ASC"]
+            ]
         });
 
         // Auto-parse snapshots
@@ -310,6 +331,31 @@ class TransactionRepository {
                 transaction.details = transaction.details.map(detail => parseSnapshots(detail));
             }
             return transaction;
+        });
+    }
+
+    async createBulkInstallments(installmentsData, { transaction } = {}) {
+        return await TransactionInstallment.bulkCreate(installmentsData, { transaction });
+    }
+
+    // 2. Get Detail Installment per ID
+    async getInstallmentById(id, { transaction } = {}) {
+        return await TransactionInstallment.findByPk(id, { transaction });
+    }
+    
+    // ✅ METHOD BARU: Mengambil seluruh list cicilan milik 1 transaksi tertentu
+    async getInstallmentsByTransactionId(transaction_id, { transaction } = {}) {
+        return await TransactionInstallment.findAll({
+            where: { transaction_id },
+            order: [["installment_number", "ASC"]],
+            transaction
+        });
+    }
+    // 3. Update Status Cicilan
+    async updateInstallment(id, data, { transaction } = {}) {
+        return await TransactionInstallment.update(data, {
+            where: { id },
+            transaction
         });
     }
 }
