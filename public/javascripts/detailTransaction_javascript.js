@@ -35,3 +35,104 @@ window.confirmApproveBtn = async function(id) {
 window.closeApproveModal = function() {
     document.getElementById('approvePaymentModal').classList.add('hidden');
 }
+
+window.confirmApproveInstallmentBtn = async function(installmentId) {
+    const btn = document.getElementById('btnApproveInstallment');
+    
+    // Helper function untuk alert agar DRY & tidak perlu repetisi cek typeof
+    const showAlert = (title, message, icon) => {
+        if (typeof Swal !== 'undefined') {
+            return Swal.fire({
+                title: title,
+                text: message,
+                icon: icon,
+                confirmButtonText: "OK"
+            });
+        } else if (typeof swal !== 'undefined') {
+            return swal(title, message, icon);
+        } else {
+            alert(`${title}: ${message}`);
+            return Promise.resolve();
+        }
+    };
+
+    if (!installmentId) {
+        showAlert('Error!', 'ID cicilan tidak ditemukan.', 'error');
+        return;
+    }
+
+    // Disable tombol & tampilkan state loading
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="ph-bold ph-circle-notch animate-spin"></i> Processing...';
+    }
+
+    try {
+        const res = await fetch(`/api/transactions/installments/${installmentId}/status`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: 'SUCCESS' })
+        });
+        
+        const data = await res.json();
+
+        if (res.ok && (data.success || data.status === 'success')) {
+            // Gunakan helper showAlert
+            showAlert("Berhasil!", data.message || "Pembayaran cicilan berhasil disetujui.", "success").then(() => {
+                location.reload();
+            });
+        } else {
+            showAlert("Gagal!", data.message || "Terjadi kesalahan pada server", "error");
+            
+            // Restore tombol jika gagal
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph-bold ph-check"></i> Ya, Approve';
+            }
+        }
+    } catch (err) {
+        console.error('Approval Error:', err);
+        showAlert("Error!", "Koneksi ke server terputus", "error");
+
+        // Restore tombol jika error jaringan/runtime
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="ph-bold ph-check"></i> Ya, Approve';
+        }
+    }
+};
+
+// window.approveInstallment = async function(id) {
+//     const btn = document.getElementById('btnApproveInstallment');
+
+//     btn.disabled = true;
+//     btn.innerHTML = '<i class="ph-bold ph-circle-notch animate-spin"></i> Processing...';
+//     try {
+//         const response = await fetch(`/api/transactions/installments/${id}/status`, {
+//             method: 'PATCH',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({ status: 'SUCCESS' })
+//         });
+
+//         const json = await response.json();
+
+//         if (response.ok && json.success) {
+//             swal("Berhasil!", "success").then(() => {
+//                 location.reload();
+//             });// Reload halaman untuk perbarui data tabel
+//         } else {
+//             alert(json.message || 'Gagal menyetujui pembayaran cicilan');
+//         }
+//     } catch (error) {
+//         console.error('Error approving installment:', error);
+//         alert('Terjadi kesalahan jaringan/server.');
+//     } finally {
+//         const btnApprove = document.getElementById('btnApproveInstallment');
+//         btnApprove.disabled = false;
+//         btnApprove.innerText = 'Ya, Approve';
+//     }
+// }

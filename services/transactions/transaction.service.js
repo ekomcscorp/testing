@@ -154,7 +154,7 @@ class TransactionService {
     // 2. CHECKOUT CICILAN (3x INSTALLMENT)
     // ========================
     async checkoutInstallment(payload) {
-        const { user_id, items, payment_method, payment_selection, due_dates } = payload;
+        const { user_id, items, payment_method, payment_selection } = payload;
 
         if (!user_id || !items || !Array.isArray(items) || items.length === 0) {
             throw new Error("Data user_id dan daftar items wajib diisi");
@@ -243,23 +243,25 @@ class TransactionService {
                 throw new Error ("Tanggal keberangkatan produk tidak valid untuk kalkulasi cicilan")
             }
 
-            const departureDate = new Date(firstProduct.tgl_keberangkatan);
+           const departureDate = new Date(firstProduct.tgl_keberangkatan);
 
-            // pelunasan 2
+            // 1. Pelunasan 2 (H-14 Sebelum Keberangkatan)
             const pelunasan2DueDate = new Date(departureDate);
             pelunasan2DueDate.setDate(pelunasan2DueDate.getDate() - 14);
 
-            //db
+            // 2. DP (H+3 Dari Sekarang)
             const dpDueDate = new Date(now);
             dpDueDate.setDate(dpDueDate.getDate() + 3);
 
+            // Guarding: Jika jarak ke departure terlalu dekat
             if (dpDueDate > pelunasan2DueDate) {
-                dpDueDate.setTime(pelunasan2DueDate.getTime());
+            dpDueDate.setTime(pelunasan2DueDate.getTime());
             }
 
-            //termin pelunasan 1
-            const midTimestapm = dpDueDate.getTime() + (pelunasan2DueDate.getDate() - dpDueDate.getDate()) / 2;
-            const pelunasan1DueDate = new Date(midTimestapm);
+            // 3. Pelunasan 1 (Titik Tengah Antara DP dan Pelunasan 2 secara Milidetik)
+            // ✅ PERBAIKAN: Gunakan .getTime() untuk kedua variabel
+            const midTimestamp = dpDueDate.getTime() + (pelunasan2DueDate.getTime() - dpDueDate.getTime()) / 2;
+            const pelunasan1DueDate = new Date(midTimestamp);
 
             if (firstProduct && firstProduct.user_id) {
                 const resolvedRekening = await travelRekeningService.resolvePaymentSelection(
@@ -291,8 +293,11 @@ class TransactionService {
             await transactionRepo.createBulkTransactionDetail(finalDetails, { transaction: t });
 
             // F. Hitung Nominal 3 Termin (30% DP, 35% Pelunasan 1, 35% Pelunasan 2)
-            const dpAmount = Math.round(totalTransactionPrice * 0.20);
-            const pelunasan1Amount = Math.round(totalTransactionPrice * 0.40);
+            const FIX_DP_AMOUNT = 10000000;
+            const dpAmount = FIX_DP_AMOUNT;
+            // 2. Sisa yang harus dilunasi
+            const remainingAmount = totalTransactionPrice - dpAmount;
+            const pelunasan1Amount = Math.floor(remainingAmount / 2);
             const pelunasan2Amount = totalTransactionPrice - (dpAmount + pelunasan1Amount); // Mencegah selisih pembulatan rupiah
 
             const installmentsData = [

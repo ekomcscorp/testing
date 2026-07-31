@@ -47,9 +47,9 @@
                 </td>
                 <td class="text-right">
                     <span style="color: #999;">Metode Pembayaran:</span><br>
-                    <span class="font-bold">Bank Central Asia (BCA)</span><br>
-                    No Rek: 7131720452<br>
-                    PT. Kolaborasi Para Sahabat
+                    <span class="font-bold"><%= data.rekening_snapshot?.nama_bank %></span><br>
+                    <%= data.rekening_snapshot?.no_rekening%><br>
+                    <%= data.rekening_snapshot?.atas_nama%>
                 </td>
             </tr>
         </table>
