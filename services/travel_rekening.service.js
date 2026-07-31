@@ -8,7 +8,7 @@ const MARKETPLACE_ESCROW_ACCOUNTS = [
         type: 'MARKETPLACE',
         id: 1,
         bank_code: 'BCA',
-        nama_bank: 'BCA Marketplace Escrow',
+        nama_bank: 'BCA',
         no_rekening: '7131720452',
         atas_nama: 'PT Kolaborasi Para Sahabat',
         description: 'Pembayaran aman via Escrow Marketplace'
@@ -17,7 +17,7 @@ const MARKETPLACE_ESCROW_ACCOUNTS = [
         type: 'MARKETPLACE',
         id: 2,
         bank_code: 'BSI',
-        nama_bank: 'BSI Marketplace Escrow',
+        nama_bank: 'BSI',
         no_rekening: '7215671498',
         atas_nama: 'PT Kolaborasi Para Sahabat',
         description: 'Pembayaran aman via Escrow Marketplace'
