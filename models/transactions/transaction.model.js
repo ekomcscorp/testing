@@ -73,9 +73,17 @@ module.exports = (sequelize, DataTypes) => {
         },
         rekening_snapshot: {
             type: DataTypes.JSON,
-            allowNull: true,
-            defaultValue: null,
-            comment: 'Snapshot { nama_bank, no_rekening, atas_nama } — immutable setelah dibuat'
+            get() {
+                const rawValue = this.getDataValue('rekening_snapshot');
+                if (typeof rawValue === 'string') {
+                try {
+                    return JSON.parse(rawValue);
+                } catch (e) {
+                    return null;
+                }
+                }
+                return rawValue;
+            }
         },
         created_at: {
             type: DataTypes.DATE,
