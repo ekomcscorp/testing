@@ -251,7 +251,7 @@ class TransactionService {
 
             // 2. DP (H+3 Dari Sekarang)
             const dpDueDate = new Date(now);
-            dpDueDate.setDate(dpDueDate.getDate() + 3);
+            dpDueDate.setDate(dpDueDate.getDate() + 1);
 
             // Guarding: Jika jarak ke departure terlalu dekat
             if (dpDueDate > pelunasan2DueDate) {
