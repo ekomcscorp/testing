@@ -91,6 +91,14 @@ app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Heade
 app.use(injectUser); // ⬅️ Middleware global
 app.use(express.static(path.join(__dirname, "public")));
 
+
+app.use("/uploads/hotels", express.static(path.join(__dirname, "public/assets/img/products/hotels")));
+app.use("/uploads/thumbnails", express.static(path.join(__dirname, "public/assets/img/products/thumbnails")));
+app.use("/uploads/profiles", express.static(path.join(__dirname, "public/assets/img/profiles")));
+app.use("/uploads/transactions", express.static(path.join(__dirname, "public/assets/img/transactions")));
+app.use("/uploads/jamaah", express.static(path.join(__dirname, "public/assets/img/transactions/jamaah")));
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

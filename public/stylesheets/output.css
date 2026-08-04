@@ -2824,6 +2824,10 @@ input:checked + .toggle-bg {
   gap: 2rem;
 }
 
+.gap-1 {
+  gap: 0.25rem;
+}
+
 .gap-y-4 {
   row-gap: 1rem;
 }
@@ -3334,6 +3338,11 @@ input:checked + .toggle-bg {
 .border-b-gray-200 {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
+}
+
+.border-b-slate-100 {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(241 245 249 / var(--tw-border-opacity, 1));
 }
 
 .bg-amber-100 {
@@ -4979,6 +4988,11 @@ table.dataTable tbody tr:hover:is(.dark *) {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-green-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-opacity-20:hover {

@@ -191,7 +191,7 @@
                 <table class="w-full text-sm text-left border-collapse px-14">
                     <thead class="bg-gray-50">
                         <tr class="border-t">
-                            <th class="py-3 px-5 font-bold text-left border-r ">#</th>
+                            <th class="py-3 px-10 font-bold text-left border-r ">#</th>
                             <th class="py-3 px-10 font-bold text-left border-r ">Title</th>
                             <th class="py-3 px-10 font-bold text-left border-r ">Jatuh tempo</th>
                             <th class="py-3 px-10 font-bold text-left border-r ">Jumlah</th>
@@ -243,13 +243,13 @@
                                 </td>
 
                                 <!-- Aksi -->
-                                <td class="py-2 px-10 border-b border-r">
+                                <td class="py-2 px-10 border-b border-r ">
                                     <button type="button" 
                                     onclick="openInstallmentModal('<%= installment.id %>', '<%= installment.evidence_url || '' %>', '<%= installment.installment_number %>', '<%= installment.amount %>')"
                                     class="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white text-xs font-semibold rounded-lg hover:bg-blue-600 transition shadow-md">
                                     <i class="ph ph-eye text-sm"></i>
                                     Lihat
-                                </button>
+                                    </button>
                                 </td>
                             </tr>
                         <% }) %>

@@ -4,13 +4,23 @@ const transactionJamaahRoutes = require('./transaction_jamaah.routes');
 const { injectUser } = require ('../../../middleware');
 const { ensureAuthToken } = require("../../../middleware/authJwt");
 const appSignature = require("../../../middleware/appSignatureGuard.js");
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 const multer = require('multer');
 const crypto = require('crypto');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, "public/assets/img/transactions/");
+
+        const uploadDir = path.join(__dirname, "../../../public/assets/img/transactions/")
+
+        // untuk membuat folder baru jika folder tidak ada
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        cb(null, uploadDir);
     },
     filename: function(req, file, cb) {
         const ext = file.originalname.split(".").pop();
