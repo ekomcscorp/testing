@@ -11,7 +11,7 @@ const productPriceController = require("../../../controllers/api/products/produc
 const productWishlistController = require("../../../controllers/api/products/productWishlist.controller.js");
 const {ensureAuthToken} = require("../../../middleware/authJwt.js");
 const appSignature = require("../../../middleware/appSignatureGuard.js")
-
+const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
@@ -45,7 +45,9 @@ const diskStrorage = multer.diskStorage({
     cb(uploadError, path.resolve(uploadPath));
   },
   filename: function(req, file, cb) {
-    cb(null, file.originalname);
+     const ext = file.originalname.split(".").pop();
+     const hash = crypto.randomBytes(16).toString('hex'); 
+     cb(null, `${hash}.${ext}`);
   }
 })
 
