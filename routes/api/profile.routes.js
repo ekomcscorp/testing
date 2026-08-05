@@ -4,6 +4,7 @@ const profileController = require('../../controllers/api/profile.controller');
 const {ensureAuthToken} = require("../../middleware/authJwt");
 const multer = require('multer');
 const path = require('path');
+const crypto = require('crypto');
 
 
 const diskStorage = multer.diskStorage({
@@ -11,7 +12,9 @@ const diskStorage = multer.diskStorage({
     cb(null, "public/assets/img/profiles/")
   },
   filename: function(req, file, cb){
-    cb(null, file.originalname);
+    const ext = file.originalname.split(".").pop();
+    const hash = crypto.randomBytes(16).toString('hex');
+    cb(null, `${hash}.${ext}`);
   }
 })
 

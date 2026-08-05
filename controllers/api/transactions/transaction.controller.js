@@ -211,12 +211,9 @@ class TransactionController {
       const { status } = req.body;
 
       // 💡 Untuk MVP Simpel, Admin hanya melakukan APPROVE ke 'SUCCESS'
-      if (!status || status !== 'SUCCESS') {
-        return response.error(res, "Status pembayaran termin hanya mendukung 'SUCCESS'", 400);
-      }
 
       const result = await transactionService.updateInstallmentStatus(installment_id, status);
-      return response.success(res, `Status cicilan berhasil disetujui (SUCCESS)`, result);
+      return response.success(res, `Status berhasil berubah!`, result);
     } catch (error) {
       console.error('[UPDATE INSTALLMENT STATUS CONTROLLER ERROR]:', error);
       return response.error(res, error.message);
