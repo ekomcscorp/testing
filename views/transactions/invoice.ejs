@@ -3,7 +3,7 @@
 <head>
     <style>
         body { font-family: Arial, sans-serif; color: #333; line-height: 1.4; }
-        .invoice-box { max-width: 800px; margin: auto; padding: 10px; font-size: 14px; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 10px; font-size: 10px; }
         
         /* Pengganti Flexbox pakai Tabel */
         table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
@@ -30,7 +30,7 @@
                 </td>
                 <td class="text-right">
                     <div class="title">INVOICE</div>
-                    <p><%= data.transaction_no %><br>
+                    <p>
                        INV<%= new Date().getFullYear().toString().slice(-2) %><%= String(new Date().getMonth() + 1).padStart(2, '0') %><%= String(data.transaction_no ).slice(-4) %>
                     </p>
                 </td>
@@ -41,12 +41,12 @@
         <table style="margin-bottom: 40px;">
             <tr>
                 <td style="width: 50%;">
-                    <span style="color: #999;">Ditagihkan Kepada:</span><br>
+                    <span style="color: rgb(156, 163, 175, 1); text-transform: uppercase;font-weight: bold;font-size: 0.875rem;">Ditagihkan Kepada:</span><br>
                     <span class="font-bold"><%= data.user?.fullname %></span><br>
                     <%= data.user?.email || "No email"%>
                 </td>
                 <td class="text-right">
-                    <span style="color: #999;">Metode Pembayaran:</span><br>
+                    <span style="color: rgb(96, 165, 250, 1); text-transform: uppercase;font-weight: bold;font-size: 0.875rem">Metode Pembayaran:</span><br>
                     <span class="font-bold"><%= data.rekening_snapshot?.nama_bank %></span><br>
                     <%= data.rekening_snapshot?.no_rekening%><br>
                     <%= data.rekening_snapshot?.atas_nama%>
@@ -96,18 +96,48 @@
         </table>
 
         <!-- Total Akhir -->
-        <div class="total-section">
-            <table style="border-top: 1px solid #eee;">
-                <tr>
-                    <td class="font-bold text-right">TOTAL AKHIR</td>
-                </tr>
-                <tr>
-                    <td class="font-bold text-right" style="font-size: 18px; color: #000;">
-                        Rp. <%= data.total_price.toLocaleString('id-ID') %>
-                    </td>
-                </tr>
-            </table>
-        </div>
+       <div class="total-section">
+    <!-- Tabel Cicilan -->
+    <% if (Array.isArray(data.installments) && data.installments.length > 0) { %>
+        <table style="margin-bottom: 12px;">
+            <tbody>
+                <% data.installments.forEach((installment) => { %>
+                    <tr>
+                        <td style="padding: 6px 0; color: #666;">
+                            <% if (installment.installment_number === 1) { %>
+                                DP
+                            <% } else { %>
+                                Pelunasan <%= installment.installment_number - 1 %>
+                            <% } %>
+                        </td>
+
+                        <td style="padding: 6px 0; text-align: right; font-weight: bold;">
+                            Rp <%= Number(installment.amount).toLocaleString('id-ID') %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <!-- Total -->
+    <table style="border-top: 1px solid #eee; margin-top: 10px;">
+        <tbody>
+            <tr>
+                <td class="font-bold text-right" style="padding-top:10px;">
+                    TOTAL AKHIR
+                </td>
+            </tr>
+
+            <tr>
+                <td class="font-bold text-right"
+                    style="font-size:18px; color:#000;">
+                    Rp. <%= data.total_price.toLocaleString('id-ID') %>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
     </div>
 </body>
 </html>

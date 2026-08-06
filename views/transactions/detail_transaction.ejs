@@ -10,15 +10,24 @@
                     <p class="text-sm text-gray-400 mt-1">Tanggal: <%= new Date(data.created_at).toLocaleDateString('id-ID') %></p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <% 
-                        
-                        let statusClass = data.status === 'SUCCESS' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
-
-                        let dotClass = data.status === 'SUCCESS' ? 'bg-green-500' : 'bg-yellow-500';
-                    %>
+                      <% 
+                    let statusText = 'Menunggu pembayaran';
+                    let statusClass = 'status-unpaid';
+                    let dotColor = '#fca5a5';
+                    
+                    if (data.status === 'SUCCESS') {
+                        statusText = 'Berhasil';
+                        statusClass = 'status-success';
+                        dotColor = '#4ade80';
+                    } else if (data.status === 'PENDING') {
+                        statusText = 'Verifikasi pembayaran';
+                        statusClass = 'status-pending';
+                        dotColor = '#facc15';
+                    }
+                %>
                     <span class="<%= statusClass %> text-sm font-semibold p-2 border flex rounded-xl items-center">
-                        <span class="w-2 h-2 me-2 <%= dotClass %> rounded-full"></span>
-                        <%= data.status %>
+                        <span class="w-2 h-2 me-2 rounded-full" style="background-color: <%= dotColor %>"></span>
+                        <%= statusText %>
                     </span>
                     <button data-modal-target="invoiceModal" data-modal-toggle="invoiceModal" class="flex items-center gap-2 px-5 py-2.5 bg-blue-700 text-white rounded-lg hover:bg-blue-900 transition shadow-md">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -499,7 +508,11 @@
                     <div class="flex justify-between mb-8">
                         <div>
                             <div class="mb-8">
-                                    <img src="../assets/img/logo/pengenumroh.png" alt="Logo" class="h-12 w-auto">
+                                    <img src="../assets/img/logo/pengenumroh.png" alt="Logo" class="h-12 w-auto mb-2">
+                                     <span class="<%= statusClass %> text-xs font-bold p-2 border flex rounded-xl items-center">
+                                        <span class="w-2 h-2 me-2 rounded-full" style="background-color: <%= dotColor %>"></span>
+                                        <%= statusText %>
+                                    </span>
                             </div>
                                 <!-- <h4 class="text-2xl font-bold text-travel-dark">
                                     
@@ -508,8 +521,8 @@
                                  -->
                         </div>
                         <div class="text-right">
-                            <h5 class="font-bold text-lg">INVOICE</h5>
-                             <p class="text-sm text-gray-600"><%= data.transaction_no %></p>
+                            <h5 class="font-bold text-3xl">INVOICE</h5>
+                             <!-- <p class="text-sm text-gray-600"><%= data.transaction_no %></p> -->
                             <p class="text-sm text-gray-600"><% 
                                 const date = new Date(data.created_at);
                                 const year = date.getFullYear().toString().slice(-2);
@@ -523,23 +536,23 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 mb-8 text-sm">
+                    <div class="info-section gap-8 mb-8 text-sm">
                         <div>
-                            <p class="text-gray-400 mb-1">Ditagihkan Kepada:</p>
+                            <p class="text-gray-400 mb-1 uppercase font-bold text-xs">Ditagihkan Kepada:</p>
                             <p class="font-bold text-gray-800"><%= data.user?.fullname %></p>
                             <p class="text-gray-600"><%= data.user?.email || "No email"%></p>
                         </div>
                         <div class="text-right">
-                            <p class="text-gray-400 mb-1">Metode Pembayaran:</p>
+                            <p class="text-blue-400 mb-1 uppercase font-bold text-xs">Metode Pembayaran:</p>
                             <p class="font-bold text-gray-800"><%= data.rekening_snapshot?.nama_bank %></p>
                             <p class="text-gray-800 font-bold"><%= data.rekening_snapshot?.no_rekening%></p>
-                             <p class="text-gray-600 text-xs"><%= data.rekening_snapshot?.atas_nama%></p>
+                             <p class="text-gray-600 text-xs uppercase font-bold"><%= data.rekening_snapshot?.atas_nama%></p>
                         </div>
                     </div>
 
                     <table class="w-full text-sm text-left border-collapse mb-8">
                         <thead class="bg-gray-50">
-                            <tr class=" border-b">
+                            <tr class=" border-b border-t">
                                 <th class="py-3 px-2 font-bold">Nama Produk</th>
                                 <th class="py-3 px-2 text-center font-bold">Qty</th>
                                 <th class="py-3 px-2 text-right font-bold">Harga</th>
@@ -565,12 +578,12 @@
                             %>
                                 <% Object.values(groupedInvoiceItems).forEach(item => { %>
                                     <tr>
-                                        <td class="py-4 px-2">
+                                        <td class="py-4 px-2 border-b">
                                             <p class="font-medium text-gray-800"><%= item.product_name %></p>
                                             <p class="text-xs text-gray-500 italic"><%= new Date(item.departure_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
                                         </td>
-                                        <td class="py-4 px-2 text-center text-gray-600"><%= item.qty %>x <%= item.room_types %></td>
-                                        <td class="py-4 px-2 text-right font-medium">Rp <%= item.price.toLocaleString('id-ID') %></td>
+                                        <td class="py-4 px-2 text-center text-gray-600 border-b"><%= item.qty %>x <%= item.room_types %></td>
+                                        <td class="py-4 px-2 text-right font-medium border-b">Rp <%= item.price.toLocaleString('id-ID') %></td>
                                     </tr>
                                 <% }) %>
                             <% } %>
@@ -579,16 +592,21 @@
 
                     <div class="flex justify-end">
                         <div class="w-64 space-y-2">
-                            <!-- <% data.details.forEach((item) => { %>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-500"><%= item.product_name %></span>
-                                <span class="font-medium">Rp <%= item.price.toLocaleString('id-ID') %></span>
-                            </div>
-                            <% }) %> -->
-                            <!-- <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">Diskon</span>
-                                <span class="text-emerald-islamic">-Rp 1.000.000</span>
-                            </div> -->
+                            <%if (Array.isArray(data.installments) && data.installments.length > 0) {%>
+                                <% data.installments.forEach((installment, index) => { %> 
+                                     <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500"> 
+                                        <% if (installment.installment_number === 1) { %>
+                                            DP
+                                        <% } else { %>
+                                            Pelunasan <%= installment.installment_number - 1 %>
+                                        <% } %></span>
+                                        <span class="font-medium"> Rp <%= Number(installment.amount).toLocaleString('id-ID') %></span>
+                                    </div>
+                                <%})%>
+                            <% } else { %>
+
+                            <% } %>
                             <div class="flex flex-col align-left justify-between border-t pt-2 mt-2">
                                 <span class="font-bold text-gray-800 uppercase text-right">Total Akhir</span>
                                 <span class="text-right font-bold text-xl text-travel-dark">Rp. <%= data.total_price.toLocaleString('id-ID') %></span>
@@ -613,7 +631,7 @@
                 </div>
             </div>
         </div>
-    </div>
+</div>
 
     <script>
         (function() {
