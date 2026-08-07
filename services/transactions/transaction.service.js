@@ -160,6 +160,7 @@ class TransactionService {
             throw new Error("Data user_id dan daftar items wajib diisi");
         }
         const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         const t = await sequelize.transaction();
 
@@ -243,7 +244,16 @@ class TransactionService {
                 throw new Error ("Tanggal keberangkatan produk tidak valid untuk kalkulasi cicilan")
             }
 
-           const departureDate = new Date(firstProduct.tgl_keberangkatan);
+           const rawDepartureDate = new Date(firstProduct.tgl_keberangkatan)
+           const departureDate = new Date(rawDepartureDate.getFullYear(), rawDepartureDate.getMonth(), rawDepartureDate.getDate());
+
+        //    Hitung selisih hari dari hari keberangkatan
+           const diffInTime = departureDate.getTime() - today.getTime();
+           const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+
+           if (diffInDays <= 14) {
+                throw new Error(`Keberangkatan tinggal ${diffInDays} hari lagi. Pembayaran cicilan tidak tersedia (minimal H-14). Silakan pilih Full Payment.`);
+            }
 
             // 1. Pelunasan 2 (H-14 Sebelum Keberangkatan)
             const pelunasan2DueDate = new Date(departureDate);
