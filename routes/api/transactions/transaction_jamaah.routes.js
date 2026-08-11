@@ -2,6 +2,7 @@ const express = require('express');
 const transactionJamaahController = require('../../../controllers/api/transactions/transaction_jamaah.controller');
 const { injectUser } = require('../../../middleware');
 const { ensureAuthToken } = require("../../../middleware/authJwt");
+const appSignature = require("../../../middleware/appSignatureGuard")
 
 const path = require('path');
 const fs = require('fs');
@@ -44,7 +45,7 @@ router.get('/search/email', transactionJamaahController.searchByEmail);
 
 router.get('/transaction/:transactionId', transactionJamaahController.getJamaahByTransaction);
 
-router.get('/', transactionJamaahController.getAllJamaah);
+router.get('/',appSignature, transactionJamaahController.getAllJamaah);
 
 router.post('/', upload.fields([
     { name: 'img_ktp', maxCount: 1},
@@ -54,7 +55,7 @@ router.post('/', upload.fields([
     { name: 'img_akta_kelahiran', maxCount: 1}
 ]) ,transactionJamaahController.createJamaah);
 
-router.get('/:id', transactionJamaahController.getJamaahById);
+router.get('/:id', appSignature,transactionJamaahController.getJamaahById);
 
 router.put('/:id',upload.fields([
     { name: 'img_ktp', maxCount: 1},

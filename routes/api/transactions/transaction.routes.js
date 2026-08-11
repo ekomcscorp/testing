@@ -47,7 +47,7 @@ router.put("/installments/:installment_id/upload", upload.single('evidence_url')
 router.patch("/installments/:installment_id/status", injectUser, transactionController.updateInstallmentStatus);
 
 // 📋 Transaction routes lanjutan (Eksisting)
-router.get("/:id", transactionController.getTransactionById);
+router.get("/:id", appSignature, transactionController.getTransactionById);
 router.post("/", ensureAuthToken, transactionController.createTransaction);
 router.put("/:id", upload.single('evidence_url'), transactionController.uploadPayment);
 router.patch("/:id", injectUser, transactionController.approvePayment);

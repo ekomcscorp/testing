@@ -56,7 +56,7 @@ const upload = multer({storage: diskStrorage})
 router.get("/landing",  productController.getProductForLanding);
 router.get("/",  appSignature, productController.getAllProduct);
 router.get("/datatables",  productController.getAllProductsDatatables);
-router.get("/:id", productController.getProductById);
+router.get("/:id",appSignature, productController.getProductById);
 router.get("/:id/flights/", productFlightController.getFlightsByProduct);
 router.get("/:id/facilities/", productFacilityController.getFacilitiesByProduct);
 router.get("/:id/hotels/", productHotelController.getHotelByProduct);
