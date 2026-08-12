@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/",appSignature, userController.getAllUsers);
 router.get("/datatables", injectUser, userController.getAllUsersDatatables);
-router.get("/:id", userController.getUserById);
+router.get("/:id", appSignature, userController.getUserById);
 router.post("/", userController.createUser);
 router.put("/:id", userController.updateUser);
 // router.put("/:id/approve", userController.approveUser); // ✅ ini baru
