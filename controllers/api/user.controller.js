@@ -66,24 +66,36 @@ class UserController {
     }
   }
 
-
-
-
   async createUser(req, res) {
     try {
+      const payload = {
+        username: String(req.body.username || "").trim(),
+        fullname: String(req.body.fullname || "").trim(),
+        email: String(req.body.email || "").trim(),
+        password: String(req.body.password || "").trim(),
+        id_level: req.body.id_level,
+        is_active: (req.body.is_active || "Y").toString().trim().toUpperCase(),
+      };
+
       const requiredFields = ["username", "fullname", "password", "email", "id_level", "is_active"];
-      if (!requiredFields.every((field) => req.body[field])) {
+      if (!requiredFields.every((field) => payload[field])) {
         return response.error(res, "Semua field wajib diisi", 400);
       }
 
-      // Validate email format
-      if (!isValidEmail(req.body.email)) {
-        return response.error(res, getEmailErrorMessage(req.body.email), 400);
+      if (!["Y", "N"].includes(payload.is_active)) {
+        return response.error(res, "Status user harus Y atau N", 400);
+      }
+
+      if (!isValidEmail(payload.email)) {
+        return response.error(res, getEmailErrorMessage(payload.email), 400);
       }
 
       const userData = {
-        ...req.body,
-        password: await hashPassword(req.body.password),
+        ...payload,
+        username: payload.username,
+        fullname: payload.fullname,
+        email: payload.email,
+        password: await hashPassword(payload.password),
       };
 
       const newUser = await UserRepository.createUser(userData);
