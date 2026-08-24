@@ -305,3 +305,97 @@ function openApproveModal() {
 function closeApproveModal() {
     document.getElementById('approvePaymentModal').classList.add('hidden');
 }
+
+// Approve Main Transaction Payment
+window.confirmApproveBtn = async function(transactionId) {
+    const confirmBtn = document.getElementById('confirmApproveBtn');
+    
+    // Check if button is disabled
+    if (confirmBtn && confirmBtn.disabled) {
+        swal("Perhatian", "Belum ada bukti pembayaran yang diunggah", "warning");
+        return;
+    }
+
+    swal({
+        title: "Konfirmasi Approval?",
+        text: "Pastikan dana sudah masuk sebelum approval!",
+        icon: "info",
+        buttons: ["Batal", "Ya, Approve"],
+        dangerMode: false,
+    }).then(async (willApprove) => {
+        if (willApprove) {
+            try {
+                const res = await fetch(`/api/transactions/${transactionId}/approve`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ status: "SUCCESS" })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    swal("Berhasil!", "Transaksi berhasil di-approve", "success");
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    swal("Gagal!", data.message || "Terjadi kesalahan saat approve", "error");
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                swal("Error!", "Gagal menghubungi server", "error");
+            }
+        }
+    });
+};
+
+// Approve Installment Payment
+window.confirmApproveInstallmentBtn = async function(installmentId) {
+    if (!installmentId) {
+        swal("Error", "ID cicilan tidak ditemukan", "error");
+        return;
+    }
+
+    const approveBtn = document.getElementById('btnApproveInstallment');
+    
+    // Check if button is disabled
+    if (approveBtn && approveBtn.disabled) {
+        swal("Perhatian", "Belum ada bukti pembayaran yang diunggah untuk cicilan ini", "warning");
+        return;
+    }
+
+    swal({
+        title: "Konfirmasi Approval?",
+        text: "Pastikan dana sudah masuk sebelum approval cicilan!",
+        icon: "info",
+        buttons: ["Batal", "Ya, Approve"],
+        dangerMode: false,
+    }).then(async (willApprove) => {
+        if (willApprove) {
+            try {
+                const res = await fetch(`/api/transaction-payments/${installmentId}/approve`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ status: "SUCCESS" })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    swal("Berhasil!", "Cicilan berhasil di-approve", "success");
+                    setTimeout(() => {
+                        closeInstallmentModal();
+                        location.reload();
+                    }, 1500);
+                } else {
+                    swal("Gagal!", data.message || "Terjadi kesalahan saat approve", "error");
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                swal("Error!", "Gagal menghubungi server", "error");
+            }
+        }
+    });
+};

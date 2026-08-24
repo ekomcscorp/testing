@@ -1,3 +1,74 @@
+// Email validation helper - Global scope
+const isValidEmail = (email) => {
+  if (!email || typeof email !== "string") {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValidFormat = emailRegex.test(email.trim());
+
+  if (!isValidFormat) {
+    return false;
+  }
+
+  if (email.length > 254) {
+    return false;
+  }
+
+  const parts = email.trim().split("@");
+  if (parts.length !== 2) {
+    return false;
+  }
+
+  const [localPart, domain] = parts;
+
+  if (!localPart || localPart.length > 64) {
+    return false;
+  }
+
+  if (email.includes("..")) {
+    return false;
+  }
+
+  if (!domain || !domain.includes(".")) {
+    return false;
+  }
+
+  return true;
+};
+
+const getEmailErrorMessage = (email) => {
+  if (!email) {
+    return "Email tidak boleh kosong";
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.trim())) {
+    return "Format email tidak valid (contoh: user@domain.com)";
+  }
+
+  if (email.length > 254) {
+    return "Email terlalu panjang (maksimal 254 karakter)";
+  }
+
+  const parts = email.trim().split("@");
+  const [localPart, domain] = parts;
+
+  if (!localPart || localPart.length > 64) {
+    return "Bagian sebelum @ terlalu panjang (maksimal 64 karakter)";
+  }
+
+  if (email.includes("..")) {
+    return "Email tidak boleh mengandung titik berturut-turut (..)";
+  }
+
+  if (!domain || !domain.includes(".")) {
+    return "Domain email harus mengandung titik (.)";
+  }
+
+  return "Email tidak valid";
+};
+
 document.addEventListener("DOMContentLoaded", () => {
 
  const table = $("#userTable").DataTable({
@@ -166,7 +237,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
     // CREATE OR UPDATE
-    document.getElementById("submitUserBtn").addEventListener("click", async () => {
+    const submitUserBtn = document.getElementById("submitUserBtn");
+    
+    // Remove previous event listener jika ada
+    const newSubmitBtn = submitUserBtn.cloneNode(true);
+    submitUserBtn.parentNode.replaceChild(newSubmitBtn, submitUserBtn);
+    
+    document.getElementById("submitUserBtn").addEventListener("click", async function(e) {
+      e.preventDefault();
+      
       const id = document.getElementById("hidden_id_user").value;
       const fullname = document.getElementById("fullname").value;
       const username = document.getElementById("username").value;
@@ -175,29 +254,33 @@ document.addEventListener("DOMContentLoaded", () => {
       const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
 
-
       if(!fullname || !username || !email || !id_level || !is_active ) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
         return;
       }
+
+      // Validate email format
+      if (!isValidEmail(email)) {
+        swal("Email Tidak Valid", getEmailErrorMessage(email), "error");
+        return;
+      }
   
-    // Tentukan URL dan method berdasarkan id
-    const isUpdate = id !== "";
-    const url = isUpdate ? `/api/user/${id}` : `/api/user`;
-    const method = isUpdate ? "PUT" : "POST";
+      // Tentukan URL dan method berdasarkan id
+      const isUpdate = id !== "";
+      const url = isUpdate ? `/api/user/${id}` : `/api/user`;
+      const method = isUpdate ? "PUT" : "POST";
 
-    const body = {
-      fullname,
-      username,
-      email,
-      id_level: parseInt(id_level),
-      is_active,
-      
-    };
+      const body = {
+        fullname,
+        username,
+        email,
+        id_level: parseInt(id_level),
+        is_active,
+      };
 
-    if (!isUpdate) {
-      body.password = password; // Hanya kirim password saat update
-    }
+      if (!isUpdate) {
+        body.password = password; // Hanya kirim password saat create
+      }
 
       try {
         const res = await fetch(url, {
@@ -211,8 +294,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
   
         if (res.ok) {
-          swal("Berhasil!", data.message || "User berhasil ditambahkan", "success");
-          setTimeout(() => location.reload(), 1500);
+          swal("Berhasil!", data.message || "User berhasil disimpan", "success");
+          setTimeout(() => {
+            document.getElementById("userFormModal").classList.add("hidden");
+            $("#userTable").DataTable().ajax.reload();
+          }, 1500);
         } else {
           swal("Gagal!", data.message || "Terjadi kesalahan saat menyimpan data", "error");
         }
@@ -234,6 +320,43 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("password").style.display = "block"; // Tampilkan password field
       document.getElementById("passwordDiv").style.display = "block"; // Tampilkan password field
     });
+
+    // Real-time email validation on input
+    const emailInput = document.getElementById("email");
+    if (emailInput) {
+      emailInput.addEventListener("blur", function() {
+        const email = this.value.trim();
+        if (email && !isValidEmail(email)) {
+          // Add error styling
+          this.classList.add("border-red-500", "border-2");
+          
+          // Show error message if element exists
+          let errorMsg = document.getElementById("emailError");
+          if (!errorMsg) {
+            errorMsg = document.createElement("p");
+            errorMsg.id = "emailError";
+            errorMsg.className = "text-red-500 text-sm mt-1";
+            this.parentNode.appendChild(errorMsg);
+          }
+          errorMsg.textContent = getEmailErrorMessage(email);
+        } else {
+          // Remove error styling
+          this.classList.remove("border-red-500", "border-2");
+          const errorMsg = document.getElementById("emailError");
+          if (errorMsg) {
+            errorMsg.remove();
+          }
+        }
+      });
+
+      emailInput.addEventListener("focus", function() {
+        this.classList.remove("border-red-500", "border-2");
+        const errorMsg = document.getElementById("emailError");
+        if (errorMsg) {
+          errorMsg.remove();
+        }
+      });
+    }
 
 
     
@@ -277,7 +400,7 @@ window.editUser = async function(id) {
   }
 }
 
-function deleteUser(id) {
+window.deleteUser = function(id) {
   swal({
     title: "Yakin ingin menghapus?",
     text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -301,4 +424,4 @@ function deleteUser(id) {
       }
     }
   });
-}
+};

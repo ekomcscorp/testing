@@ -1,6 +1,7 @@
 const response                    = require("../../utils/response");
 const UserRepository              = require("../../repositories/user.repository");
 const { hashPassword }            = require("../../utils/hash");
+const { isValidEmail, getEmailErrorMessage } = require("../../utils/validation");
 
 class UserController {
   async getAllUsers(req, res) {
@@ -70,9 +71,14 @@ class UserController {
 
   async createUser(req, res) {
     try {
-      const requiredFields = ["username", "fullname", "password", "id_level", "is_active"];
+      const requiredFields = ["username", "fullname", "password", "email", "id_level", "is_active"];
       if (!requiredFields.every((field) => req.body[field])) {
         return response.error(res, "Semua field wajib diisi", 400);
+      }
+
+      // Validate email format
+      if (!isValidEmail(req.body.email)) {
+        return response.error(res, getEmailErrorMessage(req.body.email), 400);
       }
 
       const userData = {
@@ -91,6 +97,11 @@ class UserController {
     try {
       const user = await UserRepository.getUserById(req.params.id);
       if (!user) return response.notFound(res, "User not found");
+
+      // Validate email format jika email diubah
+      if (req.body.email && !isValidEmail(req.body.email)) {
+        return response.error(res, getEmailErrorMessage(req.body.email), 400);
+      }
 
       await UserRepository.updateUser(req.params.id, req.body);
       return response.success(res, "User updated successfully");
