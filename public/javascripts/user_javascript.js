@@ -270,24 +270,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const url = isUpdate ? `/api/user/${id}` : `/api/user`;
       const method = isUpdate ? "PUT" : "POST";
 
-      const normalizedStatus = String(is_active || 'Y').trim().toUpperCase();
-      const safeStatus = normalizedStatus === 'YA' ? 'Y' : normalizedStatus === 'TIDAK' ? 'N' : normalizedStatus;
-
       const body = {
-        fullname: String(fullname).trim(),
-        username: String(username).trim(),
-        email: String(email).trim(),
+        fullname,
+        username,
+        email,
         id_level: parseInt(id_level),
-        is_active: safeStatus,
+        is_active,
       };
 
       if (!isUpdate) {
-        body.password = String(password || '').trim();
-      }
-
-      if (!body.password && !isUpdate) {
-        swal("Peringatan", "Password wajib diisi untuk user baru", "warning");
-        return;
+        body.password = password; // Hanya kirim password saat create
       }
 
       try {
