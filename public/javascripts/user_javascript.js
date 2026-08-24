@@ -253,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
       const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
+      const no_wa = document.getElementById("no_wa").value;
 
       if(!fullname || !username || !email || !id_level || !is_active ) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
@@ -271,11 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const method = isUpdate ? "PUT" : "POST";
 
       const body = {
-        fullname,
-        username,
-        email,
+        fullname: String(fullname).trim(),
+        username: String(username).trim(),
+        email: String(email).trim(),
+        no_wa: String(no_wa).trim(),
         id_level: parseInt(id_level),
-        is_active,
+        is_active: String(is_active).trim(),
       };
 
       if (!isUpdate) {
@@ -384,6 +386,7 @@ window.editUser = async function(id) {
         document.getElementById("fullname").value = user.fullname;
         document.getElementById("username").value = user.username;
         document.getElementById("email").value = user.email;
+        document.getElementById("no_wa").value = user.no_wa || '';
         document.getElementById("id_level").value = user.id_level;
         document.getElementById("is_active").value = user.is_active;
      

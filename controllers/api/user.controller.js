@@ -71,19 +71,27 @@ class UserController {
 
   async createUser(req, res) {
     try {
-      const requiredFields = ["username", "fullname", "password", "email", "id_level", "is_active"];
-      if (!requiredFields.every((field) => req.body[field])) {
+      const payload = {
+        ...req.body,
+        username: String(req.body.username || "").trim(),
+        fullname: String(req.body.fullname || "").trim(),
+        email: String(req.body.email || "").trim(),
+        no_wa: String(req.body.no_wa || "").trim(),
+        is_active: (req.body.is_active || "Y").toString().trim().toUpperCase(),
+      };
+
+      const requiredFields = ["username", "fullname", "password", "email", "no_wa", "id_level", "is_active"];
+      if (!requiredFields.every((field) => payload[field])) {
         return response.error(res, "Semua field wajib diisi", 400);
       }
 
-      // Validate email format
-      if (!isValidEmail(req.body.email)) {
-        return response.error(res, getEmailErrorMessage(req.body.email), 400);
+      if (!isValidEmail(payload.email)) {
+        return response.error(res, getEmailErrorMessage(payload.email), 400);
       }
 
       const userData = {
-        ...req.body,
-        password: await hashPassword(req.body.password),
+        ...payload,
+        password: await hashPassword(payload.password),
       };
 
       const newUser = await UserRepository.createUser(userData);
