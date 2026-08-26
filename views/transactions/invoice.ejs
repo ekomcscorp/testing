@@ -43,6 +43,8 @@
                 <td style="width: 50%;">
                     <span style="color: rgb(156, 163, 175, 1); text-transform: uppercase;font-weight: bold;font-size: 0.875rem;">Ditagihkan Kepada:</span><br>
                     <span class="font-bold"><%= data.user?.fullname %></span><br>
+                    <%= data.user?.no_wa || "No nomor WA"%>
+                    <br>
                     <%= data.user?.email || "No email"%>
                 </td>
                 <td class="text-right">
