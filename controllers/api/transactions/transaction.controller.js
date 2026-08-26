@@ -198,8 +198,15 @@ class TransactionController {
   async approvePayment(req, res) {
     try {
       const { id } = req.params;
-      const result = await transactionService.updateStatus(id, 'SUCCESS');
-      return response.success(res, "Status transaksi berhasil diperbarui menjadi SUCCESS", result);
+      const { status } = req.body || {};
+      const nextStatus = status === 'FAILED' ? 'FAILED' : 'SUCCESS';
+
+      const result = await transactionService.updateStatus(id, nextStatus);
+      const message = nextStatus === 'FAILED'
+        ? "Status transaksi berhasil ditolak"
+        : "Status transaksi berhasil diperbarui menjadi SUCCESS";
+
+      return response.success(res, message, result);
     } catch (error) {
       return response.error(res, error.message);
     }
