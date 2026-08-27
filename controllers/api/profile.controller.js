@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const response = require("../../utils/response");
 const profileRepo = require("../../repositories/profile.repository");
 
@@ -120,7 +122,21 @@ class ProfileController {
 
       const updateData = {};
 
-      if (req.file) updateData.image = req.file.filename;
+      if (req.file) {
+        updateData.image = req.file.filename;
+
+        if (profile.image) {
+          const oldPath = path.join(__dirname, "../../public/assets/img/profiles", profile.image);
+
+          if (fs.existsSync(oldPath)) {
+            try {
+              fs.unlinkSync(oldPath);
+            } catch (err) {
+              console.error("Gagal menghapus foto lama:", err);
+            }
+          }
+        }
+      };
       if (address !== undefined) updateData.address = address;
       if (jk !== undefined) updateData.jk = jk;
       if (no_nik !== undefined) updateData.no_nik = no_nik;
