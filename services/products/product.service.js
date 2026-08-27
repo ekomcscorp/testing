@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const { sequelize } = require("../../models");
 const productRepository = require("../../repositories/products/product.repository");
 const productPricesRepository = require("../../repositories/products/productPrices.repository");
@@ -75,6 +77,12 @@ class ProductService {
         const validateHotels = ensureArray(hotels);
         const validateItineraries = ensureArray(itineraries);
 
+        for (const i of validateItineraries) {
+            if (!i.title || i.title.trim() === '') {
+                throw new Error("Title/Lokasi Itinerary wajib diisi");
+            }
+        }
+
         productFields.user_id = userId;
 
         // ✅ create product
@@ -143,9 +151,25 @@ class ProductService {
 }
 
        async updateProduct(id, productData) {
-        const transaction = await sequelize.transaction();
-        try {
-            let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
+         const transaction = await sequelize.transaction();
+         try {
+             const oldProduct = await productRepository.getProductById(id);
+             if (!oldProduct) {
+                 throw new Error("Product not found");
+             }
+
+             let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
+
+             // Determine thumbnail to delete
+             let thumbnailToDelete = null;
+             if (productFields.thumbnail_url && oldProduct.thumbnail_url && productFields.thumbnail_url !== oldProduct.thumbnail_url) {
+                 thumbnailToDelete = oldProduct.thumbnail_url;
+             }
+
+             // Determine hotel images to delete
+             const oldHotelImages = (oldProduct.hotels || []).map(h => h.image).filter(Boolean);
+             const newHotelImages = (hotels || []).map(h => h.image).filter(Boolean);
+             const hotelImagesToDelete = oldHotelImages.filter(img => !newHotelImages.includes(img));
             
             // Validasi dan normalisasi status
             const validStatuses = ['draft', 'publish', 'closed'];
@@ -196,12 +220,17 @@ class ProductService {
                         product_id: pid, name: h.name, city: h.city, rating: h.rating, jarak: h.jarak, image: h.image || "", facilities: h.facilities
                     }));
 
-                    await updateRelation(productItineraryRepository, itineraries, (i, pid) => ({
-                        product_id: pid, 
-                        day_order: i.day_order, 
-                        title: i.title, 
-                        description: i.description
-                    }));
+                    await updateRelation(productItineraryRepository, itineraries, (i, pid) => {
+                        if (!i.title || i.title.trim() === '') {
+                            throw new Error("Title/Lokasi Itinerary wajib diisi");
+                        }
+                        return {
+                            product_id: pid, 
+                            day_order: i.day_order, 
+                            title: i.title, 
+                            description: i.description
+                        };
+                    });
 
                     await updateRelation(productSnKRepository, snks, (i, pid) => ({
                         product_id: pid, 
@@ -215,6 +244,32 @@ class ProductService {
                     }));
             console.log("productFields:", productFields);
             await transaction.commit();
+
+            // Clean up old thumbnail from disk
+            if (thumbnailToDelete) {
+                const thumbPath = path.join(__dirname, "../../public/assets/img/products/thumbnails", thumbnailToDelete);
+                if (fs.existsSync(thumbPath)) {
+                    try {
+                        fs.unlinkSync(thumbPath);
+                        console.log("Successfully deleted old thumbnail:", thumbnailToDelete);
+                    } catch (e) {
+                        console.error("Failed to delete old thumbnail:", e);
+                    }
+                }
+            }
+
+            // Clean up old hotel images from disk
+            for (const img of hotelImagesToDelete) {
+                const hotelImgPath = path.join(__dirname, "../../public/assets/img/products/hotels", img);
+                if (fs.existsSync(hotelImgPath)) {
+                    try {
+                        fs.unlinkSync(hotelImgPath);
+                        console.log("Successfully deleted old hotel image:", img);
+                    } catch (e) {
+                        console.error("Failed to delete old hotel image:", e);
+                    }
+                }
+            }
             return await productRepository.getProductById(id);
         } catch (error) {
             if(transaction) await transaction.rollback();

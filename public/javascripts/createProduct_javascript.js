@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                             </div>
                             <div class="md:col-span-3">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase">Lokasi</label>
-                                <input type="text" value="${item.title}" placeholder="Lokasi" class="itinerary-title w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 outline-none focus:border-primary-500">
+                                <input type="text" value="${item.title}" placeholder="Lokasi" class="itinerary-title w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 outline-none focus:border-primary-500 required">
                             </div>
                             <div class="md:col-span-6">
                                 <label class="block text-xs font-semibold text-gray-500 uppercase">Aktivitas</label>
@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                     </div>
                     <div class="md:col-span-3">
                         <label class="block text-xs font-semibold text-gray-500 uppercase">Lokasi</label>
-                        <input type="text" placeholder="Lokasi" class="itinerary-title w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 outline-none focus:border-primary-500">
+                        <input type="text" placeholder="Lokasi" class="itinerary-title w-full mt-1 px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 outline-none focus:border-primary-500 required">
                     </div>
                     <div class="md:col-span-6">
                         <label class="block text-xs font-semibold text-gray-500 uppercase">Aktivitas</label>
@@ -594,7 +594,15 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (!ProductHotelState.Madinah.name || ProductHotelState.Madinah.name.trim() === '') errors.push('Hotel Madinah');
 
         // Itinerary
-        if (!ProductItineraryState || ProductItineraryState.length === 0) errors.push('Itinerary');
+        if (!ProductItineraryState || ProductItineraryState.length === 0) {
+            errors.push('Itinerary');
+        } else {
+            ProductItineraryState.forEach((it, idx) => {
+                if (!it.title || it.title.trim() === '') {
+                    errors.push(`Lokasi/Title Itinerary Hari ke-${it.day_order || idx + 1}`);
+                }
+            });
+        }
 
         // Facilities at least one
         if ((!ProductFacilityState.INCLUDE || ProductFacilityState.INCLUDE.length === 0) && (!ProductFacilityState.EXCLUDE || ProductFacilityState.EXCLUDE.length === 0)) {
@@ -602,7 +610,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
 
         if(!ProductSnKState || ProductSnKState.length === 0) errors.push('Syarat & Ketentuan');
-
 
         if (errors.length > 0) {
             const msg = `Field berikut wajib diisi atau diperbaiki:\n- ${[...new Set(errors)].join('\n- ')}`;
