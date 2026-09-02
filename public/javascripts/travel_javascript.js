@@ -252,14 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const username = document.getElementById("username").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const id_level_input = document.getElementById("id_level").value;
+      const id_level = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
       const no_wa = document.getElementById("no_wa").value;
 
-      // For travel page, force id_level to 4
-      const id_level = 4;
-
-      if(!fullname || !username || !email || !is_active ) {
+      if(!fullname || !username || !email || !id_level || !is_active ) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
         return;
       }
@@ -280,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         username: String(username).trim(),
         email: String(email).trim(),
         no_wa: String(no_wa).trim(),
-        id_level: id_level,
+        id_level: 4, // Force id_level=4 for travel page
         is_active: String(is_active).trim(),
       };
 
@@ -289,6 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
+        console.log("Submitting user data:", body);
         const res = await fetch(url, {
           method: method,
           headers: {
@@ -297,21 +295,31 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(body),
         });
   
+        if (!res.ok) {
+          console.error("Form submit HTTP error: " + res.status, res.statusText);
+          const errorData = await res.json().catch(() => ({}));
+          swal("Gagal!", errorData.message || ("Error " + res.status + ": " + res.statusText), "error");
+          return;
+        }
+        
         const data = await res.json();
+        console.log("Form submit response:", data);
   
-        if (res.ok) {
+        if (data.status === "success" || res.ok) {
           swal("Berhasil!", data.message || "User berhasil disimpan", "success");
           setTimeout(() => {
             document.getElementById("userFormModal").classList.add("hidden");
-            // Reload dengan filter id_level=4
             const table = $("#userTable").DataTable();
-            table.ajax.url("/api/user/datatables?id_level=4").load();
+            table.settings()[0].aoServerData = { id_level: 4 };
+            table.ajax.reload();
           }, 1500);
         } else {
+          console.warn("Form submit status not success:", data);
           swal("Gagal!", data.message || "Terjadi kesalahan saat menyimpan data", "error");
         }
       } catch (err) {
-        swal("Error!", "Gagal menghubungi server", "error");
+        console.error("Form submit fetch error:", err.message);
+        swal("Error!", err.message || "Gagal menghubungi server", "error");
       }
     });
 
@@ -384,20 +392,24 @@ window.editUser = async function(id) {
   try {
     const res = await fetch(`/api/user/${id}`);
     
+    // Check HTTP status
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      console.error(`❌ editUser HTTP error: ${res.status}`, res.statusText);
+      swal("Gagal", `Error ${res.status}: ${res.statusText}`, "error");
+      return;
     }
     
     const json = await res.json();
+    console.log("✅ editUser response:", json);
 
-    if (json && json.status === "success" && json.data) {
+    if (json.status === "success") {
       const user = json.data;
       document.getElementById("hidden_id_user").value = user.id;
       document.getElementById("fullname").value = user.fullname;
       document.getElementById("username").value = user.username;
       document.getElementById("email").value = user.email;
       document.getElementById("no_wa").value = user.no_wa || '';
-      document.getElementById("id_level").value = user.id_level;
+      document.getElementById("id_level").value = 4; // Force id_level=4 for travel users
       document.getElementById("is_active").value = user.is_active;
 
       document.getElementById("modalTitle").innerHTML = 'Edit User';
@@ -405,11 +417,11 @@ window.editUser = async function(id) {
       document.getElementById("password").style.display = "none";
       document.getElementById("passwordDiv").style.display = "none";
     } else {
-      console.error("Invalid response structure:", json);
-      swal("Gagal", json?.message || "User tidak ditemukan", "error");
+      console.warn("❌ editUser status not success:", json);
+      swal("Gagal", json.message || "User tidak ditemukan", "error");
     }
   } catch (error) {
-    console.error("editUser error:", error);
+    console.error("❌ editUser fetch error:", error.message);
     swal("Error", error.message || "Gagal mengambil data", "error");
   }
 }
@@ -426,23 +438,28 @@ window.deleteUser = function(id) {
       try {
         const res = await fetch(`/api/user/${id}`, { method: "DELETE" });
         
+        // Check HTTP status
         if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          console.error(`❌ deleteUser HTTP error: ${res.status}`, res.statusText);
+          swal("Gagal!", `Error ${res.status}: ${res.statusText}`, "error");
+          return;
         }
         
         const data = await res.json();
+        console.log("✅ deleteUser response:", data);
 
-        if (data && data.status === "success") {
-          swal("Terhapus!", data.message || "User berhasil dihapus", "success");
-          // Reload dengan filter id_level=4
+        if (data.status === "success") {
+          swal("Terhapus!", data.message, "success");
+          // Reload dengan mempertahankan filter id_level=4
           const table = $("#userTable").DataTable();
-          table.ajax.url("/api/user/datatables?id_level=4").load();
+          table.settings()[0].aoServerData = { id_level: 4 };
+          table.ajax.reload();
         } else {
-          console.error("Delete failed:", data);
-          swal("Gagal!", data?.message || "Gagal menghapus user", "error");
+          console.warn("❌ deleteUser status not success:", data);
+          swal("Gagal!", data.message || "Gagal menghapus data", "error");
         }
       } catch (err) {
-        console.error("deleteUser error:", err);
+        console.error("❌ deleteUser fetch error:", err.message);
         swal("Error!", err.message || "Gagal menghubungi server", "error");
       }
     }
