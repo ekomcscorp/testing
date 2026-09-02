@@ -252,11 +252,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const username = document.getElementById("username").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const id_level = document.getElementById("id_level").value;
+      const id_level_input = document.getElementById("id_level").value;
       const is_active = document.getElementById("is_active").value;
       const no_wa = document.getElementById("no_wa").value;
 
-      if(!fullname || !username || !email || !id_level || !is_active ) {
+      // For travel page, force id_level to 4
+      const id_level = 4;
+
+      if(!fullname || !username || !email || !is_active ) {
         swal("Peringatan", "Semua field harus diisi dengan benar sebelum submit", "warning");
         return;
       }
@@ -277,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         username: String(username).trim(),
         email: String(email).trim(),
         no_wa: String(no_wa).trim(),
-        id_level: parseInt(id_level),
+        id_level: id_level,
         is_active: String(is_active).trim(),
       };
 
@@ -300,7 +303,9 @@ document.addEventListener("DOMContentLoaded", () => {
           swal("Berhasil!", data.message || "User berhasil disimpan", "success");
           setTimeout(() => {
             document.getElementById("userFormModal").classList.add("hidden");
-            $("#userTable").DataTable().ajax.reload();
+            // Reload dengan filter id_level=4
+            const table = $("#userTable").DataTable();
+            table.ajax.url("/api/user/datatables?id_level=4").load();
           }, 1500);
         } else {
           swal("Gagal!", data.message || "Terjadi kesalahan saat menyimpan data", "error");
@@ -376,31 +381,36 @@ window.closeUserModal = function() {
 }
 
 window.editUser = async function(id) {
-  
-  try{
-      const res = await fetch(`/api/user/${id}`);
-      const json = await res.json();
+  try {
+    const res = await fetch(`/api/user/${id}`);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
+    const json = await res.json();
 
-      if(json.status === "success"){
-        const user = json.data;
-        document.getElementById("hidden_id_user").value = user.id;
-        document.getElementById("fullname").value = user.fullname;
-        document.getElementById("username").value = user.username;
-        document.getElementById("email").value = user.email;
-        document.getElementById("no_wa").value = user.no_wa || '';
-        document.getElementById("id_level").value = user.id_level;
-        document.getElementById("is_active").value = user.is_active;
-     
+    if (json && json.status === "success" && json.data) {
+      const user = json.data;
+      document.getElementById("hidden_id_user").value = user.id;
+      document.getElementById("fullname").value = user.fullname;
+      document.getElementById("username").value = user.username;
+      document.getElementById("email").value = user.email;
+      document.getElementById("no_wa").value = user.no_wa || '';
+      document.getElementById("id_level").value = user.id_level;
+      document.getElementById("is_active").value = user.is_active;
 
-        document.getElementById("modalTitle").innerHTML = 'Edit User';
-        document.getElementById("userFormModal").classList.remove("hidden");
-        document.getElementById("password").style.display = "none";
-        document.getElementById("passwordDiv").style.display = "none";
-      } else {
-        swal("Gagal", "User tidak ditemukan", "error");
-      }
+      document.getElementById("modalTitle").innerHTML = 'Edit User';
+      document.getElementById("userFormModal").classList.remove("hidden");
+      document.getElementById("password").style.display = "none";
+      document.getElementById("passwordDiv").style.display = "none";
+    } else {
+      console.error("Invalid response structure:", json);
+      swal("Gagal", json?.message || "User tidak ditemukan", "error");
+    }
   } catch (error) {
-    swal("Error", "Gagal mengambil data", "error");
+    console.error("editUser error:", error);
+    swal("Error", error.message || "Gagal mengambil data", "error");
   }
 }
 
@@ -415,16 +425,25 @@ window.deleteUser = function(id) {
     if (willDelete) {
       try {
         const res = await fetch(`/api/user/${id}`, { method: "DELETE" });
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
         const data = await res.json();
 
-        if (data.status === "success") {
-          swal("Terhapus!", data.message, "success");
-          $("#userTable").DataTable().ajax.reload();
+        if (data && data.status === "success") {
+          swal("Terhapus!", data.message || "User berhasil dihapus", "success");
+          // Reload dengan filter id_level=4
+          const table = $("#userTable").DataTable();
+          table.ajax.url("/api/user/datatables?id_level=4").load();
         } else {
-          swal("Gagal!", data.message, "error");
+          console.error("Delete failed:", data);
+          swal("Gagal!", data?.message || "Gagal menghapus user", "error");
         }
       } catch (err) {
-        swal("Error!", "Gagal menghubungi server", "error");
+        console.error("deleteUser error:", err);
+        swal("Error!", err.message || "Gagal menghubungi server", "error");
       }
     }
   });
