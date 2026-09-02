@@ -14,12 +14,15 @@ class UserRepository {
     });
   }
 
-
-  async countAll() {
-    return await User.count();
+  async getAllTravels() {
+    return await User.findAll({
+      where: {
+        id_level: 4
+      }
+    })
   }
 
-  async getPaginatedUsers({ start, length, search, order, columns }) {
+  async getPaginatedUsers({ start, length, search, order, columns, filters }) {
     const where = {
       ...(search && {
         [Op.or]: [
@@ -31,6 +34,11 @@ class UserRepository {
       }),
       // Add any other filters you need here
     };
+
+    // Apply filters (e.g., id_level)
+    if (filters && filters.id_level) {
+      where.id_level = filters.id_level;
+    }
 
     const sort =
       order && order.length > 0
@@ -58,6 +66,13 @@ class UserRepository {
     });
 
     return result;
+  }
+
+  async countAll(filters) {
+    if (!filters) return await User.count();
+    const where = {};
+    if (filters.id_level) where.id_level = filters.id_level;
+    return await User.count({ where });
   }
 
   async getUserById(id) {

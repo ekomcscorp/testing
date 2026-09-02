@@ -22,6 +22,7 @@ class UserController {
 
       const { draw, start, length, order, columns } = req.query;
       const search = req.query["search[value]"] || req.query.search?.value || "";
+      const id_level = req.query.id_level ? parseInt(req.query.id_level) : null;
 
       const [result, totalCount] = await Promise.all([
         UserRepository.getPaginatedUsers({
@@ -30,8 +31,9 @@ class UserController {
           search,
           order,
           columns,
+          filters: id_level ? { id_level } : undefined,
         }),
-        UserRepository.countAll(),
+        UserRepository.countAll(id_level ? { id_level } : undefined),
       ]);
 
       const data = result.rows.map((user) => ({
