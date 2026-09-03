@@ -9,7 +9,7 @@
       </nav>
     </div>
     <% if (typeof akses !== 'undefined' && akses.add_level === 'Y') { %>
-    <button id="addUserBtn"
+    <button id="addTravelBtn"
       class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors shadow-lg shadow-primary-500/30">
       <i class="ph ph-plus text-lg"></i>
       <span>Tambah Travel
@@ -45,7 +45,7 @@
     </div>
 
     <div class="overflow-x-auto px-10">
-      <table class="w-full text-left p-0 border rounded-2xl" id="userTable">
+      <table class="w-full text-left p-0 border rounded-2xl" id="travelTable">
         <thead>
           <tr class=" dark:bg-slate-800/50 border-gray-100 dark:border-dark-border text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">
             <th class="p-5 w-32 text-center   border-b">Action</th>
@@ -75,7 +75,7 @@
   </div>
 </div>
 
-<div id="userFormModal" class="fixed inset-0 z-[80] hidden"  tabindex="-1" aria-hidden="true">
+<div id="travelFormModal" class="fixed inset-0 z-[80] hidden"  tabindex="-1" aria-hidden="true">
    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" id="menuModalBackdrop"></div>
    <div class="flex min-h-full items-center justify-center p-4">
     <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-dark-card text-left shadow-xl transition-all sm:w-full sm:max-w-lg">

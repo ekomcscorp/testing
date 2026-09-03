@@ -13,50 +13,99 @@ class UserController {
     }
   }
 
-  async getAllUsersDatatables(req, res) {
-    try {
-      const { akses } = res.locals;
-      if (akses.view_level?.trim() !== "Y") {
-        return res.status(403).json({ success: false, message: "Akses ditolak" });
-      }
-
-      const { draw, start, length, order, columns } = req.query;
-      const search = req.query["search[value]"] || req.query.search?.value || "";
-      const id_level = req.query.id_level ? parseInt(req.query.id_level) : null;
-
-      const [result, totalCount] = await Promise.all([
-        UserRepository.getPaginatedUsers({
-          start:  parseInt(start)  || 0,
-          length: parseInt(length) || 10,
-          search,
-          order,
-          columns,
-          filters: id_level ? { id_level } : undefined,
-        }),
-        UserRepository.countAll(id_level ? { id_level } : undefined),
-      ]);
-
-      const data = result.rows.map((user) => ({
-        ...user.get({ plain: true }),
-        akses: {
-          edit:   akses.edit_level?.trim()   === "Y",
-          delete: akses.delete_level?.trim() === "Y",
-        },
-      }));
-
-      return res.status(200).json({
-        success:         true,
-        message:         "User fetched successfully",
-        draw:            parseInt(draw) || 0,
-        recordsTotal:    totalCount,
-        recordsFiltered: result.count,
-        data,
-      });
-    } catch (error) {
-      console.error("Error getAllUsersDatatables:", error);
-      return response.error(res, error.message);
+async getAllUsersDatatables(req, res) {
+  try {
+    const akses = res.locals.akses || {};
+    
+    // Pastikan hak akses view diizinkan
+    if (akses.view_level?.trim() !== "Y") {
+      return res.status(403).json({ success: false, message: "Akses ditolak" });
     }
+
+    const { draw, start, length, order, columns } = req.query;
+    const search = req.query["search[value]"] || req.query.search?.value || "";
+    const id_level = req.query.id_level ? parseInt(req.query.id_level) : null;
+
+    const [result, totalCount] = await Promise.all([
+      UserRepository.getPaginatedUsers({
+        start:  parseInt(start)  || 0,
+        length: parseInt(length) || 10,
+        search,
+        order,
+        columns,
+        filters: id_level ? { id_level } : undefined,
+      }),
+      UserRepository.countAll(id_level ? { id_level } : undefined),
+    ]);
+
+    // Kembalikan objek 'akses' sebagai STRING 'Y' / 'N' agar cocok dengan JS DataTables
+    const data = result.rows.map((user) => ({
+      ...user.get({ plain: true }),
+      akses: {
+        edit:   akses.edit_level?.trim()   === "Y",
+        delete: akses.delete_level?.trim() === "Y",
+      },
+    }));
+
+    return res.status(200).json({
+      success:         true,
+      message:         "User fetched successfully",
+      draw:            parseInt(draw) || 0,
+      recordsTotal:    totalCount,
+      recordsFiltered: result.count,
+      data,
+    });
+  } catch (error) {
+    console.error("Error getAllUsersDatatables:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
+}
+
+async getAllTravelsDatatables(req, res) {
+  try {
+    const akses = res.locals.akses || {};
+
+    if (akses.view_level?.trim() !== "Y") {
+      return res.status(403).json({ success: false, message: "Akses ditolak" });
+    }
+
+    const { draw, start, length, order, columns } = req.query;
+    const search = req.query["search[value]"] || req.query.search?.value || "";
+
+    // Hardcode filter id_level = 4 khusus untuk Travel
+    const [result, totalCount] = await Promise.all([
+      UserRepository.getPaginatedUsers({
+        start:  parseInt(start)  || 0,
+        length: parseInt(length) || 10,
+        search,
+        order,
+        columns,
+        filters: { id_level: 4 },
+      }),
+      UserRepository.countAll({ id_level: 4 }),
+    ]);
+
+    const data = result.rows.map((user) => ({
+      ...user.get({ plain: true }),
+      akses: {
+        edit:   akses.edit_level?.trim()   === "Y",
+        delete: akses.delete_level?.trim() === "Y",
+      },
+    }));
+
+    return res.status(200).json({
+      success:         true,
+      message:         "Travel fetched successfully",
+      draw:            parseInt(draw) || 0,
+      recordsTotal:    totalCount,
+      recordsFiltered: result.count,
+      data,
+    });
+  } catch (error) {
+    console.error("Error getAllTravelsDatatables:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
 
   async getUserById(req, res) {
     try {

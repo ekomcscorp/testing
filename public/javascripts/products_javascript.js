@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 className: "p-2  border-b dark:text-white",
                 render: function (data, type, row) {
                    let buttons = `<div class="flex items-center justify-center gap-2">`;
-
+                   console.log("Row akses data:", row.akses);
                     buttons += `
                     <button onclick="viewDetail(${row.id})" class="p-2 rounded-lg text-orange-600 bg-orange-50 dark:bg-orange-500/10 hover:bg-orange-100" title="Lihat">
                       <i class="ph-bold ph-eye text-base"></i>
