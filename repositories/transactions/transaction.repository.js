@@ -273,6 +273,21 @@ class TransactionRepository {
         return await Transaction.count();
     }
 
+    // Diinisiasi di constructor atau file startup
+    async handleScheduledExpirations() {
+        try {
+            const unpaidTransactions = await Transaction.findAll({
+                where: { status: 'UNPAID' }
+            });
+
+            for (const tx of unpaidTransactions) {
+                await expireTransactionIfNeeded(tx);
+            }
+        } catch (err) {
+            console.error("[CRON EXPIRE ERROR]", err);
+        }
+    }
+
     async updateTransaction(id, transactionData, { transaction } = {}) {
         return await Transaction.update(transactionData, { 
             where: { id },

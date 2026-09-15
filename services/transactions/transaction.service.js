@@ -9,6 +9,7 @@ function getQuotaMultiplier(/* roomType */) {
 }
 
 class TransactionService {
+    
     // =======================
     // 1. CHECKOUT REGULER (FULL PAYMENT)
     // =======================
@@ -352,37 +353,135 @@ class TransactionService {
     // =======================
     async updateInstallmentPayment(installmentId, payload) {
         const { evidence_url, payment_method } = payload;
+
         const t = await sequelize.transaction();
 
         try {
-            const installment = await TransactionInstallment.findByPk(installmentId, {
-                lock: t.LOCK.UPDATE,
-                transaction: t
-            });
+            // ==========================================
+            // 1. AMBIL DATA TERMIN
+            // ==========================================
+            const installment = await TransactionInstallment.findByPk(
+                installmentId,
+                {
+                    lock: t.LOCK.UPDATE,
+                    transaction: t
+                }
+            );
 
             if (!installment) {
                 throw new Error("Data termin cicilan tidak ditemukan");
             }
 
-            // Jika sudah SUCCESS, abaikan (Idempotent)
-            if (installment.status === 'SUCCESS') {
-                await t.rollback();
-                return await transactionRepo.getTransactionById(installment.transaction_id);
+            // ==========================================
+            // 2. AMBIL TRANSAKSI INDUK
+            // ==========================================
+            let transaction = await transactionRepo.getTransactionById(
+                installment.transaction_id,
+                {
+                    transaction: t
+                }
+            );
+
+            if (!transaction) {
+                throw new Error("Transaksi induk tidak ditemukan");
             }
 
-            // Update status termin jadi PENDING
-            await transactionRepo.updateInstallment(installmentId, {
-                evidence_url,
-                payment_method: payment_method || 'TRANSFER',
-                status: 'PENDING',
-                updated_at: new Date()
-            }, { transaction: t });
+            // ==========================================
+            // 3. CEK DEADLINE 24 JAM
+            // ==========================================
+            //
+            // Hanya transaksi yang masih UNPAID yang
+            // dianggap sedang menunggu pembayaran awal.
+            //
+            // Jika sudah lewat 24 jam:
+            //
+            // UNPAID → FAILED
+            //
+            transaction = await this.expireTransactionIfNeeded(transaction);
 
+            if (transaction.status === 'FAILED') {
+                throw new Error(
+                    "Transaksi sudah melewati batas waktu pembayaran 24 jam dan telah dibatalkan."
+                );
+            }
+
+            // ==========================================
+            // 4. VALIDASI STATUS TRANSAKSI INDUK
+            // ==========================================
+            //
+            // Kalau transaksi sudah SUCCESS, berarti seluruh
+            // proses pembayaran selesai.
+            //
+            if (transaction.status === 'SUCCESS') {
+                throw new Error(
+                    "Transaksi sudah selesai dan tidak dapat menerima pembayaran lagi."
+                );
+            }
+
+            // ==========================================
+            // 5. IDEMPOTENT
+            // ==========================================
+            //
+            // Kalau termin sudah SUCCESS, jangan diproses
+            // ulang.
+            //
+            if (installment.status === 'SUCCESS') {
+                await t.rollback();
+
+                return await transactionRepo.getTransactionById(
+                    installment.transaction_id
+                );
+            }
+
+            // ==========================================
+            // 6. VALIDASI STATUS TERMIN
+            // ==========================================
+            //
+            // Jangan menerima upload baru untuk termin
+            // yang sudah PENDING.
+            //
+            if (installment.status === 'PENDING') {
+                throw new Error(
+                    "Bukti pembayaran termin ini sedang menunggu verifikasi admin."
+                );
+            }
+
+            if (installment.status !== 'UNPAID') {
+                throw new Error(
+                    "Status termin tidak mengizinkan upload pembayaran."
+                );
+            }
+
+            // ==========================================
+            // 7. UPDATE TERMIN
+            // ==========================================
+            await transactionRepo.updateInstallment(
+                installmentId,
+                {
+                    evidence_url,
+                    payment_method: payment_method || 'TRANSFER',
+                    status: 'PENDING',
+                    updated_at: new Date()
+                },
+                {
+                    transaction: t
+                }
+            );
+
+            // ==========================================
+            // 8. COMMIT
+            // ==========================================
             await t.commit();
-            return await transactionRepo.getTransactionById(installment.transaction_id);
+
+            return await transactionRepo.getTransactionById(
+                installment.transaction_id
+            );
 
         } catch (error) {
-            if (t && !t.finished) await t.rollback();
+            if (t && !t.finished) {
+                await t.rollback();
+            }
+
             throw error;
         }
     }
@@ -477,11 +576,60 @@ class TransactionService {
             data: result.rows
         };
     }
+    // Helper di dalam TransactionService atau di atas class
+    async expireTransactionIfNeeded(transactionInstance) {
+        if (!transactionInstance) {
+            return transactionInstance;
+        }
 
+        // Deadline 24 jam hanya berlaku untuk transaksi yang
+        // masih menunggu pembayaran.
+        if (transactionInstance.status !== 'UNPAID') {
+            return transactionInstance;
+        }
+
+        const createdAtTime = new Date(transactionInstance.created_at).getTime();
+
+        // Pastikan created_at valid
+        if (Number.isNaN(createdAtTime)) {
+            throw new Error("Tanggal pembuatan transaksi tidak valid.");
+        }
+
+        const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+        const expiredAt = createdAtTime + TWENTY_FOUR_HOURS;
+
+        // Tepat 24 jam sudah dianggap expired
+        if (Date.now() >= expiredAt) {
+            console.log(
+                `[TRANSACTION EXPIRED] transaction_id=${transactionInstance.id} | ` +
+                `created_at=${transactionInstance.created_at} | ` +
+                `expired_at=${new Date(expiredAt).toISOString()}`
+            );
+
+            // Gunakan method service sendiri.
+            // updateStatus() sudah menangani restore quota.
+            return await this.updateStatus(
+                transactionInstance.id,
+                'FAILED'
+            );
+        }
+
+        return transactionInstance;
+    }
     async updatePayment(id, payload) {
-        const checktTransaction = await transactionRepo.getTransactionById(id);
-        if (!checktTransaction) {
+        let transaction = await transactionRepo.getTransactionById(id);
+        if (!transaction) {
             throw new Error("Transaksi tidak ditemukan");
+        }
+
+        transaction = await this.expireTransactionIfNeeded(transaction);
+
+        if(transaction.status === 'FAILED') {
+            throw new Error("Transaksi sudah melewati batas waktu pembayaran 24 jam dan telah dibatalkan.");
+        }
+
+        if(transaction.status !== 'UNPAID' && transaction.status !== 'PENDING') {
+            throw new Error("Status transaksi tidak mengizinkan upload pembayaran.");
         }
 
         await transactionRepo.updateTransaction(id, {
