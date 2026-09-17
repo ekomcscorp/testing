@@ -201,9 +201,10 @@ window.deleteTransaction = async function(id) {
         const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
         const data = await res.json();
 
-        if (data.success) {
+        if (res.ok) {
           swal("Terhapus!", data.message || "Transaksi berhasil dihapus", "success");
-          setTimeout(() => location.reload(), 1500);
+          $("#transactionsTable").DataTable().ajax.reload(null, false);
+          
         } else {
           swal("Gagal!", data.message || "Terjadi kesalahan saat menghapus data", "error");
         }

@@ -18,6 +18,9 @@ const server = http.createServer(app); // Ganti dari app.listen
 const io = new Server(server); // Socket.IO instance
 const { setIO } = require("./utils/socketIO");
 setIO(io); // ✅ ini penting agar getIO() bisa dipakai di auth.service.js
+const startTransactionExpirationJob = require('./services/transactions/jobs/transaction_expiration.job.js');
+
+startTransactionExpirationJob();
 
 app.set("trust proxy", true);
 const isProduction = process.env.NODE_ENV === "production";
