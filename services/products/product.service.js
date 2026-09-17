@@ -150,102 +150,109 @@ class ProductService {
     }
 }
 
-       async updateProduct(id, productData) {
-         const transaction = await sequelize.transaction();
-         try {
-             const oldProduct = await productRepository.getProductById(id);
-             if (!oldProduct) {
-                 throw new Error("Product not found");
-             }
+    async updateProduct(id, productData) {
+    const transaction = await sequelize.transaction();
+        try {
+            const oldProduct = await productRepository.getProductById(id);
+            if (!oldProduct) {
+                throw new Error("Product not found");
+            }
 
-             let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
+            let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
 
-             // Determine thumbnail to delete
-             let thumbnailToDelete = null;
-             if (productFields.thumbnail_url && oldProduct.thumbnail_url && productFields.thumbnail_url !== oldProduct.thumbnail_url) {
-                 thumbnailToDelete = oldProduct.thumbnail_url;
-             }
+            // 💡 PERBAIKAN: Cek apakah ada file thumbnail baru yang diunggah
+            let thumbnailToDelete = null;
+            if (productFields.thumbnail_url && oldProduct.thumbnail_url && productFields.thumbnail_url !== oldProduct.thumbnail_url) {
+                thumbnailToDelete = oldProduct.thumbnail_url;
+            } else if (!productFields.thumbnail_url) {
+                // Jika tidak ada thumbnail baru di-upload, pertahankan thumbnail_url yang lama
+                productFields.thumbnail_url = oldProduct.thumbnail_url;
+            }
 
-             // Determine hotel images to delete
-             const oldHotelImages = (oldProduct.hotels || []).map(h => h.image).filter(Boolean);
-             const newHotelImages = (hotels || []).map(h => h.image).filter(Boolean);
-             const hotelImagesToDelete = oldHotelImages.filter(img => !newHotelImages.includes(img));
-            
+            // 💡 PERBAIKAN: Deteksi gambar hotel yang diganti atau dihapus
+            const oldHotelImages = (oldProduct.hotels || []).map(h => h.image).filter(Boolean);
+            const newHotelImages = (hotels || []).map(h => h.image).filter(Boolean);
+            const hotelImagesToDelete = oldHotelImages.filter(img => !newHotelImages.includes(img));
+
             // Validasi dan normalisasi status
             const validStatuses = ['draft', 'publish', 'closed'];
             if (productFields.status) {
                 productFields.status = productFields.status.trim().toLowerCase();
-                
                 if (!validStatuses.includes(productFields.status)) {
                     throw new Error(`Invalid status. Allowed values: ${validStatuses.join(', ')}`);
                 }
             }
-            
-            console.log("Updated ProductFields with status:", productFields.status);
-            
-            await productRepository.updateProduct(id, productFields);
-            
+
+            // Update data produk utama
+            await productRepository.updateProduct(id, productFields, { transaction });
+
             const updateRelation = async (repo, data, mapper) => {
-                if(data) {
+                if (data) {
                     const validatedData = typeof data === "string" ? JSON.parse(data) : data;
+                    await repo.deleteByProduct(id, { transaction });
 
-                    await repo.deleteByProduct(id,{transaction});
-
-                    if(validatedData.length > 0){
+                    if (validatedData.length > 0) {
                         const payload = validatedData.map(item => mapper(item, id));
-                        await repo.createMany(payload, {transaction});
+                        await repo.createMany(payload, { transaction });
                     }
                 }
-            }
-             // 2. Proses Semua Relasi
-                    await updateRelation(productPricesRepository, prices, (p, pid) => ({
-                        product_id: pid, 
-                        room_types: p.type || p.room_types, 
-                        price: p.price,
-                        quota: p.quota || 0
-                    }));
+            };
 
-                    await updateRelation(productFlightRepository, flights, (f, pid) => ({
-                        product_id: pid, 
-                        airline_name: f.airline_name, 
-                        type: f.type
-                    }));
+            // Proses Relasi
+            await updateRelation(productPricesRepository, prices, (p, pid) => ({
+                product_id: pid,
+                room_types: p.type || p.room_types,
+                price: p.price,
+                quota: p.quota || 0
+            }));
 
-                    await updateRelation(productNoteRepository, notes, (n, pid) => ({
-                        product_id: pid, 
-                        note: n.note
-                    }));
+            await updateRelation(productFlightRepository, flights, (f, pid) => ({
+                product_id: pid,
+                airline_name: f.airline_name,
+                type: f.type
+            }));
 
-                    await updateRelation(productHotelRepository, hotels, (h, pid) => ({
-                        product_id: pid, name: h.name, city: h.city, rating: h.rating, jarak: h.jarak, image: h.image || "", facilities: h.facilities
-                    }));
+            await updateRelation(productNoteRepository, notes, (n, pid) => ({
+                product_id: pid,
+                note: n.note
+            }));
 
-                    await updateRelation(productItineraryRepository, itineraries, (i, pid) => {
-                        if (!i.title || i.title.trim() === '') {
-                            throw new Error("Title/Lokasi Itinerary wajib diisi");
-                        }
-                        return {
-                            product_id: pid, 
-                            day_order: i.day_order, 
-                            title: i.title, 
-                            description: i.description
-                        };
-                    });
+            await updateRelation(productHotelRepository, hotels, (h, pid) => ({
+                product_id: pid,
+                name: h.name,
+                city: h.city,
+                rating: h.rating,
+                jarak: h.jarak,
+                image: h.image || "",
+                facilities: h.facilities
+            }));
 
-                    await updateRelation(productSnKRepository, snks, (i, pid) => ({
-                        product_id: pid, 
-                        name: i.name
-                    }));
+            await updateRelation(productItineraryRepository, itineraries, (i, pid) => {
+                if (!i.title || i.title.trim() === '') {
+                    throw new Error("Title/Lokasi Itinerary wajib diisi");
+                }
+                return {
+                    product_id: pid,
+                    day_order: i.day_order,
+                    title: i.title,
+                    description: i.description
+                };
+            });
 
-                    await updateRelation(productFacilityRepository, facilities, (f, pid) => ({
-                        product_id: pid, 
-                        facility: f.facility, 
-                        type: f.type
-                    }));
-            console.log("productFields:", productFields);
+            await updateRelation(productSnKRepository, snks, (i, pid) => ({
+                product_id: pid,
+                name: i.name
+            }));
+
+            await updateRelation(productFacilityRepository, facilities, (f, pid) => ({
+                product_id: pid,
+                facility: f.facility,
+                type: f.type
+            }));
+
             await transaction.commit();
 
-            // Clean up old thumbnail from disk
+            // 💡 UNLINK/DELETE FILE LAMA DARI DISK
             if (thumbnailToDelete) {
                 const thumbPath = path.join(__dirname, "../../public/assets/img/products/thumbnails", thumbnailToDelete);
                 if (fs.existsSync(thumbPath)) {
@@ -258,7 +265,6 @@ class ProductService {
                 }
             }
 
-            // Clean up old hotel images from disk
             for (const img of hotelImagesToDelete) {
                 const hotelImgPath = path.join(__dirname, "../../public/assets/img/products/hotels", img);
                 if (fs.existsSync(hotelImgPath)) {
@@ -270,19 +276,43 @@ class ProductService {
                     }
                 }
             }
+
             return await productRepository.getProductById(id);
         } catch (error) {
-            if(transaction) await transaction.rollback();
+            if (transaction && !transaction.finished) await transaction.rollback();
             throw new Error(error.message);
         }
-       }
+    }
 
        
        async deleteByProduct(id) {
-            try{
-                    return await productRepository.deleteProduct(id);
+            try {
+                const product = await productRepository.getProductById(id);
+                if (!product) return null;
+
+                // Hapus thumbnail jika ada
+                if (product.thumbnail_url) {
+                    const thumbPath = path.join(__dirname, "../../public/assets/img/products/thumbnails", product.thumbnail_url);
+                    if (fs.existsSync(thumbPath)) {
+                        try { fs.unlinkSync(thumbPath); } catch (e) { console.error("Error deleting thumbnail:", e); }
+                    }
+                }
+
+                // Hapus gambar hotel jika ada
+                if (product.hotels && product.hotels.length > 0) {
+                    for (const hotel of product.hotels) {
+                        if (hotel.image) {
+                            const hotelImgPath = path.join(__dirname, "../../public/assets/img/products/hotels", hotel.image);
+                            if (fs.existsSync(hotelImgPath)) {
+                                try { fs.unlinkSync(hotelImgPath); } catch (e) { console.error("Error deleting hotel image:", e); }
+                            }
+                        }
+                    }
+                }
+
+                return await productRepository.deleteProduct(id);
             } catch (error) {
-                    throw new Error(error.message);
+                throw new Error(error.message);
             }
         }
 
