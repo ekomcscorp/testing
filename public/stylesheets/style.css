@@ -6,17 +6,22 @@
         }
         
         .status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
-            border-color: #fde68a;
+            background-color: #6ef0ff;
+            color: #00a4b7;
+            border-color: #8af3fd;
         }
         
         .status-unpaid {
-            background-color: #fee2e2;
+            background-color: #fff58a;
             color: #991b1b;
-            border-color: #fecaca;
+            border-color: #fef1ca;
         }
         
+        .status-failed {
+            background-color: #ff2200cf;
+            color: #fff;
+            border-color: #e00f00;
+        }
         .status-dot {
             display: inline-block;
             width: 8px;
@@ -66,7 +71,7 @@
             margin-top: 10px;
         }
         
-        .status-success {
+        /* .status-success {
             background-color: #dcfce7;
             color: #166534;
             border-color: #bbf7d0;
@@ -82,7 +87,7 @@
             background-color: #fee2e2;
             color: #991b1b;
             border-color: #fecaca;
-        }
+        } */
         
         .status-dot {
             display: inline-block;

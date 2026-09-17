@@ -22,7 +22,11 @@
                     } else if (data.status === 'PENDING') {
                         statusText = 'Verifikasi pembayaran';
                         statusClass = 'status-pending';
-                        dotColor = '#facc15';
+                        dotColor = '#fff';
+                    } else if (data.status === 'FAILED') {
+                        statusText = 'Gagal';
+                        statusClass = 'status-failed';
+                        dotColor = '#ffff';
                     }
                 %>
                     <span class="<%= statusClass %> text-sm font-semibold p-2 border flex rounded-xl items-center">
@@ -610,7 +614,7 @@
                         </tbody>
                     </table>
 
-                    <div class="flex justify-end z-">
+                    <div class="flex justify-end ">
                         <div class="w-64 space-y-2">
                             <%if (Array.isArray(data.installments) && data.installments.length > 0) {%>
                                 <% data.installments.forEach((installment, index) => { %> 
@@ -655,7 +659,7 @@
 
     <script>
         (function() {
-            const transactionId = <%= data.id %>;
+            const transactionId = `<%= data.id %>`;
             const initialEvidenceUrl = `<%= data.evidence_url ? data.evidence_url : '' %>`;
             const evidenceContent = document.getElementById('evidenceContent');
 
