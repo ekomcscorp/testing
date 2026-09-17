@@ -18,7 +18,7 @@ class ProductHotelRepository {
   async deleteByProduct(productId, options = {}) {
     return await ProductHotel.destroy({
       where: { product_id: productId },
-      options,
+      ...options,
     });
   }
 }

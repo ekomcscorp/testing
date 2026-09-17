@@ -168,7 +168,7 @@ class ProductService {
 }
 
     async updateProduct(id, productData) {
-    const transaction = await sequelize.transaction();
+        const transaction = await sequelize.transaction();
         try {
             const oldProduct = await productRepository.getProductById(id);
             if (!oldProduct) {
@@ -177,21 +177,37 @@ class ProductService {
 
             let { prices, flights, notes, snks, facilities, hotels, itineraries, ...productFields } = productData;
 
-            // 💡 PERBAIKAN: Cek apakah ada file thumbnail baru yang diunggah
+            // 1. Dapatkan map gambar hotel lama berdasarkan Kota/ID
+            const oldHotelsMap = {};
+            (oldProduct.hotels || []).forEach(h => {
+                if (h.city) oldHotelsMap[h.city] = h.image;
+            });
+
+            // 2. Normalisasi data hotels dan amankan nama file gambar
+            const parsedHotels = typeof hotels === "string" ? JSON.parse(hotels) : (hotels || []);
+            const updatedHotels = parsedHotels.map(h => {
+                // Jika tidak ada image baru diupload, gunakan image lama dari DB berdasarkan kota
+                const finalImage = h.image || oldHotelsMap[h.city] || "";
+                return {
+                    ...h,
+                    image: finalImage
+                };
+            });
+
+            // 3. Deteksi Thumbnail
             let thumbnailToDelete = null;
             if (productFields.thumbnail_url && oldProduct.thumbnail_url && productFields.thumbnail_url !== oldProduct.thumbnail_url) {
                 thumbnailToDelete = oldProduct.thumbnail_url;
             } else if (!productFields.thumbnail_url) {
-                // Jika tidak ada thumbnail baru di-upload, pertahankan thumbnail_url yang lama
                 productFields.thumbnail_url = oldProduct.thumbnail_url;
             }
 
-            // 💡 PERBAIKAN: Deteksi gambar hotel yang diganti atau dihapus
+            // 4. Deteksi Gambar Hotel yang harus dihapus dari Disk
             const oldHotelImages = (oldProduct.hotels || []).map(h => h.image).filter(Boolean);
-            const newHotelImages = (hotels || []).map(h => h.image).filter(Boolean);
+            const newHotelImages = updatedHotels.map(h => h.image).filter(Boolean);
             const hotelImagesToDelete = oldHotelImages.filter(img => !newHotelImages.includes(img));
 
-            // Validasi dan normalisasi status
+            // Validasi status
             const validStatuses = ['draft', 'publish', 'closed'];
             if (productFields.status) {
                 productFields.status = productFields.status.trim().toLowerCase();
@@ -200,7 +216,7 @@ class ProductService {
                 }
             }
 
-            // Update data produk utama
+            // Update produk utama
             await productRepository.updateProduct(id, productFields, { transaction });
 
             const updateRelation = async (repo, data, mapper) => {
@@ -215,7 +231,7 @@ class ProductService {
                 }
             };
 
-            // Proses Relasi
+            // Process Relasi
             await updateRelation(productPricesRepository, prices, (p, pid) => ({
                 product_id: pid,
                 room_types: p.type || p.room_types,
@@ -234,13 +250,14 @@ class ProductService {
                 note: n.note
             }));
 
-            await updateRelation(productHotelRepository, hotels, (h, pid) => ({
+            // 💡 FIX HOTEL: Gunakan updatedHotels yang gambarnya sudah diamankan
+            await updateRelation(productHotelRepository, updatedHotels, (h, pid) => ({
                 product_id: pid,
                 name: h.name,
                 city: h.city,
                 rating: h.rating,
                 jarak: h.jarak,
-                image: h.image || "",
+                image: h.image, // Sekarang nilainya terjamin ada
                 facilities: h.facilities
             }));
 
@@ -269,7 +286,7 @@ class ProductService {
 
             await transaction.commit();
 
-            // 💡 UNLINK/DELETE FILE LAMA DARI DISK
+            // Clean-up file lama dari disk
             if (thumbnailToDelete) {
                 safeDeleteFile("thumbnails", thumbnailToDelete);
             }
@@ -277,7 +294,6 @@ class ProductService {
             for (const img of hotelImagesToDelete) {
                 safeDeleteFile("hotels", img);
             }
-
 
             return await productRepository.getProductById(id);
         } catch (error) {
