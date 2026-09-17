@@ -94,6 +94,8 @@ app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Heade
 app.use(injectUser); // ⬅️ Middleware global
 app.use(express.static(path.join(__dirname, "public")));
 
+//💡 TAMBAHKAN BARIS INI: Expose path /assets agar sesuai dengan URL di Blade/Frontend
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 app.use("/uploads/hotels", express.static(path.join(__dirname, "public/assets/img/products/hotels")));
 app.use("/uploads/thumbnails", express.static(path.join(__dirname, "public/assets/img/products/thumbnails")));
