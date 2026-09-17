@@ -11,7 +11,24 @@ const productFacilityRepository = require("../../repositories/products/productFa
 const productItineraryRepository = require("../../repositories/products/productItinerary.repository");
 
 
+// Helper hapus file yang aman di Production
+const safeDeleteFile = (folderSubPath, filename) => {
+    if (!filename) return;
+    try {
+        const cleanFileName = path.basename(filename);
+        // Menggunakan process.cwd() menunjuk langsung ke root project
+        const absolutePath = path.resolve(process.cwd(), "public/assets/img/products", folderSubPath, cleanFileName);
 
+        if (fs.existsSync(absolutePath)) {
+            fs.unlinkSync(absolutePath);
+            console.log(`[FILE DELETED] ${absolutePath}`);
+        } else {
+            console.warn(`[FILE NOT FOUND] ${absolutePath}`);
+        }
+    } catch (e) {
+        console.error(`[DELETE ERROR] ${filename}:`, e.message);
+    }
+};
 
 class ProductService {
    async getAllProduct(user) {
@@ -254,28 +271,13 @@ class ProductService {
 
             // 💡 UNLINK/DELETE FILE LAMA DARI DISK
             if (thumbnailToDelete) {
-                const thumbPath = path.join(__dirname, "../../public/assets/img/products/thumbnails", thumbnailToDelete);
-                if (fs.existsSync(thumbPath)) {
-                    try {
-                        fs.unlinkSync(thumbPath);
-                        console.log("Successfully deleted old thumbnail:", thumbnailToDelete);
-                    } catch (e) {
-                        console.error("Failed to delete old thumbnail:", e);
-                    }
-                }
+                safeDeleteFile("thumbnails", thumbnailToDelete);
             }
 
             for (const img of hotelImagesToDelete) {
-                const hotelImgPath = path.join(__dirname, "../../public/assets/img/products/hotels", img);
-                if (fs.existsSync(hotelImgPath)) {
-                    try {
-                        fs.unlinkSync(hotelImgPath);
-                        console.log("Successfully deleted old hotel image:", img);
-                    } catch (e) {
-                        console.error("Failed to delete old hotel image:", e);
-                    }
-                }
+                safeDeleteFile("hotels", img);
             }
+
 
             return await productRepository.getProductById(id);
         } catch (error) {
@@ -284,6 +286,7 @@ class ProductService {
         }
     }
 
+    
        
        async deleteByProduct(id) {
             try {
@@ -292,20 +295,14 @@ class ProductService {
 
                 // Hapus thumbnail jika ada
                 if (product.thumbnail_url) {
-                    const thumbPath = path.join(__dirname, "../../public/assets/img/products/thumbnails", product.thumbnail_url);
-                    if (fs.existsSync(thumbPath)) {
-                        try { fs.unlinkSync(thumbPath); } catch (e) { console.error("Error deleting thumbnail:", e); }
-                    }
+                    safeDeleteFile("thumbnails", product.thumbnail_url);
                 }
 
                 // Hapus gambar hotel jika ada
                 if (product.hotels && product.hotels.length > 0) {
                     for (const hotel of product.hotels) {
                         if (hotel.image) {
-                            const hotelImgPath = path.join(__dirname, "../../public/assets/img/products/hotels", hotel.image);
-                            if (fs.existsSync(hotelImgPath)) {
-                                try { fs.unlinkSync(hotelImgPath); } catch (e) { console.error("Error deleting hotel image:", e); }
-                            }
+                            safeDeleteFile("hotels", hotel.image);
                         }
                     }
                 }
