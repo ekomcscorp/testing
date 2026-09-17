@@ -22,3 +22,16 @@ config/config.json
 
 # Graphifyy output folder
 graphify-out/
+
+# Ignore file penting
+public/assets/img/transactions
+public/assets/img/transactions/jamaah
+public/assets/img/products/hotels/*
+public/assets/img/products/thumbnails/*
+
+#
+!public/assets/img/transactions/.gitkeep
+!public/assets/img/transactions/jamaah/.gitkeep
+!public/assets/img/products/hotels/.gitkeep
+!public/assets/img/products/thumbnails/.gitkeep
+!public/assets/img/profiles/.gitkeep
