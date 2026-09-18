@@ -31,7 +31,7 @@ const diskStrorage = multer.diskStorage({
 
     // 💡 FIX 1: Gunakan '===' untuk pengecekan environment
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
-      ? "/home/public_html/assets_ext/img/products"
+      ? "/assets_ext/img/products"
       : path.join(__dirname, "../../../public/assets/img/products");
 
     let uploadPath = UPLOAD_BASE_DIR;

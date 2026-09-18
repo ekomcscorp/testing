@@ -104,7 +104,7 @@ app.use("/uploads/transactions", express.static(path.join(__dirname, "public/ass
 app.use("/uploads/jamaah", express.static(path.join(__dirname, "public/assets/img/transactions/jamaah")));
 
 const uploadsPath = process.env.NODE_ENV === "production"
-? "/home/public_html/assets_ext/img/products/"
+? "/assets_ext/img/products/"
 : path.join(__dirname, "public/assets/img/products/");
 
 app.use("/assets/img/products/thumbnails", express.static(path.join(uploadsPath, "/thumbnails")));
