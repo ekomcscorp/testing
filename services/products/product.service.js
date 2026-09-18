@@ -16,8 +16,13 @@ const safeDeleteFile = (folderSubPath, filename) => {
     if (!filename) return;
     try {
         const cleanFileName = path.basename(filename);
+
+        const baseDir = process.env.NODE_ENV = 'production' 
+            ? "/home/public_html/assets_ext/img/products/"
+            : path.resolve(process.cwd(), "public/assets/img/products/");
+            
         // Menggunakan process.cwd() menunjuk langsung ke root project
-        const absolutePath = path.resolve(process.cwd(), "public/assets/img/products", folderSubPath, cleanFileName);
+        const absolutePath = path.resolve(baseDir, folderSubPath, cleanFileName);
 
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);

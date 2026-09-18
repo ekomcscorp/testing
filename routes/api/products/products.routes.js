@@ -28,28 +28,35 @@ const diskStrorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const isValid = FILE_TYPE[file.mimetype];
     let uploadError = new Error('Invalid image type: JPG, JPEG, PNG, WEBP only allowed');
-    let uploadPath = path.join(__dirname, "../../../public/assets/img/products/");
 
+    // 💡 FIX 1: Gunakan '===' untuk pengecekan environment
+    const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
+      ? "/home/public_html/assets_ext/img/products"
+      : path.join(__dirname, "../../../public/assets/img/products");
+
+    let uploadPath = UPLOAD_BASE_DIR;
+
+    // 💡 FIX 2: Gunakan path.join agar penanganan slash aman di Linux/Mac/Windows
     if (file.fieldname === "thumbnail") {
-      uploadPath += "thumbnails/";
+      uploadPath = path.join(uploadPath, "thumbnails");
     }
 
     if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
-      uploadPath += "hotels/";
+      uploadPath = path.join(uploadPath, "hotels");
     }
 
-    if(isValid){
-        uploadError = null;
+    if (isValid) {
+      uploadError = null;
     }
 
-    cb(uploadError, path.resolve(uploadPath));
+    cb(uploadError, uploadPath);
   },
   filename: function(req, file, cb) {
      const ext = file.originalname.split(".").pop();
      const hash = crypto.randomBytes(16).toString('hex'); 
      cb(null, `${hash}.${ext}`);
   }
-})
+});
 
 const upload = multer({storage: diskStrorage})
 

@@ -103,6 +103,13 @@ app.use("/uploads/profiles", express.static(path.join(__dirname, "public/assets/
 app.use("/uploads/transactions", express.static(path.join(__dirname, "public/assets/img/transactions")));
 app.use("/uploads/jamaah", express.static(path.join(__dirname, "public/assets/img/transactions/jamaah")));
 
+const uploadsPath = process.env.NODE_ENV === "production"
+? "/home/public_html/assets_ext/img/products/"
+: path.join(__dirname, "public/assets/img/products/");
+
+app.use("/assets/img/products/thumbnails", express.static(path.join(uploadsPath, "/thumbnails")));
+app.use("/assets/img/products/hotels", express.static(path.join(uploadsPath, "/hotels")));
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
