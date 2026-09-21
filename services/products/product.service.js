@@ -18,9 +18,9 @@ const safeDeleteFile = (folderSubPath, filename) => {
         const cleanFileName = path.basename(filename);
 
         const baseDir = process.env.NODE_ENV = 'production' 
-            ? "/home/public_html/assets_ext/img/products/"
+            ? path.resolve(process.cwd(), "../../../external_assets/img/products/" )
             : path.resolve(process.cwd(), "public/assets/img/products/");
-            
+
         // Menggunakan process.cwd() menunjuk langsung ke root project
         const absolutePath = path.resolve(baseDir, folderSubPath, cleanFileName);
 

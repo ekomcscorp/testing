@@ -31,7 +31,7 @@ const diskStrorage = multer.diskStorage({
 
     // 💡 FIX 1: Gunakan '===' untuk pengecekan environment
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
-      ? "/assets_ext/img/products"
+      ? path.resolve(process.cwd(),"/external_assets/img/products")
       : path.join(__dirname, "../../../public/assets/img/products");
 
     let uploadPath = UPLOAD_BASE_DIR;
@@ -43,6 +43,10 @@ const diskStrorage = multer.diskStorage({
 
     if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
       uploadPath = path.join(uploadPath, "hotels");
+    }
+
+    if(!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, {recursive: true});
     }
 
     if (isValid) {
