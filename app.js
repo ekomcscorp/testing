@@ -92,7 +92,6 @@ const extractJwt = require("./middleware/extractJwt");
 app.use(extractJwt); // ⬅️ Middleware untuk mendeteksi JWT dari Cookie/Header
 
 app.use(injectUser); // ⬅️ Middleware global
-app.use(express.static(path.join(__dirname, "public")));
 
 //💡 TAMBAHKAN BARIS INI: Expose path /assets agar sesuai dengan URL di Blade/Frontend
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
@@ -103,12 +102,26 @@ app.use("/uploads/profiles", express.static(path.join(__dirname, "public/assets/
 app.use("/uploads/transactions", express.static(path.join(__dirname, "public/assets/img/transactions")));
 app.use("/uploads/jamaah", express.static(path.join(__dirname, "public/assets/img/transactions/jamaah")));
 
+// 💡 TESTING: Tunjuk ke external_assets saat production
 const uploadsPath = process.env.NODE_ENV === "production"
-? path.resolve(process.cwd(), "../../../external_assets/img/products/")
-: path.join(__dirname, "public/assets/img/products/");
+  ? path.resolve(process.cwd(), "../../../external_assets")
+  : path.join(__dirname, "public/assets/img/products");
 
-app.use("/assets/img/products/thumbnails", express.static(path.join(uploadsPath, "/thumbnails")));
-app.use("/assets/img/products/hotels", express.static(path.join(uploadsPath, "/hotels")));
+// Static route untuk membaca file
+app.use("/assets/img/products", express.static(uploadsPath));
+app.use("/assets/img/products/thumbnails", express.static(uploadsPath));
+app.use("/assets/img/products/hotels", express.static(uploadsPath));
+
+// external
+// const uploadsPath = process.env.NODE_ENV === "production"
+// ? path.resolve(process.cwd(), "../../../external_assets/img/products/")
+// : path.join(__dirname, "public/assets/img/products/");
+
+// app.use("/assets/img/products/thumbnails", express.static(path.join(uploadsPath, "/thumbnails")));
+// app.use("/assets/img/products/hotels", express.static(path.join(uploadsPath, "/hotels")));
+
+
+app.use(express.static(path.join(__dirname, "public")));
 
 
 app.use(bodyParser.json());

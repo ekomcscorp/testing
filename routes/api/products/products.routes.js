@@ -29,31 +29,21 @@ const diskStrorage = multer.diskStorage({
     const isValid = FILE_TYPE[file.mimetype];
     let uploadError = new Error('Invalid image type: JPG, JPEG, PNG, WEBP only allowed');
 
-    // 💡 FIX 1: Gunakan '===' untuk pengecekan environment
+    // 💡 TESTING: Direct ke folder external_assets di root domain
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
-      ? path.resolve(process.cwd(),"/external_assets/img/products")
+      ? path.resolve(process.cwd(), "../../../external_assets")
       : path.join(__dirname, "../../../public/assets/img/products");
 
-    let uploadPath = UPLOAD_BASE_DIR;
-
-    // 💡 FIX 2: Gunakan path.join agar penanganan slash aman di Linux/Mac/Windows
-    if (file.fieldname === "thumbnail") {
-      uploadPath = path.join(uploadPath, "thumbnails");
-    }
-
-    if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
-      uploadPath = path.join(uploadPath, "hotels");
-    }
-
-    if(!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, {recursive: true});
+    // Auto-create folder jika belum ada
+    if (!fs.existsSync(UPLOAD_BASE_DIR)) {
+      fs.mkdirSync(UPLOAD_BASE_DIR, { recursive: true });
     }
 
     if (isValid) {
       uploadError = null;
     }
 
-    cb(uploadError, uploadPath);
+    cb(uploadError, UPLOAD_BASE_DIR);
   },
   filename: function(req, file, cb) {
      const ext = file.originalname.split(".").pop();
@@ -61,6 +51,44 @@ const diskStrorage = multer.diskStorage({
      cb(null, `${hash}.${ext}`);
   }
 });
+
+// const diskStrorage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     const isValid = FILE_TYPE[file.mimetype];
+//     let uploadError = new Error('Invalid image type: JPG, JPEG, PNG, WEBP only allowed');
+
+//     // 💡 FIX 1: Gunakan '===' untuk pengecekan environment
+//     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
+//       ? path.resolve(process.cwd(),"/external_assets/img/products")
+//       : path.join(__dirname, "../../../public/assets/img/products");
+
+//     let uploadPath = UPLOAD_BASE_DIR;
+
+//     // 💡 FIX 2: Gunakan path.join agar penanganan slash aman di Linux/Mac/Windows
+//     if (file.fieldname === "thumbnail") {
+//       uploadPath = path.join(uploadPath, "thumbnails");
+//     }
+
+//     if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
+//       uploadPath = path.join(uploadPath, "hotels");
+//     }
+
+//     if(!fs.existsSync(uploadPath)) {
+//       fs.mkdirSync(uploadPath, {recursive: true});
+//     }
+
+//     if (isValid) {
+//       uploadError = null;
+//     }
+
+//     cb(uploadError, uploadPath);
+//   },
+//   filename: function(req, file, cb) {
+//      const ext = file.originalname.split(".").pop();
+//      const hash = crypto.randomBytes(16).toString('hex'); 
+//      cb(null, `${hash}.${ext}`);
+//   }
+// });
 
 const upload = multer({storage: diskStrorage})
 

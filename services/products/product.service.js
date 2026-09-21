@@ -10,19 +10,17 @@ const productHotelRepository = require("../../repositories/products/productHotel
 const productFacilityRepository = require("../../repositories/products/productFacility.repository");
 const productItineraryRepository = require("../../repositories/products/productItinerary.repository");
 
-
-// Helper hapus file yang aman di Production
 const safeDeleteFile = (folderSubPath, filename) => {
     if (!filename) return;
     try {
         const cleanFileName = path.basename(filename);
+        
+        // 💡 TESTING: Tunjuk ke external_assets saat production
+        const baseDir = process.env.NODE_ENV === "production"
+            ? path.resolve(process.cwd(), "../../../external_assets")
+            : path.resolve(process.cwd(), "public/assets/img/products");
 
-        const baseDir = process.env.NODE_ENV = 'production' 
-            ? path.resolve(process.cwd(), "../../../external_assets/img/products/" )
-            : path.resolve(process.cwd(), "public/assets/img/products/");
-
-        // Menggunakan process.cwd() menunjuk langsung ke root project
-        const absolutePath = path.resolve(baseDir, folderSubPath, cleanFileName);
+        const absolutePath = path.resolve(baseDir, cleanFileName);
 
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);
@@ -34,6 +32,31 @@ const safeDeleteFile = (folderSubPath, filename) => {
         console.error(`[DELETE ERROR] ${filename}:`, e.message);
     }
 };
+
+
+// Helper hapus file yang aman di Production
+// const safeDeleteFile = (folderSubPath, filename) => {
+//     if (!filename) return;
+//     try {
+//         const cleanFileName = path.basename(filename);
+
+//         const baseDir = process.env.NODE_ENV = 'production' 
+//             ? path.resolve(process.cwd(), "../../../external_assets/img/products/" )
+//             : path.resolve(process.cwd(), "public/assets/img/products/");
+
+//         // Menggunakan process.cwd() menunjuk langsung ke root project
+//         const absolutePath = path.resolve(baseDir, folderSubPath, cleanFileName);
+
+//         if (fs.existsSync(absolutePath)) {
+//             fs.unlinkSync(absolutePath);
+//             console.log(`[FILE DELETED] ${absolutePath}`);
+//         } else {
+//             console.warn(`[FILE NOT FOUND] ${absolutePath}`);
+//         }
+//     } catch (e) {
+//         console.error(`[DELETE ERROR] ${filename}:`, e.message);
+//     }
+// };
 
 class ProductService {
    async getAllProduct(user) {
