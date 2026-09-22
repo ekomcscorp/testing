@@ -40,7 +40,7 @@ const diskStrorage = multer.diskStorage({
     // Pisahkan folder fisik berdasarkan fieldname
     if (file.fieldname === "thumbnail") {
       targetDir = path.join(BASE_DIR, "thumbnails");
-    } else if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
+    } else if (file.fieldname === "hotel_image_mekkah" || file. fieldname === "hotel_image_madinah") {
       targetDir = path.join(BASE_DIR, "hotels");
     }
 

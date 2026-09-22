@@ -17,7 +17,7 @@ const safeDeleteFile = (folderSubPath, filename) => {
         
         // 💡 TESTING: Tunjuk ke external_assets saat production
         const baseDir = process.env.NODE_ENV === "production"
-            ? path.resolve(process.cwd(), "../../../external_assets")
+            ? path.resolve(process.cwd(), "../../../../external_assets")
             : path.resolve(process.cwd(), "public/assets/img/products");
 
         const absolutePath = path.resolve(baseDir, cleanFileName);

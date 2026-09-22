@@ -117,6 +117,8 @@ const uploadsPath = process.env.NODE_ENV === "production"
 
 // Static route untuk membaca file
 app.use("/assets/img/products", express.static(uploadsPath));
+app.use("/assets/img/transactions", express.static(uploadsPath));
+app.use("/assets/img/profiles", express.static(uploadsPath));
 // app.use("/assets/img/products/thumbnails", express.static(uploadsPath));
 // app.use("/assets/img/products/hotels", express.static(uploadsPath));
 

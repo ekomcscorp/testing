@@ -4,12 +4,22 @@ const profileController = require('../../controllers/api/profile.controller');
 const {ensureAuthToken} = require("../../middleware/authJwt");
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 
 
 const diskStorage = multer.diskStorage({
   destination: function (req, file, cb ) {
-    cb(null, "public/assets/img/profiles/")
+
+    const BASE_DIR = process.env.NODE_ENV === 'production'
+    ? path.resolve(process.cwd(), "../../../../external_assets")
+    : path.join(__dirname, "public/assets/img/profiles/");
+
+    if(!fs.existsSync(BASE_DIR)) {
+      fs.mkdirSync(BASE_DIR, {  recursive:true, mode:0o775 });
+    }
+
+    cb(null, BASE_DIR)
   },
   filename: function(req, file, cb){
     const ext = file.originalname.split(".").pop();

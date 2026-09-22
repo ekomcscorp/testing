@@ -1,7 +1,32 @@
-const fs = require("fs").promises; // Menggunakan fs.promises untuk async I/O
+const fs = require("fs"); // Menggunakan sinkron/asinkron sesuai kebutuhan
+const fsPromises = require("fs").promises;
 const path = require("path");
 const response = require("../../utils/response");
 const profileRepo = require("../../repositories/profile.repository");
+
+const safeDeleteFile = (filename) => {
+  if(!filename) return;
+
+  try{
+    const cleanFileName = path.basename(filename);
+
+    const baseDir = process.env.NODE_ENV === 'production'
+    ? path.resolve(process.cwd(), '../../../../external_assets')
+    : path.resolve(process.cwd(), "public/assets/img/profiles");
+
+    const absolutePath = path.resolve(baseDir, cleanFileName);
+
+     if (fs.existsSync(absolutePath)) {
+                fs.unlinkSync(absolutePath);
+                console.log(`[FILE DELETED] ${absolutePath}`);
+      } else {
+                console.warn(`[FILE NOT FOUND] ${absolutePath}`);
+      }
+  } catch (e) {
+    console.error(`[DELETE ERROR] ${filename}:`, e.message);
+  }
+}
+
 
 class ProfileController {
 

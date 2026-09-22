@@ -575,7 +575,7 @@ class TransactionService {
                 if (Number.isNaN(createdAtTime)) continue;
 
                 // Batas Waktu 24 Jam sejak checkout (Ubah 10*1000 ke 24*60*60*1000 saat Production)
-                const PAYMENT_DEADLINE_MS = 30 * 1000;
+                const PAYMENT_DEADLINE_MS = 24 * 60 * 60 * 1000;
                 const isPast24Hours = now.getTime() >= (createdAtTime + PAYMENT_DEADLINE_MS);
 
                 // 1. FULL PAYMENT (Kadaluarsa jika > 24 jam)
