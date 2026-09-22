@@ -44,6 +44,7 @@ const diskStrorage = multer.diskStorage({
       targetDir = path.join(BASE_DIR, "hotels");
     }
 
+    //buat folder baru ketika folder external ga ada
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true, mode: 0o775 });
     }
