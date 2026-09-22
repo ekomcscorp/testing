@@ -32,7 +32,7 @@ const diskStrorage = multer.diskStorage({
 
     // 💡 TESTING: Direct ke folder external_assets di root domain
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
-      ? path.resolve(process.cwd(), "../../../../external_assets/img/products")
+      ? path.resolve(process.cwd(), "../../../../external_assets")
       : path.join(__dirname, "../../../public/assets/img/products");
 
     // Auto-create folder jika belum ada
