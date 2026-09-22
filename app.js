@@ -104,8 +104,16 @@ app.use("/uploads/jamaah", express.static(path.join(__dirname, "public/assets/im
 
 // 💡 TESTING: Tunjuk ke external_assets saat production
 const uploadsPath = process.env.NODE_ENV === "production"
-  ? path.resolve(process.cwd(), "../../../external_assets")
+  ? path.resolve(process.cwd(), "../../../../external_assets")
   : path.join(__dirname, "public/assets/img/products");
+
+  if (!fs.existsSync(uploadsPath)) {
+    try {
+      fs.mkdirSync(uploadsPath, { recursive: true, mode: 0o775 });
+    } catch (e) {
+      console.error("Gagal membuat folder external_assets:", e);
+    }
+  }
 
 // Static route untuk membaca file
 app.use("/assets/img/products", express.static(uploadsPath));

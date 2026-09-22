@@ -13,6 +13,7 @@ const {ensureAuthToken} = require("../../../middleware/authJwt.js");
 const appSignature = require("../../../middleware/appSignatureGuard.js")
 const crypto = require('crypto');
 const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 router.use(injectUser);
@@ -31,7 +32,7 @@ const diskStrorage = multer.diskStorage({
 
     // 💡 TESTING: Direct ke folder external_assets di root domain
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
-      ? path.resolve(process.cwd(), "../../../external_assets")
+      ? path.resolve(process.cwd(), "../../../../external_assets")
       : path.join(__dirname, "../../../public/assets/img/products");
 
     // Auto-create folder jika belum ada
