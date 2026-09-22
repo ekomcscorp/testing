@@ -30,31 +30,21 @@ const diskStrorage = multer.diskStorage({
     const isValid = FILE_TYPE[file.mimetype];
     let uploadError = new Error('Invalid image type: JPG, JPEG, PNG, WEBP only allowed');
 
-    // 💡 FIX 2: Naik 4 level agar keluar dari folder hbuilds ke root domain
+    // 💡 TESTING: Direct ke folder external_assets di root domain
     const UPLOAD_BASE_DIR = process.env.NODE_ENV === 'production' 
       ? path.resolve(process.cwd(), "../../../../external_assets/img/products")
       : path.join(__dirname, "../../../public/assets/img/products");
 
-    let uploadPath = UPLOAD_BASE_DIR;
-
-    if (file.fieldname === "thumbnail") {
-      uploadPath = path.join(uploadPath, "thumbnails");
-    }
-
-    if (file.fieldname === "hotel_image_mekkah" || file.fieldname === "hotel_image_madinah") {
-      uploadPath = path.join(uploadPath, "hotels");
-    }
-
-    // 💡 FIX 3: Set permission 0o775 saat auto-create folder
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true, mode: 0o775 });
+    // Auto-create folder jika belum ada
+    if (!fs.existsSync(UPLOAD_BASE_DIR)) {
+      fs.mkdirSync(UPLOAD_BASE_DIR, { recursive: true });
     }
 
     if (isValid) {
       uploadError = null;
     }
 
-    cb(uploadError, uploadPath);
+    cb(uploadError, UPLOAD_BASE_DIR);
   },
   filename: function(req, file, cb) {
      const ext = file.originalname.split(".").pop();
