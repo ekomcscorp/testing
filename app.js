@@ -115,10 +115,34 @@ const uploadsPath = process.env.NODE_ENV === "production"
     }
   }
 
+  const profilesPath = process.env.NODE_ENV === "production"
+  ? path.resolve(process.cwd(), "../../../../external_assets/profile")
+  : path.join(__dirname, "public/assets/img/products");
+
+  if (!fs.existsSync(profilesPath)) {
+    try {
+      fs.mkdirSync(profilesPath, { recursive: true, mode: 0o775 });
+    } catch (e) {
+      console.error("Gagal membuat folder external_assets:", e);
+    }
+  }
+
+   const paymentPath = process.env.NODE_ENV === "production"
+  ? path.resolve(process.cwd(), "../../../../external_assets/transaksi")
+  : path.join(__dirname, "public/assets/img/products");
+
+  if (!fs.existsSync(paymentPath)) {
+    try {
+      fs.mkdirSync(paymentPath, { recursive: true, mode: 0o775 });
+    } catch (e) {
+      console.error("Gagal membuat folder external_assets:", e);
+    }
+  }
+
 // Static route untuk membaca file
 app.use("/assets/img/products", express.static(uploadsPath));
-app.use("/assets/img/transactions", express.static(uploadsPath));
-app.use("/assets/img/profiles", express.static(uploadsPath));
+app.use("/assets/img/transactions", express.static(paymentPath));
+app.use("/assets/img/profiles", express.static(profilesPath));
 // app.use("/assets/img/products/thumbnails", express.static(uploadsPath));
 // app.use("/assets/img/products/hotels", express.static(uploadsPath));
 
