@@ -10,7 +10,7 @@ const productHotelRepository = require("../../repositories/products/productHotel
 const productFacilityRepository = require("../../repositories/products/productFacility.repository");
 const productItineraryRepository = require("../../repositories/products/productItinerary.repository");
 
-const safeDeleteFile = (folderSubPath, filename) => {
+const safeDeleteFile = (folderSubPath = "", filename) => {
     if (!filename) return;
     try {
         const cleanFileName = path.basename(filename);
@@ -20,7 +20,9 @@ const safeDeleteFile = (folderSubPath, filename) => {
             ? path.resolve(process.cwd(), "../../../../external_assets")
             : path.resolve(process.cwd(), "public/assets/img/products");
 
-        const absolutePath = path.resolve(baseDir, cleanFileName, folderSubPath);
+        const absolutePath = folderSubPath
+        ? path.resolve(baseDir, folderSubPath, cleanFileName )
+        : path.resolve(baseDir,cleanFileName );
 
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);
