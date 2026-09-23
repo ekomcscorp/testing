@@ -12,11 +12,11 @@ const diskStorage = multer.diskStorage({
   destination: function (req, file, cb ) {
 
     const BASE_DIR = process.env.NODE_ENV === 'production'
-    ? path.resolve(process.cwd(), "../../../../external_assets")
+    ? path.resolve(process.cwd(), "../../../../external_assets/profile")
     : path.join(__dirname, "public/assets/img/profiles/");
 
     if(!fs.existsSync(BASE_DIR)) {
-      fs.mkdirSync(BASE_DIR, {  recursive:true, mode:0o775 });
+      fs.mkdirSync(BASE_DIR, {  recursive:true, mode: 0o775 });
     }
 
     cb(null, BASE_DIR)
