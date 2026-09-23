@@ -7,7 +7,7 @@ const profileRepo = require("../../repositories/profile.repository");
 const safeDeleteFile = (filename) => {
   if(!filename) return;
 
-  try{
+  try {
     const cleanFileName = path.basename(filename);
 
     const baseDir = process.env.NODE_ENV === 'production'
@@ -107,8 +107,9 @@ class ProfileController {
       if (!profile) {
         // Hapus file baru yang sempat diupload middleware jika profile tidak ditemukan
         if (req.file) {
-          const uploadedPath = path.resolve(__dirname, "../../public/assets/img/profiles", req.file.filename);
-          await fs.unlink(uploadedPath).catch(() => {});
+          safeDeleteFile(req.file.filename);
+          // const uploadedPath = path.resolve(__dirname, "../../public/assets/img/profiles", req.file.filename);
+          // await fs.unlink(uploadedPath).catch(() => {});
         }
         return response.error(res, "Profile tidak ditemukan", 404);
       }
@@ -133,15 +134,16 @@ class ProfileController {
         updateData.image = req.file.filename;
 
         if (profile.image) {
+          safeDeleteFile(req.file.filename);
           // path.resolve memastikan absolute path yang presisi dari root direktori file ini
-          const oldPath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
+          // const oldPath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
 
-          try {
-            await fs.access(oldPath); // Cek keberadaan file (async)
-            await fs.unlink(oldPath);  // Hapus file lama (async)
-          } catch (err) {
-            console.error("File lama tidak ditemukan atau gagal dihapus:", err.message);
-          }
+          // try {
+          //   await fs.access(oldPath); // Cek keberadaan file (async)
+          //   await fs.unlink(oldPath);  // Hapus file lama (async)
+          // } catch (err) {
+          //   console.error("File lama tidak ditemukan atau gagal dihapus:", err.message);
+          // }
         }
       }
 
@@ -195,8 +197,9 @@ class ProfileController {
 
       // Hapus file gambar jika profile dihapus
       if (profile.image) {
-        const imagePath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
-        await fs.unlink(imagePath).catch((err) => console.error("Gagal menghapus gambar saat delete profile:", err.message));
+        safeDeleteFile(req.file.filename);
+        // const imagePath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
+        // await fs.unlink(imagePath).catch((err) => console.error("Gagal menghapus gambar saat delete profile:", err.message));
       }
 
       await profileRepo.deleteProfile(profile.id);

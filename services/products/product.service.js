@@ -20,7 +20,7 @@ const safeDeleteFile = (folderSubPath, filename) => {
             ? path.resolve(process.cwd(), "../../../../external_assets")
             : path.resolve(process.cwd(), "public/assets/img/products");
 
-        const absolutePath = path.resolve(baseDir, cleanFileName);
+        const absolutePath = path.resolve(baseDir, cleanFileName, folderSubPath);
 
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);
