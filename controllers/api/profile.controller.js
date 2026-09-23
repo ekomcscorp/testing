@@ -1,34 +1,35 @@
-const fs = require("fs"); // Menggunakan sinkron/asinkron sesuai kebutuhan
+const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 const response = require("../../utils/response");
 const profileRepo = require("../../repositories/profile.repository");
 
+// 💡 FIX 1: safeDeleteFile yang mendukung folderSubPath ("profiles") & external_assets
 const safeDeleteFile = (folderSubPath = "", filename) => {
-  if(!filename) return;
+  if (!filename) return;
 
   try {
     const cleanFileName = path.basename(filename);
 
     const baseDir = process.env.NODE_ENV === 'production'
-    ? path.resolve(process.cwd(), '../../../../external_assets')
-    : path.resolve(process.cwd(), "public/assets/img/profiles");
+      ? path.resolve(process.cwd(), '../../../../external_assets')
+      : path.resolve(process.cwd(), "public/assets/img/profiles");
 
-    const absolutePath = folderSubPath 
-    ? path.resolve(baseDir, folderSubPath,  cleanFileName)
-    : path.resolve(baseDir, cleanFileName);
+    // Jika di production & pakai subfolder "profiles", susun path-nya: baseDir -> folderSubPath -> cleanFileName
+    const absolutePath = process.env.NODE_ENV === 'production' && folderSubPath
+      ? path.resolve(baseDir, folderSubPath, cleanFileName)
+      : path.resolve(baseDir, cleanFileName);
 
-     if (fs.existsSync(absolutePath)) {
-                fs.unlinkSync(absolutePath);
-                console.log(`[FILE DELETED] ${absolutePath}`);
-      } else {
-                console.warn(`[FILE NOT FOUND] ${absolutePath}`);
-      }
+    if (fs.existsSync(absolutePath)) {
+      fs.unlinkSync(absolutePath);
+      console.log(`[FILE DELETED] ${absolutePath}`);
+    } else {
+      console.warn(`[FILE NOT FOUND] ${absolutePath}`);
+    }
   } catch (e) {
     console.error(`[DELETE ERROR] ${filename}:`, e.message);
   }
-}
-
+};
 
 class ProfileController {
 
@@ -107,11 +108,9 @@ class ProfileController {
       const profile = await profileRepo.getProfileByUserId(userId);
 
       if (!profile) {
-        // Hapus file baru yang sempat diupload middleware jika profile tidak ditemukan
+        // Hapus file baru jika profile tidak ditemukan
         if (req.file) {
-          // safeDeleteFile(req.file.filename);
-          const uploadedPath = path.resolve(__dirname, "../../public/assets/img/profiles", req.file.filename);
-          await fs.unlink(uploadedPath).catch(() => {});
+          safeDeleteFile("profiles", req.file.filename);
         }
         return response.error(res, "Profile tidak ditemukan", 404);
       }
@@ -131,21 +130,12 @@ class ProfileController {
 
       const updateData = {};
 
-      // Handle upload foto baru & hapus foto lama
+      // 💡 FIX 2: Gunakan safeDeleteFile untuk menghapus foto lama di external_assets
       if (req.file) {
         updateData.image = req.file.filename;
 
         if (profile.image) {
-          //safeDeleteFile(req.file.filename);
-          // path.resolve memastikan absolute path yang presisi dari root direktori file ini
-          const oldPath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
-
-          try {
-            await fs.access(oldPath); // Cek keberadaan file (async)
-            await fs.unlink(oldPath);  // Hapus file lama (async)
-          } catch (err) {
-            console.error("File lama tidak ditemukan atau gagal dihapus:", err.message);
-          }
+          safeDeleteFile("profiles", profile.image);
         }
       }
 
@@ -162,7 +152,6 @@ class ProfileController {
       if (username !== undefined) updateUserData.username = username;
       if (no_wa !== undefined) updateUserData.no_wa = no_wa;
 
-      // Eksekusi update database HANYA jika ada data yang diubah
       if (Object.keys(updateData).length > 0) {
         await profileRepo.updateProfile(profile.id, updateData);
       }
@@ -179,10 +168,9 @@ class ProfileController {
         updatedProfile
       );
     } catch (error) {
-      // Clean up file baru jika terjadi crash saat query DB
+      // 💡 FIX 3: Clean up file baru jika terjadi crash DB
       if (req.file) {
-        const uploadedPath = path.resolve(__dirname, "../../public/assets/img/profiles", req.file.filename);
-        await fs.unlink(uploadedPath).catch(() => {});
+        safeDeleteFile("profiles", req.file.filename);
       }
       return response.error(res, error.message);
     }
@@ -197,11 +185,9 @@ class ProfileController {
         return response.error(res, "Profile tidak ditemukan", 404);
       }
 
-      // Hapus file gambar jika profile dihapus
+      // 💡 FIX 4: Gunakan safeDeleteFile saat profile dihapus
       if (profile.image) {
-        // safeDeleteFile(req.file.filename);
-        const imagePath = path.resolve(__dirname, "../../public/assets/img/profiles", profile.image);
-        await fs.unlink(imagePath).catch((err) => console.error("Gagal menghapus gambar saat delete profile:", err.message));
+        safeDeleteFile("profiles", profile.image);
       }
 
       await profileRepo.deleteProfile(profile.id);
