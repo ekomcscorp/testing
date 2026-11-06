@@ -407,9 +407,9 @@ class TransactionService {
             }
 
             // 8. HANYA UNPAID BOLEH UPLOAD
-            if (installment.status !== 'UNPAID') {
-                throw new Error("Status termin tidak mengizinkan upload pembayaran.");
-            }
+            // if (installment.status !== 'UNPAID' || installment.status === 'FAILED') {
+            //     throw new Error("Status termin tidak mengizinkan upload pembayaran.");
+            // }
 
             // 9. SIMPAN BUKTI DI TERMIN CICILAN
             await transactionRepo.updateInstallment(
