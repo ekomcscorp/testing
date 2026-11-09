@@ -13,19 +13,13 @@ const crypto = require("crypto");
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        const BASE_DIR = process.env.NODE_ENV === 'production'
-        ? path.resolve(process.cwd(), "../../../../external_assets")
+        const targetDir = process.env.NODE_ENV === 'production'
+        ? path.resolve(process.cwd(), "../../../../external_assets/jamaah")
         : path.join(__dirname, "../../../public/assets/img/transactions/jamaah");
         
-        let targetDir = BASE_DIR;
-
-        if(file.filename === 'jamaah') {
-            targetDir = path.join(BASE_DIR, "jamaah")
-        }
-
         // untuk membuat folder baru jika folder tidak ada
         if (!fs.existsSync(targetDir)) {   
-            fs.mkdirSync(targetDir, { recursive: true });
+            fs.mkdirSync(targetDir, { recursive: true, mode: 0o775 });
         }
 
         cb(null, targetDir);
