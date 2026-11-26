@@ -381,6 +381,86 @@ class ProductService {
         await productRepository.updateProduct(id, { status: normalized });
         return await productRepository.getProductById(id);
        }
+
+       async copyProduct(id, userId) {
+        const transaction = await sequelize.transaction();
+        try {
+            const original = await productRepository.getProductById(id);
+            if (!original) {
+                throw new Error("Product not found");
+            }
+
+            const plainOriginal = original.get({ plain: true });
+            const { id: _, createdAt: __, updatedAt: ___, user_id: ____, creator: _____, ...fields } = plainOriginal;
+
+            const productFields = {
+                ...fields,
+                nama_produk: `${fields.nama_produk} (Copy)`,
+                status: 'draft',
+                user_id: userId
+            };
+
+            const newProduct = await productRepository.createProduct(productFields, { transaction });
+
+            const bulkInsert = async (repo, data, mapper) => {
+                if (!data || !data.length) return;
+                const payload = data.map(item => mapper(item, newProduct.id));
+                await repo.createMany(payload, { transaction });
+            };
+
+            await bulkInsert(productPricesRepository, original.prices, (p, pid) => ({
+                product_id: pid,
+                room_types: p.room_types,
+                price: p.price,
+                quota: p.quota
+            }));
+
+            await bulkInsert(productFlightRepository, original.flights, (f, pid) => ({
+                product_id: pid,
+                airline_name: f.airline_name,
+                type: f.type
+            }));
+
+            await bulkInsert(productNoteRepository, original.notes, (n, pid) => ({
+                product_id: pid,
+                note: n.note
+            }));
+
+            await bulkInsert(productSnKRepository, original.snk, (s, pid) => ({
+                product_id: pid,
+                name: s.name
+            }));
+
+            await bulkInsert(productFacilityRepository, original.facility, (f, pid) => ({
+                product_id: pid,
+                facility: f.facility,
+                type: f.type
+            }));
+
+            await bulkInsert(productHotelRepository, original.hotels, (h, pid) => ({
+                product_id: pid,
+                name: h.name,
+                city: h.city,
+                rating: h.rating,
+                jarak: h.jarak,
+                image: h.image,
+                facilities: h.facilities
+            }));
+
+            await bulkInsert(productItineraryRepository, original.itinerary, (i, pid) => ({
+                product_id: pid,
+                day_order: i.day_order,
+                title: i.title,
+                description: i.description
+            }));
+
+            await transaction.commit();
+            return await productRepository.getProductById(newProduct.id);
+        } catch (error) {
+            if (transaction && !transaction.finished) await transaction.rollback();
+            throw new Error(error.message);
+        }
+    }
 }
 
 module.exports = new ProductService;

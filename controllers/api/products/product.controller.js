@@ -261,6 +261,34 @@ class ProductController {
       return handleServerError(res, error);
     }
   }
+
+  // Copy product
+  async copyProduct(req, res) {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const newProduct = await productService.copyProduct(id, userId);
+      if (!newProduct) {
+        return res.status(404).json({ success: false, message: "Product not found" });
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "Product copied successfully",
+        data: newProduct
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Gagal menyalin produk"
+      });
+    }
+  }
   // Datatables endpoint
  
 }

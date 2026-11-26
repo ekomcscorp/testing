@@ -111,6 +111,7 @@ router.post("/", appSignature, upload.fields([
     { name: 'hotel_image_mekkah', },
     { name: 'hotel_image_madinah', }
 ]), productController.createProduct);
+router.post("/:id/copy", appSignature, productController.copyProduct);
 router.put("/:id", appSignature, upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'hotel_image_mekkah', },
